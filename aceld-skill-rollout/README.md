@@ -23,16 +23,20 @@
 
 ---
 
-## 三步
+## 四步
 
 | 阶段 | 命令 | 解决什么 |
 |---|---|---|
 | ① 审计 | `python scripts/audit.py` | 哪些技能有、在什么位置、是不是三方 |
 | ② 注入 | `python scripts/inject.py --block b.md --marker "能力名" --apply` | 幂等插入，再跑一次是「替换」不是「再插一遍」 |
 | ③ 验证 | `python scripts/audit.py --verify` | 位置 ≤30 行？脚本存在？仓库与本地一致？ |
+| ④ 发布 | `python scripts/publish.py -m "..."` | **提交 + 推送 + 同步本地 + 再验证**，一条命令 |
 
-配套的 `sync.py` 负责仓库 → 本地已装副本，**默认只报告不覆盖**
-（本地工作版常常比仓库发布版新）。
+`publish.py` 是第 ④ 步的重点：用户的要求是「提交 GitHub 后本地技能也要更新」，
+分步手工做一定会漏，而且漏了**没有任何报错**——本地还是旧版，你以为已经更新了。
+
+配套的 `sync.py` 负责仓库 → 本地已装副本，**默认只报告不覆盖**；
+`--mirror` 才以仓库为准全覆盖（`publish.py` 用的就是它）。
 
 ---
 
@@ -69,11 +73,8 @@ python aceld-skill-rollout/skill/scripts/inject.py \
     --block aceld-skill-rollout/skill/assets/block-preflight.md \
     --marker "开工前置检查" --apply
 
-# 4. 同步到本地已装副本
-python aceld-skill-rollout/skill/scripts/sync.py --apply
-
-# 5. 发布前必过
-python aceld-skill-rollout/skill/scripts/audit.py --verify
+# 4. 发布：提交 + 推送 + 同步本地 + 验证，一条命令
+python aceld-skill-rollout/skill/scripts/publish.py -m "feat(xxx): 为什么改"
 ```
 
 ---
@@ -104,6 +105,11 @@ aceld-findskill ✓   140/208   v1 ✗ 太靠后
 名字不以 `aceld-` 开头的，是市场装的技能——改了下次更新会被整体覆盖。
 `audit.py` 自动分类并标「跳过」。
 
+### 四、提交 ≠ 完成，本地同步了才算
+
+仓库改了、本地没跟，用户当下用的还是旧版。所以第 ④ 步用 `publish.py`
+把 `commit / push / sync --mirror / verify` 绑成一个动作——**不要手工分步做**。
+
 ---
 
 ## 目录结构
@@ -126,7 +132,8 @@ aceld-skill-rollout/
     └── scripts/
         ├── audit.py                # 扫描 + 矩阵表；--verify 加严
         ├── inject.py               # 幂等注入/替换/移除 sentinel 块
-        └── sync.py                 # 仓库 skill/ → 本地已装副本（带备份）
+        ├── sync.py                 # 仓库 skill/ → 本地已装副本；--mirror 全覆盖
+        └── publish.py              # 提交 + 推送 + 同步本地 + 验证，一条命令
 ```
 
 ---
@@ -150,7 +157,10 @@ aceld-skill-rollout/
 | `open(path,"w")` 先截断后写 | 生成内容抛异常 → 251 行文件变 0 字节 | 一律 `tmp + os.replace` 原子写 |
 | `fence = not fence` 判代码块 | ```` ```markdown ```` 里套 ```` ```bash ```` → 示例文字被当正文 | 只有裸围栏算闭合 |
 | Windows 上 `os.path.isabs("/foo")` 为 True | `~/.workbuddy-ai/...` 被截成 `/...` → 7 条假错 | `~` 先 expanduser；绝对路径只认盘符 |
-| 无脑 `repo → local` 覆盖 | 本地 1634 行工作版被 254 行发布版冲掉 | `sync.py` 默认只报告，`--force` 才覆盖且备份 |
+| 无脑 `repo → local` 覆盖 | 本地 1634 行工作版被 254 行发布版冲掉 | `sync.py` 默认只报告，`--mirror` 才覆盖且逐个备份 |
+| 用**仓库目录名**找本地目录 | `aceld-course/` 装出来其实是 `course-studio`，比的不是同一个技能 | 读 `SKILL.md` 的 `name:` 决定本地目录名（`read_skill_name()`） |
+| `cp -R` / `copytree` 带进 `__pycache__` | 本地技能目录里一堆 `.pyc` | 装完 `clean_pycache()` 清掉 |
+| 提交推送完就收工 | 本地还是旧版，**且没有任何报错** | `publish.py` 把四步绑成一个动作 |
 
 ---
 

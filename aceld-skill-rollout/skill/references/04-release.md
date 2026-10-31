@@ -28,6 +28,29 @@
 
 ## 2. 完整发布流程
 
+### 2.1 首选：一条命令
+
+```bash
+cd D:/我的坚果云/AI/aceld-skill
+python aceld-skill-rollout/skill/scripts/publish.py -m "feat(xxx): 为什么改"
+```
+
+它按顺序做：`git add -A` → `commit` → `push`（自动设 7890 代理）→
+`sync.py --mirror --apply`（同步本地）→ `audit.py --verify`。
+任何一步失败立刻停，并告诉你下一步怎么做。
+
+**为什么要绑成一个动作**：用户的要求是「提交后本地也要更新」。
+分步做的话，`push` 成功就已经觉得完事了，本地还是旧版，**而且没有任何报错**。
+这种静默不一致最难发现——下次用技能时才发现用的是两周前的版本。
+
+推送失败（网络/凭据）时提交已留在本地，修好后补一条：
+
+```bash
+python aceld-skill-rollout/skill/scripts/publish.py --sync-only
+```
+
+### 2.2 手工分步（调试脚本本身时才需要）
+
 ```bash
 # 0. 进仓库根（find_repo 靠这个找）
 cd D:/我的坚果云/AI/aceld-skill
@@ -37,14 +60,13 @@ python aceld-skill-rollout/skill/scripts/audit.py --verify
 
 # 2. 同步本地已装副本
 python aceld-skill-rollout/skill/scripts/sync.py            # 先看
-python aceld-skill-rollout/skill/scripts/sync.py --apply
+python aceld-skill-rollout/skill/scripts/sync.py --mirror --apply
 
 # 3. 再验证一次（本地那几行也要 ≤30 行）
 python aceld-skill-rollout/skill/scripts/audit.py --verify
 
 # 4. 语法自检（别把 SyntaxError 提交上去）
 python -m py_compile aceld-skill-rollout/skill/scripts/*.py
-python -c "import ast,glob;[ast.parse(open(f,encoding='utf-8').read()) for f in glob.glob('aceld-skill-rollout/skill/scripts/*.py')]"
 
 # 5. 看 diff（关键：确认没有意外删除）
 git status --short
@@ -86,13 +108,12 @@ export http_proxy=http://127.0.0.1:7890
 git push origin main
 ```
 
-**推送需要凭据**，而本机没有任何 GitHub 凭据（无 `gh` CLI、无 `GITHUB_TOKEN`、
-凭据管理器无条目、`~/.ssh` 为空）。所以 `git push` 会停在用户名/密码提示，
-需要用户自己授权（或在 GitHub 上生成 PAT 后配一次 credential helper）。
+**凭据**：本机 `git config credential.helper` = `manager`（Git Credential Manager），
+**已存有 aceld 的凭据**，`GIT_TERMINAL_PROMPT=0 git push` 可以直接成功。
+（早期记录说「无任何凭据」是错的，已实测推翻。）
 
-**别在非交互环境里干等**：`git push` 一旦开始提示输入，命令就挂住了。
-先 `git remote -v` 和 `git config --get credential.helper` 确认有没有凭据，
-没有就直接告诉用户「需要你授权」，把 commit 做完即可。
+`GIT_TERMINAL_PROMPT=0` 仍然要加：万一 GCM 哪天要重新授权，
+它会**立刻失败**而不是挂在用户名/密码提示上干等。`publish.py` 已经设了这个变量。
 
 ---
 
@@ -166,17 +187,23 @@ python aceld-skill-rollout/skill/scripts/inject.py --marker "开工前置检查"
 
 ## 7. 发布检查清单（可勾选）
 
+用 `publish.py` 时，前 5 条它全包了，你只需确认后 4 条：
+
 ```
-[ ] audit.py --verify 全绿
-[ ] sync.py --apply 执行过，本地也是 ✓ 生效
-[ ] py_compile 无报错
-[ ] git diff --stat 没有异常的大段删除
+[ ] （publish 自动）audit.py --verify 全绿
+[ ] （publish 自动）sync.py --mirror 执行过，本地也是 ✓ 生效
+[ ] （publish 自动）py_compile 无报错
+[ ] （publish 自动）git diff --stat 没有异常的大段删除
+[ ] （publish 自动）push 成功
 [ ] 新技能已加进仓库根 README.md 的「已收录技能」表
 [ ] 新技能的 README.md / install.sh / install.ps1 齐了
 [ ] commit message 说了「为什么」
-[ ] push 成功（或明确告知用户需要授权）
 [ ] memory 记了一条
+[ ] 重启会话后新技能才进 Agent 的技能列表
 ```
+
+> 最后一条容易忘：`sync.py` 只是把文件放到 `~/.workbuddy-ai/skills/`，
+> **Agent 的技能列表是会话启动时读的**。不重启，本会话里仍然用旧版。
 
 第 5、6 条最容易漏。技能在仓库里但 README 没列 = 别人翻不到；
 没有 `install.sh` = 装了也不会用。

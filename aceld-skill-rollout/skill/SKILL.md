@@ -36,7 +36,7 @@ metadata:
 ## 0. 一分钟速览
 
 ```
-① 审计 → ② 定 block → ③ 注入 → ④ 同步本地 → ⑤ 验证 → ⑥ 发布
+① 审计 → ② 定 block → ③ 注入 → ④ 验证 → ⑤ 发布（提交+推送+同步本地）
 ```
 
 | 阶段 | 动作 | 脚本 | 产出 |
@@ -44,9 +44,13 @@ metadata:
 | ① 审计 | 现在到底哪些技能有、哪些只是"写了但没生效" | `audit.py` | 一张矩阵表 |
 | ② 定 block | 写一段**跨技能完全一致**的核心块 | 手写 | `block.md` |
 | ③ 注入 | 幂等插入到每个技能的正确锚点 | `inject.py` | 改动的 SKILL.md |
-| ④ 同步 | 仓库 `skill/` → 本地已装副本（带备份） | `sync.py` | 本地技能更新 |
-| ⑤ 验证 | marker 在顶部？脚本能跑？仓库与本地一致？ | `audit.py --verify` | PASS / 问题清单 |
-| ⑥ 发布 | 提交信息写清「为什么改」+ 推送 + 记 memory | 手写 | commit |
+| ④ 验证 | marker 在顶部？脚本能跑？仓库与本地一致？ | `audit.py --verify` | PASS / 问题清单 |
+| ⑤ 发布 | **一条命令**：提交 → 推送 → 同步本地 → 再验证 | `publish.py` | commit + 本地已更新 |
+
+> **★铁律四：提交 ≠ 完成，本地同步了才算。**
+> 仓库改了、本地没跟 = 用户当下用的还是旧版。所以 `publish.py` 把
+> `git commit` / `git push` / `sync.py --mirror` / `audit.py --verify` 绑成一个动作，
+> **不要手工分步做**（分步一定会漏，而且漏了没有任何报错）。
 
 ---
 
@@ -91,12 +95,23 @@ python scripts/audit.py --verify            # 加严：位置 + 脚本路径 + �
 python scripts/inject.py --block block.md --marker "开工前置检查"
 python scripts/inject.py --block block.md --marker "开工前置检查" --apply
 
-# ③ 同步：仓库 skill/ → 本地已装副本（默认 dry-run）
+# ③ 同步：仓库 skill/ → 本地已装副本（默认只报告）
 python scripts/sync.py
-python scripts/sync.py --apply
+python scripts/sync.py --apply              # 只装「本地还没有」的
+python scripts/sync.py --mirror --apply     # 以仓库为准，覆盖所有不一致的（逐个备份）
+
+# ④ 发布（★最常用）：提交 + 推送 + 同步本地 + 验证，一条命令
+python scripts/publish.py -m "feat(xxx): 为什么改"
+python scripts/publish.py --sync-only       # 只同步本地 + 验证（推送失败后补做）
+python scripts/publish.py -m "..." --dry-run
 ```
 
 `--repo` 不给时自动找：`$ACELD_SKILL_REPO` → 从当前目录向上找 `aceld-course/skill/SKILL.md`。
+
+> **`sync.py` 按 SKILL.md 的 `name:` 决定本地目录名，不是仓库目录名。**
+> 仓库 `aceld-course/` 装出来是 `course-studio`。按目录名同步会拿
+> 「254 行通用开源版」覆盖本地的「1634 行个人工作版」——两者结构都不一样，覆盖就是丢工作。
+> 现在 `aceld-course/`（个人版）根本不在比对范围内，不会被碰。
 
 ---
 
@@ -134,12 +149,31 @@ python scripts/sync.py --apply
 
 ---
 
-## 5. 发布前的四问
+## 5. 发布：一条命令，不要手工分步
+
+```bash
+python scripts/publish.py -m "feat(xxx): 为什么改"
+```
+
+它按顺序做四件事，任何一步失败立刻停并告诉你：
+
+```
+git add -A → git commit → git push（自动设 7890 代理）→ sync.py --mirror --apply → audit.py --verify
+```
+
+**为什么要绑成一个动作**：用户的要求是「提交后本地也要更新」。
+手工分步做，push 完就以为结束了 —— 本地还是旧版，而且**没有任何报错**。
+这种「静默的不一致」比报错难发现得多。
+
+发布前四问（`publish.py` 会替你查前两条）：
 
 1. **每个自有技能都有 sentinel？** `audit.py --verify` 全绿
 2. **块内引用的脚本真的存在？** verify 会检查路径
-3. **仓库和本地都改了？** 只改仓库 = 本地不生效；只改本地 = 下次装就丢
+3. **仓库和本地都改了？** 由 `sync.py --mirror` 保证，不用手工判断
 4. **提交信息写清「为什么」？** 不是「加了 X」，而是「原来写在末尾所以从没被执行」
+
+推送失败（网络/凭据）时：提交已留在本地，修好后补做同步即可 ——
+`python scripts/publish.py --sync-only`。
 
 ---
 
@@ -153,4 +187,5 @@ python scripts/sync.py --apply
 | `references/04-release.md` | 验证清单、提交规范、memory 记录、推送 |
 | `scripts/audit.py` | 扫描仓库+本地，输出矩阵；`--verify` 加严 |
 | `scripts/inject.py` | 幂等注入/替换/移除 sentinel 块 |
-| `scripts/sync.py` | 仓库 `skill/` → 本地已装副本（带备份） |
+| `scripts/sync.py` | 仓库 `skill/` → 本地已装副本；`--mirror` 以仓库为准全覆盖 |
+| `scripts/publish.py` | **提交 + 推送 + 同步本地 + 验证**，一条命令 |

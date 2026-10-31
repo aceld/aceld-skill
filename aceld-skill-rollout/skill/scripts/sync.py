@@ -32,6 +32,16 @@ def tree_files(root):
     return sorted(out)
 
 
+def clean_pycache(root):
+    """copytree 会把仓库里的 __pycache__ 一起搬过去，装完清掉。"""
+    hits = []
+    for dp, _, _ in os.walk(root):
+        if os.path.basename(dp) == "__pycache__":
+            hits.append(dp)
+    for h in hits:
+        shutil.rmtree(h, ignore_errors=True)
+
+
 def same_tree(a, b):
     fa, fb = tree_files(a), tree_files(b)
     if fa != fb:
@@ -48,6 +58,8 @@ def main():
     ap.add_argument("--local", default=LOCAL_DEFAULT)
     ap.add_argument("--apply", action="store_true", help="执行安装/覆盖")
     ap.add_argument("--force", default="", help="强制覆盖这些技能（逗号分隔，会备份）")
+    ap.add_argument("--mirror", action="store_true",
+                    help="镜像模式：以仓库为准覆盖所有不一致的技能（逐个备份）")
     a = ap.parse_args()
 
     repo = find_repo(a.repo)
@@ -56,34 +68,38 @@ def main():
         return 2
     force = {x.strip() for x in a.force.split(",") if x.strip()}
     items = scan_repo(repo)
+    if a.mirror:
+        force = {it["skill"] for it in items}
 
     print("仓库：%s\n本地：%s\n模式：%s\n"
           % (repo, a.local, "执行" if a.apply else "只报告（加 --apply 执行）"))
 
     todo, skipped, blocked = [], [], []
     for it in items:
-        name = it["name"]
+        name = it["name"]          # 仓库目录名，如 aceld-course
+        skill = it["skill"]        # 技能名（= 本地安装目录名），如 course-studio
         src = os.path.join(repo, name, "skill")
-        dest = os.path.join(a.local, name)
+        dest = os.path.join(a.local, skill)
+        label = skill if skill == name else "%s (%s)" % (skill, name)
         if not os.path.isdir(src):
             continue
         if not os.path.isdir(dest):
-            print("  + %-24s 本地没有 → 待安装（%d 个文件）" % (name, len(tree_files(src))))
-            todo.append((name, src, dest, "install"))
+            print("  + %-24s 本地没有 → 待安装（%d 个文件）" % (label, len(tree_files(src))))
+            todo.append((skill, src, dest, "install"))
             continue
         if same_tree(src, dest):
-            print("  = %-24s 一致，跳过" % name)
-            skipped.append(name)
+            print("  = %-24s 一致，跳过" % label)
+            skipped.append(skill)
             continue
         ls, ld = len(tree_files(src)), len(tree_files(dest))
-        if name in force:
+        if skill in force:
             print("  ! %-24s 不一致（仓库 %d / 本地 %d 文件）→ 强制覆盖（会备份）"
-                  % (name, ls, ld))
-            todo.append((name, src, dest, "force"))
+                  % (label, ls, ld))
+            todo.append((skill, src, dest, "force"))
         else:
             print("  ~ %-24s 不一致（仓库 %d / 本地 %d 文件）→ 不动，需 --force %s"
-                  % (name, ls, ld, name))
-            blocked.append(name)
+                  % (label, ls, ld, skill))
+            blocked.append(skill)
 
     if not a.apply:
         print("\n待安装 %d / 强制覆盖 %d / 一致 %d / 需人工确认 %d"
@@ -101,6 +117,7 @@ def main():
             print("  ✓ %-24s 已备份到 %s" % (name, os.path.basename(bak)))
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         shutil.copytree(src, dest)
+        clean_pycache(dest)
         print("  ✓ %-24s %s 完成" % (name, "安装" if how == "install" else "覆盖"))
 
     if todo:

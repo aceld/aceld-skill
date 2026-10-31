@@ -64,35 +64,80 @@ return "三方"
 
 ---
 
-## 4. 本地副本常常比仓库新（反直觉但真实）
+## 4. 仓库目录名 ≠ 技能名（最容易丢东西的一处）
 
-`sync.py` 默认**只报告不覆盖**，原因写在文件头：
+`sync.py` 一开始是拿**仓库目录名**去比对本地目录的。于是它报：
 
 ```
-本地副本常常比仓库「更新」：
-仓库是发布版，本地是工作版。比如 aceld-course 本地 1600+ 行、仓库 250 行。
+~ aceld-course  不一致（仓库 25 / 本地 24 文件）→ 不动，需 --force aceld-course
 ```
 
-实测数据：
+看着像「版本不一致」，其实是**两个不同的技能**被放在一起比：
 
-| 技能 | 仓库 | 本地 | 差异原因 |
-|---|---|---|---|
-| `aceld-course` | 254 行 | 1634 行 | 本地是正在写的工作版 |
-| `aceld-findskill` | 208 行 | 208 行 | 一致 |
-| `aceld-voice` | — | 315 行 | 还没回仓 |
+| | 仓库 `aceld-course/` | 本地 `aceld-course/` |
+|---|---|---|
+| 是什么 | 去个人化的**开源通用版** | 作者的**个人实战工作版** |
+| SKILL.md | 254 行，7 章 + `references/01-10` 分章 | 1634 行，14 章，含三/四/五课复盘 |
+| 脚本 | 12 个通用脚本 | `slides_a~d.py` 等本课专用 |
+| 装出来叫 | **`course-studio`**（frontmatter 的 `name:`） | `aceld-course` |
 
-如果 `sync.py` 默认 `repo → local` 覆盖，`aceld-course` 那 1380 行当场蒸发。
+仓库 `aceld-course/install.sh` 里写得很清楚：
 
-所以三种模式：
+```bash
+NAME="course-studio"
+```
+
+也就是说：仓库目录名只是**归类用的文件夹**，真正的技能标识是 `skill/SKILL.md` 的 `name:`。
+按目录名同步，等于拿 254 行的通用版去覆盖 1634 行的个人版 —— 1380 行当场蒸发。
+
+### 修法：按 `name:` 决定本地目录名
+
+```python
+def read_skill_name(path):
+    lines = read_lines(path)
+    if not lines or lines[0].strip() != "---":
+        return os.path.basename(os.path.dirname(os.path.dirname(path)))
+    for ln in lines[1:40]:
+        if ln.strip() == "---":
+            break
+        m = re.match(r"^name:\s*(.+?)\s*$", ln)
+        if m:
+            return m.group(1).strip().strip("\"'")
+    return os.path.basename(os.path.dirname(os.path.dirname(path)))
+```
+
+改完的映射（实测）：
+
+| 仓库目录 | 技能名（本地目录） |
+|---|---|
+| `aceld-course/` | `course-studio` |
+| `aceld-diagram/` | `aceld-diagram` |
+| `aceld-findskill/` | `aceld-findskill` |
+| `aceld-skill-rollout/` | `aceld-skill-rollout` |
+
+于是本地 `aceld-course`（个人版）**根本不在比对范围内**，怎么同步都不会被碰；
+而仓库的通用版老老实实装成 `course-studio`，两者并存、互不干扰。
+
+`audit.py` 的表格会把映射显式打出来：
+
+```
+aceld-course [repo]→course-studio  自有(仓库)   ✓   10/254   v1 ✓ 生效
+aceld-course                       自有(本地独有) ✓   11/1634  v1 ✓ 生效
+course-studio                      自有(仓库)   ✓   10/254   v1 ✓ 生效
+```
+
+### 三种同步模式
 
 ```bash
 python sync.py                                 # 只报告（默认，最安全）
 python sync.py --apply                         # 只装「本地还没有」的
-python sync.py --force aceld-diagram --apply   # 强制覆盖指定技能，自动备份
+python sync.py --force course-studio --apply   # 强制覆盖指定技能，自动备份
+python sync.py --mirror --apply                # 以仓库为准，覆盖所有不一致的
 ```
 
-`--force` 的备份是 `shutil.move(dest, dest + ".bak.YYYYmmddHHMMSS")`——
-**移动**不是复制，所以磁盘不翻倍，且原目录一定不残留。
+`--mirror` 是 `publish.py` 用的模式：既然提交了，本地就该跟仓库一样。
+备份是 `shutil.move(dest, dest + ".bak.YYYYmmddHHMMSS")`——
+**移动**不是复制，磁盘不翻倍，且原目录一定不残留。
 
 **回滚**：把 `.bak.<时间戳>` 改回原名即可。
 

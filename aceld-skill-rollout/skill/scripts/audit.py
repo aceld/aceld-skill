@@ -43,6 +43,26 @@ def is_backup(name):
     return ".bak" in name or name.endswith(".zip")
 
 
+def read_skill_name(path):
+    """读 SKILL.md frontmatter 的 name:，读不到就退回目录名。
+
+    ★仓库目录名 ≠ 技能名：`aceld-course/` 装出来是 `course-studio`
+    （仓库里是目录归类，本地是技能标识，由 frontmatter 的 name 决定）。
+    按目录名去同步，会拿「通用开源版」覆盖本地的「个人实战工作版」——
+    两者是 254 行 vs 1634 行，结构都不一样，覆盖就是丢工作。
+    """
+    lines = read_lines(path)
+    if not lines or lines[0].strip() != "---":
+        return os.path.basename(os.path.dirname(os.path.dirname(path)))
+    for ln in lines[1:40]:
+        if ln.strip() == "---":
+            break
+        m = re.match(r"^name:\s*(.+?)\s*$", ln)
+        if m:
+            return m.group(1).strip().strip("\"'")
+    return os.path.basename(os.path.dirname(os.path.dirname(path)))
+
+
 def scan_repo(repo):
     """仓库里每个技能：<dir>/skill/SKILL.md"""
     out = []
@@ -52,7 +72,7 @@ def scan_repo(repo):
         p = os.path.join(repo, d, "skill", "SKILL.md")
         if is_backup(d) or not os.path.isfile(p):
             continue
-        out.append({"name": d, "path": p, "where": "repo"})
+        out.append({"name": d, "skill": read_skill_name(p), "path": p, "where": "repo"})
     return out
 
 
@@ -64,14 +84,14 @@ def scan_local(local):
         p = os.path.join(local, d, "SKILL.md")
         if is_backup(d) or not os.path.isfile(p):
             continue
-        out.append({"name": d, "path": p, "where": "local"})
+        out.append({"name": d, "skill": d, "path": p, "where": "local"})
     return out
 
 
-def classify(item, repo_names):
-    if item["name"] in repo_names:
+def classify(item, repo_skills):
+    if item["skill"] in repo_skills:
         return "自有(仓库)"
-    if item["name"].startswith("aceld-"):
+    if item["skill"].startswith("aceld-"):
         return "自有(本地独有)"
     meta = os.path.join(os.path.dirname(item["path"]), "_meta.json")
     if os.path.isfile(meta):
@@ -205,11 +225,13 @@ def main():
     a = ap.parse_args()
 
     repo = find_repo(a.repo)
-    items = scan_repo(repo) + scan_local(a.local)
+    repo_items = scan_repo(repo)
+    local_items = scan_local(a.local)
+    items = repo_items + local_items
     if not items:
         print("!! 没扫到任何技能。检查 --repo / --local，或设 ACELD_SKILL_REPO")
         return 2
-    repo_names = {i["name"] for i in scan_repo(repo)}
+    repo_skills = {i["skill"] for i in repo_items}
 
     print("仓库：%s" % (repo or "（未找到，只审计本地）"))
     print("本地：%s" % a.local)
@@ -217,7 +239,7 @@ def main():
 
     rows, problems = [], []
     for it in items:
-        kind = classify(it, repo_names)
+        kind = classify(it, repo_skills)
         r = inspect(it, a.marker)
         rows.append((it, kind, r))
         if kind.startswith("三方"):
@@ -235,9 +257,9 @@ def main():
                     problems.append("%s 引用的脚本不存在：%s" % (it["name"], ref))
 
     if a.verify:
-        both = {i["name"] for i in scan_repo(repo)} & {i["name"] for i in scan_local(a.local)}
+        both = repo_skills & {i["skill"] for i in local_items}
         for n in sorted(both):
-            got = {it["where"]: r["has"] for it, k, r in rows if it["name"] == n}
+            got = {it["where"]: r["has"] for it, k, r in rows if it["skill"] == n}
             if len(set(got.values())) > 1:
                 problems.append("%s 仓库与本地不一致（%s）" % (n, got))
 
@@ -250,15 +272,17 @@ def main():
             flag = "✓ 生效" if r["ok_pos"] else "✗ 太靠后"
         else:
             pos, flag = "-", ("跳过(三方)" if kind.startswith("三方") else "✗ 缺")
+        label = it["name"] + (" [repo]" if it["where"] == "repo" else "")
+        if it["skill"] != it["name"]:
+            label += "→" + it["skill"]
         print("%-34s %-14s %-6s %-12s %s" % (
-            it["name"] + (" [repo]" if it["where"] == "repo" else ""),
-            kind, "✓" if r["has"] else "✗", pos,
+            label, kind, "✓" if r["has"] else "✗", pos,
             ("%s %s" % (r["version"], flag)) if r["has"] else flag))
 
     own = [(it, k, r) for it, k, r in rows if not k.startswith("三方")]
     ok = [x for x in own if x[2]["ok_pos"]]
     print("\n自有技能 %d 个（仓库 %d + 本地 %d），生效 %d 个"
-          % (len(own), len(scan_repo(repo)), len(scan_local(a.local)), len(ok)))
+          % (len(own), len(repo_items), len(local_items), len(ok)))
     third = [x for x in rows if x[1].startswith("三方")]
     if third:
         print("三方技能 %d 个已跳过（改了会被市场更新覆盖）：%s"
