@@ -29,6 +29,7 @@
 | Course Studio（AI 课程制作流水线） | [`aceld-course/`](aceld-course/) | 给一份讲稿，产出一节完整的课：动画幻灯片 → 配音 → 成片 → 图文 → 图卡 → 封面 |
 | Aceld 架构图绘制（draw.io 默认主题白底扁平风） | [`aceld-diagram/`](aceld-diagram/) | 圆角矩形模块、圆柱存储、虚线分组、便签标注、细线小箭头、左侧鹰眼监控列的架构图：风格规范 + 零依赖 SVG 生成器 |
 | Find Skill（开工前置检查 + 检索 + 体检 + 吸收） | [`aceld-findskill/`](aceld-findskill/) | 每个技能开工前先跑它：本地有没有更合适的、线上有没有更新的。再做多源检索（skills.sh 安装量 / GitHub）+ 五条硬性淘汰线 + 安全扫描 + 吸收方法论（不搬代码） |
+| Skill Rollout（能力批量铺开：审计 → 注入 → 验证） | [`aceld-skill-rollout/`](aceld-skill-rollout/) | 一个能力要铺到全部技能上时用它：审计「存在≠生效」、幂等注入（sentinel 哨兵块）、仓库→本地同步、发布前端到端验证 |
 
 > 每个技能都是自包含的：进入对应子目录，运行里面的 `install.sh` / `install.ps1` 即可安装。
 
