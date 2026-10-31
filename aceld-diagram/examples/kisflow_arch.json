@@ -6,7 +6,7 @@
   "monitor": { "label": "鹰眼" },
   "nodes": [
     { "id": "source",     "x": 120, "y": 100, "w": 130, "h": 52, "fill": "lblue",  "label": "数据源 Source" },
-    { "id": "flow",       "x": 400, "y": 100, "w": 170, "h": 52, "fill": "blue",   "label": "Flow 数据流" },
+    { "id": "flow",       "x": 400, "y": 100, "w": 170, "h": 52, "fill": "cyan",   "label": "Flow 数据流" },
     { "id": "result",     "x": 850, "y": 100, "w": 130, "h": 52, "fill": "green",  "label": "结果输出 Result" },
 
     { "id": "f1", "x": 150, "y": 230, "w": 110, "h": 46, "fill": "green",  "label": "Func-A" },
@@ -15,8 +15,8 @@
     { "id": "f4", "x": 570, "y": 230, "w": 110, "h": 46, "fill": "green",  "label": "Func-D" },
     { "id": "f5", "x": 710, "y": 230, "w": 110, "h": 46, "fill": "green",  "label": "Func-E" },
 
-    { "id": "scheduler",  "x": 300, "y": 360, "w": 180, "h": 50, "fill": "orange", "label": "Scheduler 调度器" },
-    { "id": "controller", "x": 560, "y": 360, "w": 180, "h": 50, "fill": "slate",  "label": "Controller 控制器" },
+    { "id": "scheduler",  "x": 300, "y": 360, "w": 180, "h": 50, "fill": "gray",   "label": "Scheduler 调度器" },
+    { "id": "controller", "x": 560, "y": 360, "w": 180, "h": 50, "fill": "gray",   "label": "Controller 控制器" },
 
     { "id": "pool",   "x": 300, "y": 490, "w": 180, "h": 46, "fill": "yellow", "label": "ConnPool 连接池" },
     { "id": "config", "x": 560, "y": 490, "w": 180, "h": 46, "fill": "purple", "label": "Config 配置" },
@@ -27,8 +27,8 @@
   ],
   "groups": [
     { "nodes": ["f1","f2","f3","f4","f5"], "title": "Function 算子池", "stroke": "#82b366" },
-    { "nodes": ["scheduler","controller"], "title": "调度核心", "stroke": "#FF8000" },
-    { "nodes": ["redis","mysql","es"], "title": "外部依赖", "stroke": "#6c8ebf" }
+    { "nodes": ["scheduler","controller"], "title": "调度核心", "stroke": "#6c8ebf" },
+    { "nodes": ["redis","mysql","es"], "title": "外部依赖", "stroke": "#888888" }
   ],
   "edges": [
     { "from": "source", "to": "flow" },
@@ -39,7 +39,7 @@
     { "from": "f4", "to": "f5" },
     { "from": "f5", "to": "result" },
     { "from": "controller", "to": "scheduler",  "dashed": true, "label": "管理" },
-    { "from": "scheduler",  "to": "flow",       "dashed": true, "label": "调度" },
+    { "from": "scheduler",  "to": "f1",         "dashed": true, "label": "调度" },
     { "from": "config",     "to": "scheduler" },
     { "from": "pool",       "to": "mysql",      "dashed": true, "label": "连接" },
     { "from": "f1", "to": "redis", "label": "写缓存" },

@@ -259,8 +259,8 @@ class Diagram:
             self.nodes[nd["id"]] = {
                 "id": nd["id"], "x": x, "y": y, "w": w, "h": h,
                 "fill": f, "stroke": s, "text": t, "label": nd.get("label", nd["id"]),
-                "shape": nd.get("shape", "rect"), "fontSize": nd.get("fontSize", 13),
-                "bold": nd.get("bold", False),
+                "shape": nd.get("shape", "rect"), "fontSize": nd.get("fontSize", 15),
+                "bold": nd.get("bold", True),
             }
             self._track(x, y, w, h)
 
@@ -272,9 +272,9 @@ class Diagram:
             ys = [self.nodes[i]["y"] for i in ids if i in self.nodes]
             xe = [self.nodes[i]["x"] + self.nodes[i]["w"] for i in ids if i in self.nodes]
             ye = [self.nodes[i]["y"] + self.nodes[i]["h"] for i in ids if i in self.nodes]
-            pad = 16
-            bx, by = min(xs) - pad, min(ys) - pad - 16
-            bw, bh = (max(xe) - min(xs)) + pad * 2, (max(ye) - min(ys)) + pad * 2 + 16
+            pad = 22
+            bx, by = min(xs) - pad, min(ys) - pad - 18
+            bw, bh = (max(xe) - min(xs)) + pad * 2, (max(ye) - min(ys)) + pad * 2 + 28
             self.groups.append({"x": bx, "y": by, "w": bw, "h": bh,
                                "title": g.get("title", ""), "stroke": g.get("stroke", "#666666")})
             self._track(bx, by, bw, bh)
@@ -284,10 +284,13 @@ class Diagram:
         if mon:
             top = min(self.min_y, (spec.get("panels") and min(p["y"] for p in spec["panels"]) or self.min_y)) - 10
             bottom = self.max_y + 10
-            mw = 46
+            mw = 54
             if isinstance(mon, dict):
-                f, s, t = self._resolve_theme(mon)
-                label = mon.get("label", "鹰眼")
+                m = dict(mon)
+                if "fill" not in m:
+                    m["fill"] = "blue"
+                f, s, t = self._resolve_theme(m)
+                label = m.get("label", "鹰眼")
             else:
                 f, s, t = self.pal["blue"][0], self.pal["blue"][1], "#ffffff"
                 label = "鹰眼"
@@ -325,9 +328,9 @@ class Diagram:
         self.parts.append(s)
 
     def _arrow_marker(self, color, name):
-        return (f'<marker id="{name}" markerWidth="9" markerHeight="9" refX="7" refY="3" '
+        return (f'<marker id="{name}" markerWidth="11" markerHeight="11" refX="8.5" refY="3.6" '
                 f'orient="auto" markerUnits="userSpaceOnUse">'
-                f'<path d="M0,0 L8,3 L0,6 Z" fill="{color}"/></marker>')
+                f'<path d="M0,0 L9,3.6 L0,7.2 Z" fill="{color}"/></marker>')
 
     def _rounded(self, x, y, w, h, r=8, fill="#fff", stroke="#36393d", sw=1.0, dash=None):
         d = dash or ""
@@ -348,18 +351,19 @@ class Diagram:
     def _node_box(self, n):
         x, y, w, h = n["x"], n["y"], n["w"], n["h"]
         sh = n["shape"]
+        sw = 1.2
         if sh == "cylinder":
-            return self._cylinder(x, y, w, h, n["fill"], n["stroke"], 1.0)
+            return self._cylinder(x, y, w, h, n["fill"], n["stroke"], sw)
         if sh == "circle":
             cx, cy, r = x + w / 2, y + h / 2, min(w, h) / 2
-            return f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r:.1f}" fill="{n["fill"]}" stroke="{n["stroke"]}" stroke-width="1.0"/>'
+            return f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r:.1f}" fill="{n["fill"]}" stroke="{n["stroke"]}" stroke-width="{sw}"/>'
         if sh == "note":
             fold = 12
             return (f'<path d="M{x:.1f},{y:.1f} h{w-fold:.1f} l{fold:.1f},{fold:.1f} '
-                    f'v{h-fold:.1f} h{-w:.1f} Z" fill="{n["fill"]}" stroke="{n["stroke"]}" stroke-width="1.0"/>'
+                    f'v{h-fold:.1f} h{-w:.1f} Z" fill="{n["fill"]}" stroke="{n["stroke"]}" stroke-width="{sw}"/>'
                     f'<path d="M{x+w-fold:.1f},{y:.1f} v{fold:.1f} h{-fold:.1f}" '
-                    f'fill="none" stroke="{n["stroke"]}" stroke-width="1.0"/>')
-        return self._rounded(x, y, w, h, r=8, fill=n["fill"], stroke=n["stroke"], sw=1.0)
+                    f'fill="none" stroke="{n["stroke"]}" stroke-width="{sw}"/>')
+        return self._rounded(x, y, w, h, r=8, fill=n["fill"], stroke=n["stroke"], sw=sw)
 
     def _node_text(self, n):
         cx, cy = n["x"] + n["w"] / 2, n["y"] + n["h"] / 2
@@ -367,31 +371,34 @@ class Diagram:
         return (f'<text x="{cx:.1f}" y="{cy:.1f}" fill="{n["text"]}" font-size="{n["fontSize"]}"{fw} '
                 f'font-family="{F}" text-anchor="middle" dominant-baseline="central">{esc(n["label"])}</text>')
 
-    def _edge(self, e, marks):
+    def _edge_geom(self, e):
         a = self.nodes.get(e["from"])
         b = self.nodes.get(e["to"])
         if not a or not b:
-            return
-        ax, ay = a["x"] + a["w"] / 2, a["y"] + a["h"] / 2
-        bx, by = b["x"] + b["w"] / 2, b["y"] + b["h"] / 2
-        p1 = _rect_edge(ax, ay, a["x"], a["y"], a["w"], a["h"], bx, by)
-        p2 = _rect_edge(bx, by, b["x"], b["y"], b["w"], b["h"], ax, ay)
-        color = e.get("color", "#666666")
-        dash = "stroke-dasharray='5,4' " if e.get("dashed") else ""
-        mname = "ah_" + color.lstrip("#")
-        if mname not in marks:
-            self._add(self._arrow_marker(color, mname))
-            marks.add(mname)
-        self._add(f'<line x1="{p1[0]:.1f}" y1="{p1[1]:.1f}" x2="{p2[0]:.1f}" y2="{p2[1]:.1f}" '
-                  f'stroke="{color}" stroke-width="1.0" {dash}marker-end="url(#{mname})"/>')
+            return None
+        acx, acy = a["x"] + a["w"] / 2, a["y"] + a["h"] / 2
+        bcx, bcy = b["x"] + b["w"] / 2, b["y"] + b["h"] / 2
+        p1 = _rect_edge(acx, acy, a["x"], a["y"], a["w"], a["h"], bcx, bcy)
+        p2 = _rect_edge(bcx, bcy, b["x"], b["y"], b["w"], b["h"], acx, acy)
+        color = e.get("color", "#5a5a5a")
+        dashed = bool(e.get("dashed"))
+        dash = "stroke-dasharray='6,4' " if dashed else ""
+        d = _ortho_path(p1, p2)
+        halo = (f'<path d="{d}" fill="none" stroke="#ffffff" stroke-width="4.8" '
+                f'stroke-linejoin="round" stroke-linecap="round" {dash}/>')
+        line = (f'<path d="{d}" fill="none" stroke="{color}" stroke-width="1.8" '
+                f'stroke-linejoin="round" stroke-linecap="round" {dash}marker-end="url(#ah_{color.lstrip("#")})"/>')
         lab = e.get("label")
+        label_bg = label_tx = None
         if lab:
             mx, my = (p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2
-            tw = _est_text_w(lab, 11) + 8
-            self._add(f'<rect x="{mx-tw/2:.1f}" y="{my-9:.1f}" width="{tw:.1f}" height="16" '
-                      f'fill="#ffffff" stroke="none" opacity="0.92"/>')
-            self._add(f'<text x="{mx:.1f}" y="{my:.1f}" fill="#333" font-size="11" '
-                      f'font-family="{F}" text-anchor="middle" dominant-baseline="central">{esc(lab)}</text>')
+            tw = _est_text_w(lab, 12.5) + 10
+            label_bg = (f'<rect x="{mx-tw/2:.1f}" y="{my-11:.1f}" width="{tw:.1f}" height="20" '
+                        f'rx="3" fill="#ffffff" stroke="none" opacity="0.95"/>')
+            label_tx = (f'<text x="{mx:.1f}" y="{my:.1f}" fill="#333" font-size="12.5" '
+                        f'font-family="{F}" text-anchor="middle" dominant-baseline="central">{esc(lab)}</text>')
+        return {"color": color, "halo": halo, "line": line,
+                "label_bg": label_bg, "label_tx": label_tx}
 
     # ---------- 渲染 ----------
     def _render(self):
@@ -407,19 +414,37 @@ class Diagram:
             self._add(self._rounded(g["x"], g["y"], g["w"], g["h"], r=10, fill="none",
                                     stroke=g["stroke"], sw=1.0, dash="stroke-dasharray='7,5'"))
             if g["title"]:
-                self._add(f'<text x="{g["x"]+10:.1f}" y="{g["y"]+13:.1f}" fill="#555" '
-                          f'font-size="12" font-weight="700" font-family="{F}">{esc(g["title"])}</text>')
+                self._add(f'<text x="{g["x"]+12:.1f}" y="{g["y"]+15:.1f}" fill="#555" '
+                          f'font-size="13" font-weight="700" font-family="{F}">{esc(g["title"])}</text>')
         if self.monitor_box:
             mb = self.monitor_box
             self._add(self._rounded(mb["x"], mb["y"], mb["w"], mb["h"], r=8, fill=mb["fill"],
-                                    stroke=mb["stroke"], sw=1.0))
+                                    stroke=mb["stroke"], sw=1.2))
             cx = mb["x"] + mb["w"] / 2
-            my = mb["y"] + mb["h"] / 2
-            self._add(f'<text x="{cx:.1f}" y="{my:.1f}" fill="{mb["text"]}" font-size="14" font-weight="700" '
-                      f'font-family="{F}" text-anchor="middle" dominant-baseline="central" '
-                      f'transform="rotate(-90 {cx:.1f} {my:.1f})">{esc(mb["label"])}</text>')
-        for e in self.spec.get("edges", []):
-            self._edge(e, marks)
+            chars = list(mb["label"])
+            n = len(chars)
+            lh = 20
+            total = n * lh
+            start = mb["y"] + (mb["h"] - total) / 2 + lh / 2
+            for i, ch in enumerate(chars):
+                y = start + i * lh
+                self._add(f'<text x="{cx:.1f}" y="{y:.1f}" fill="{mb["text"]}" font-size="16" '
+                          f'font-weight="700" font-family="{F}" text-anchor="middle" '
+                          f'dominant-baseline="central">{esc(ch)}</text>')
+        # 先画全部边的白色光晕（跨线时留白），再画彩色边，避免交叉处糊在一起
+        edge_geoms = [g for g in (self._edge_geom(e) for e in self.spec.get("edges", [])) if g]
+        for g in edge_geoms:
+            self._add(g["halo"])
+        added_marks = set()
+        for g in edge_geoms:
+            mn = "ah_" + g["color"].lstrip("#")
+            if mn not in added_marks:
+                self._add(self._arrow_marker(g["color"], mn))
+                added_marks.add(mn)
+            self._add(g["line"])
+            if g["label_bg"]:
+                self._add(g["label_bg"])
+                self._add(g["label_tx"])
         for n in self.nodes.values():
             self._add(self._node_box(n))
             self._add(self._node_text(n))
@@ -427,19 +452,19 @@ class Diagram:
             x, y = c.get("at", [0, 0])
             text = c.get("text", "")
             color = c.get("color", "#fff2cc")
-            tw = _est_text_w(text, 11) + 12
-            self._add(self._rounded(x - tw / 2, y - 16, tw, 30, r=4, fill=color, stroke="#d6b656", sw=1.0))
-            self._add(f'<text x="{x:.1f}" y="{y:.1f}" fill="#333" font-size="11" font-family="{F}" '
+            tw = _est_text_w(text, 13) + 14
+            self._add(self._rounded(x - tw / 2, y - 18, tw, 32, r=5, fill=color, stroke="#d6b656", sw=1.0))
+            self._add(f'<text x="{x:.1f}" y="{y:.1f}" fill="#333" font-size="13" font-weight="700" font-family="{F}" '
                       f'text-anchor="middle" dominant-baseline="central">{esc(text)}</text>')
         meta = self.spec.get("meta", {})
         ty = self.MARGIN + 6
         title_x = self.MARGIN
         if self.monitor_box:
             title_x = self.monitor_box["x"] + self.monitor_box["w"] + 16
-        self._add(f'<text x="{title_x:.1f}" y="{ty+18:.1f}" fill="#000" font-size="24" '
+        self._add(f'<text x="{title_x:.1f}" y="{ty+20:.1f}" fill="#000" font-size="26" '
                   f'font-weight="700" font-family="{F}">{esc(meta.get("title", "架构图"))}</text>')
         if meta.get("subtitle"):
-            self._add(f'<text x="{title_x:.1f}" y="{ty+40:.1f}" fill="#888" font-size="13" '
+            self._add(f'<text x="{title_x:.1f}" y="{ty+44:.1f}" fill="#888" font-size="14" '
                       f'font-family="{F}">{esc(meta["subtitle"])}</text>')
 
     # ---------- 输出 ----------
@@ -466,6 +491,20 @@ def _rect_edge(cx, cy, x, y, w, h, tx, ty):
     sy = hh / abs(dy) if dy != 0 else float("inf")
     s = min(sx, sy)
     return cx + dx * s, cy + dy * s
+
+
+def _ortho_path(p1, p2):
+    """两点之间的直角折线（H-V-H 或 V-H-V），拐角由 stroke-linejoin 圆角化。"""
+    x1, y1 = p1
+    x2, y2 = p2
+    if abs(x2 - x1) >= abs(y2 - y1):
+        mx = (x1 + x2) / 2
+        return (f"M{x1:.1f},{y1:.1f} L{mx:.1f},{y1:.1f} "
+                f"L{mx:.1f},{y2:.1f} L{x2:.1f},{y2:.1f}")
+    else:
+        my = (y1 + y2) / 2
+        return (f"M{x1:.1f},{y1:.1f} L{x1:.1f},{my:.1f} "
+                f"L{x2:.1f},{my:.1f} L{x2:.1f},{y2:.1f}")
 
 
 def main():
