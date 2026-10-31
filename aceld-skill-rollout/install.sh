@@ -33,6 +33,10 @@ fi
 mkdir -p "$(dirname "$DEST")"
 cp -R "$SRC" "$DEST"
 
+# cp -R 会把开发时的 __pycache__ 一起搬过去，装完清掉
+find "$DEST" -type d -name __pycache__ -prune -exec rm -rf {} + 2>/dev/null || true
+find "$DEST" -type f -name "*.pyc" -delete 2>/dev/null || true
+
 echo "==> 已安装到：$DEST"
 
 # 登记来源，供 preflight.py --check-updates 查上游更新（找不到 register_source.py 就跳过）

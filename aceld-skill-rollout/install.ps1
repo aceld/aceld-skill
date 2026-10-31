@@ -37,6 +37,12 @@ if (Test-Path $Dest) {
 New-Item -ItemType Directory -Force -Path (Split-Path $Dest -Parent) | Out-Null
 Copy-Item -Path $Src -Destination $Dest -Recurse -Force
 
+# Copy-Item 会把开发时的 __pycache__ 一起搬过去，装完清掉
+Get-ChildItem -Path $Dest -Recurse -Directory -Filter "__pycache__" -ErrorAction SilentlyContinue |
+    Remove-Item -Recurse -Force -Confirm:$false -ErrorAction SilentlyContinue
+Get-ChildItem -Path $Dest -Recurse -File -Filter "*.pyc" -ErrorAction SilentlyContinue |
+    Remove-Item -Force -Confirm:$false -ErrorAction SilentlyContinue
+
 Write-Host "==> 已安装到：$Dest" -ForegroundColor Green
 
 # 登记来源，供 preflight.py --check-updates 查上游更新（找不到 register_source.py 就跳过）
