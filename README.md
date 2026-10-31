@@ -28,14 +28,20 @@
 |---|---|---|
 | Course Studio（AI 课程制作流水线） | [`aceld-course/`](aceld-course/) | 给一份讲稿，产出一节完整的课：动画幻灯片 → 配音 → 成片 → 图文 → 图卡 → 封面 |
 | Aceld 架构图绘制（draw.io 默认主题白底扁平风） | [`aceld-diagram/`](aceld-diagram/) | 圆角矩形模块、圆柱存储、虚线分组、便签标注、细线小箭头、左侧鹰眼监控列的架构图：风格规范 + 零依赖 SVG 生成器 |
-| Find Skill（能力缺口 → 找到并吸收别人的技能） | [`aceld-findskill/`](aceld-findskill/) | 联网检索 skills.sh / GitHub 上的 Agent Skill，五条硬性淘汰线 + 安全扫描体检，吸收方法论而非照搬代码。**其余技能遇到能力缺口时都调它** |
+| Find Skill（开工前置检查 + 检索 + 体检 + 吸收） | [`aceld-findskill/`](aceld-findskill/) | 每个技能开工前先跑它：本地有没有更合适的、线上有没有更新的。再做多源检索（skills.sh 安装量 / GitHub）+ 五条硬性淘汰线 + 安全扫描 + 吸收方法论（不搬代码） |
 
 > 每个技能都是自包含的：进入对应子目录，运行里面的 `install.sh` / `install.ps1` 即可安装。
 
 ### 技能之间怎么协作
 
-`aceld-findskill` 是**底座**：任何技能走到「这一步我没把握」的时候，都按它的流程去外面找补强，
-而不是硬编一个自己都不信的实现。具体钩子写在每个技能 `SKILL.md` 的「能力缺口」一节。
+`aceld-findskill` 是**底座**，所有 aceld 技能的 `SKILL.md` **顶部**都挂了同一块「⚑ 开工前置检查」：
+
+```bash
+python ~/.workbuddy-ai/skills/aceld-findskill/scripts/preflight.py "本次任务关键词"
+```
+
+30 秒出三种结论：**① 直接用本地 X** / **② 本地没有或线上更强 → 检索+体检** / **③ 上游有更新 → 先看差异**。
+不检查就开工，等于用去年的地图走今年的路——技能生态每周都在变。
 
 ## 规划中的技能方向
 

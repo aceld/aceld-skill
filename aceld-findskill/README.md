@@ -12,9 +12,11 @@
 
 | 脚本 | 作用 |
 |---|---|
+| `scripts/preflight.py` | **开工前置检查**：本地技能匹配（IDF 加权）+ 线上候选 + 上游更新，30 秒出三选一结论 |
 | `scripts/find.py` | 多源检索（skills.sh 安装量榜 / GitHub 仓库 / npx skills），输出候选表 |
 | `scripts/vet.py` | 单技能体检：五条硬性淘汰线 + 18 条安全规则扫描 + 许可分级 → PASS/WARN/REJECT |
 | `scripts/absorb.py` | 拉到 inbox + 生成阅读报告（含大纲、外部调用点、吸收五问、防漂移指纹） |
+| `scripts/register_source.py` | 登记技能来源（install.sh 自动调用），供 `--check-updates` 用 |
 
 **绝不自动安装**：所有候选只落到 `~/.aceld-skill-inbox/`，不写 skills 目录、不执行任何下载来的脚本。
 
@@ -24,15 +26,45 @@
 # 0) 国内先设代理（直连 github 会被 SNI 拦）
 export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890
 
-# 1) 检索：给能力描述，不给产品名
+# 1) 前置检查：本地有没有能用的？线上有没有更好的？（每次开工先跑这个）
+python skill/scripts/preflight.py "竖版视频 抖音 版式重排"
+
+# 2) 检索：给能力描述，不给产品名
 python skill/scripts/find.py "pdf form filling" --min-installs 1000
 
-# 2) 体检：id 用 skills.sh 的 owner/repo/skill 格式
+# 3) 体检：id 用 skills.sh 的 owner/repo/skill 格式
 python skill/scripts/vet.py anthropics/skills/pdf
 
-# 3) 吸收：拉到 inbox 并生成阅读报告（不安装、不执行）
+# 4) 吸收：拉到 inbox 并生成阅读报告（不安装、不执行）
 python skill/scripts/absorb.py anthropics/skills/pdf
 ```
+
+## 前置检查的三种结论
+
+```
+$ python skill/scripts/preflight.py "配音 音色克隆"
+【本地】
+  100.0  aceld-voice   复现「刘丹冰（Aceld）」的音色、主播形象与讲课风格…
+  100.0  aceld-course  「刘丹冰Aceld」课程制作全套流水线…
+【线上】skills.sh 按安装量
+    3.9k  feicaiclub/video-spec-builder/video-spec-builder
+【结论】
+  → 直接用本地 `aceld-voice`（匹配度 100）。
+```
+
+| 结论 | 下一步 |
+|---|---|
+| 直接用本地 X（≥35 分） | 回到 X 的流程做，**不要再检索** |
+| 本地沾边（15–35 分） | 花 2 分钟 vet 线上最高安装量的那个，对比再决定 |
+| 本地没有 | 写清缺口 → `find.py` → `vet.py` → `absorb.py` |
+| 上游有更新 | `absorb.py --force` 重拉，比对指纹段 |
+
+**评分规则**（踩过的坑都在这）：
+- 正文（SKILL.md 章节）参与匹配 —— 「竖版」这种词永远不会写进 description
+- 但**只靠正文命中封顶 20 分** —— 否则「pdf」会靠课程技能里「处理 PDF 讲稿」一句把自己顶到 34 分
+- IDF 加权而非硬过滤 —— 小语料库里「音色」出现 4 次就被过滤掉，会让「配音」任务选错技能
+- 同分优先正文更短的（更专注的）技能 —— 否则 `aceld-course` 和 `aceld-voice` 永远打平
+- `aceld-findskill` 自己不进候选 —— 它是找技能的工具，不是答案
 
 ## 实测样例
 
@@ -82,26 +114,30 @@ aceld-findskill/
     │   ├── 05-absorb.md         吸收五问、回写模板、冲突处理
     │   └── 06-maintenance.md    来源索引、漂移检查、体检节奏、淘汰机制
     └── scripts/
+        ├── preflight.py
         ├── find.py
         ├── vet.py
-        └── absorb.py
+        ├── absorb.py
+        └── register_source.py
 ```
 
-## 给已有技能加「找技能」钩子
+## 给已有技能加「开工前置检查」
 
-任何技能都可以在 `SKILL.md` 末尾加一节：
+任何技能都可以在 `SKILL.md` **最顶部**（不是末尾）加这一块：
 
 ```markdown
-## 能力缺口
-
-本技能流程走不下去时（缺工具 / 缺方法 / 缺领域知识），不要硬编：
-1. 用一句话写下缺口（输入 → 期望输出）
-2. 加载 `aceld-findskill`，按它的流程检索 + 体检
-3. 只吸收「方法论与检查清单」，脚本按本技能的约定重写
-4. 把结论补进对应 reference，并登记来源
+> ### ⚑ 开工前置检查（每次先跑，30 秒）
+> ```bash
+> python ~/.workbuddy-ai/skills/aceld-findskill/scripts/preflight.py "本次任务关键词"
+> ```
+> ① 直接用本地 X → 继续按本技能做；
+> ② 本地没有 / 线上更强 → 走 aceld-findskill 检索 + 体检，别硬编；
+> ③ 上游有更新 → 先看差异再决定。
 ```
 
-判断标准：**如果这一步你在硬写一个自己没把握的实现，就是该去找技能的信号。**
+同时要写清**本技能覆盖不了什么**，否则 Agent 会默认「有这个技能就能干这件事」。
+
+判断标准：**如果这一步你在硬写一个自己没把握的实现，就是该跑 preflight 的信号。**
 
 ## 许可
 

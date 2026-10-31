@@ -24,18 +24,38 @@
 
 ## 2. 版本漂移检查
 
-`vet.py` 的 `--json` 输出里带 `security` 与 `path`，
-`absorb.py` 的 `INBOX_REPORT.md` 第 8 节是文件指纹。定期复检流程：
+登记了来源之后，一条命令就能查出哪些技能的上游动过：
 
 ```bash
-# 1. 重新拉一份到 inbox（会自动覆盖并重算指纹）
+python scripts/preflight.py --check-updates
+```
+
+```
+  ↑ aceld-course    上游 2026-10-31 有新提交（本地检查于 2026-10-20）★12
+  ✓ aceld-findskill 无更新（上游 2026-10-31 / 本地 2026-10-31）
+```
+
+来源登记在 `~/.workbuddy-ai/skills/.findskill-sources.json`：
+
+```json
+{"aceld-course": {"source": "aceld/aceld-skill", "checked": "2026-10-31"}}
+```
+
+`install.sh` 装完会自动写这一条（`register_source.py`），**手工装的技能要自己补**，
+否则 `--check-updates` 看不见它。
+
+判定方式是「上游 `pushed_at` 晚于本地 `checked` 日期」，不是精确 commit 比对——
+它回答的是「**值不值得去比**」，不回答「改了什么」。要知道改了什么，走指纹比对：
+
+```bash
+# 重拉一份到 inbox（会重算指纹）
 python scripts/absorb.py owner/repo/skill --force
 
-# 2. 比对指纹段
+# 比对指纹段
 diff <(sed -n '/## 8. 指纹/,$p' 旧报告) <(sed -n '/## 8. 指纹/,$p' 新报告)
 ```
 
-有差异 → 说明作者改过内容 → **必须重读改动部分**，不能假设"只是小修"。
+有差异 → 作者改过内容 → **必须重读改动部分**，不能假设「只是小修」。
 这是 AST07（更新漂移）唯一的实际防线。
 
 ---
@@ -44,8 +64,9 @@ diff <(sed -n '/## 8. 指纹/,$p' 旧报告) <(sed -n '/## 8. 指纹/,$p' 新报
 
 | 对象 | 频率 | 做什么 |
 |---|---|---|
+| 正在用的技能（本地 `~/.workbuddy-ai/skills/`） | 每次开工 | `preflight.py "任务关键词"` —— 30 秒，确认有没有更合适的 |
 | 正在用的技能（本地 `~/.workbuddy-ai/skills/`） | 每季度 | 跑一遍 `vet.py`，看有没有新的 HIGH 命中 |
-| 已吸收的来源 | 每半年 | 比对指纹，看是否需要更新方法 |
+| 已吸收的来源 | 每半年 | `preflight.py --check-updates` + 指纹比对 |
 | 整个技能库 | 每年 | 删掉半年没用的技能；把重复的合并 |
 | 新建技能前 | 每次 | `find.py` 查重：是不是已经有人做过、我是不是要重复造 |
 

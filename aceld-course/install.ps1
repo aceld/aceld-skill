@@ -38,6 +38,12 @@ New-Item -ItemType Directory -Force -Path (Split-Path $Dest -Parent) | Out-Null
 Copy-Item -Path $Src -Destination $Dest -Recurse -Force
 
 Write-Host "==> 已安装到：$Dest" -ForegroundColor Green
+
+# 若已装 aceld-findskill，登记来源，供 preflight.py --check-updates 查上游更新
+$Reg = Join-Path $HOME ".workbuddy-ai\skills\aceld-findskill\scripts\register_source.py"
+$Py  = Get-Command python -ErrorAction SilentlyContinue
+if ((Test-Path $Reg) -and $Py) { & python $Reg $Name "aceld/aceld-skill" }
+
 Write-Host ""
 Write-Host "内容：" -ForegroundColor Cyan
 Get-ChildItem -Path $Dest -Recurse -File -Depth 1 |

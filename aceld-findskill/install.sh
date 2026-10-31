@@ -34,6 +34,13 @@ mkdir -p "$(dirname "$DEST")"
 cp -R "$SRC" "$DEST"
 
 echo "==> 已安装到：$DEST"
+
+# 登记来源，供 preflight.py --check-updates 查上游更新
+PYBIN="$(command -v python3 || command -v python || true)"
+if [[ -n "$PYBIN" ]]; then
+  "$PYBIN" "$DEST/scripts/register_source.py" "$NAME" "aceld/aceld-skill" || true
+fi
+
 echo
 echo "内容："
 find "$DEST" -maxdepth 2 -type f | sed "s|$DEST|  |" | sort
@@ -41,5 +48,5 @@ echo
 echo "下一步："
 echo "  1) 重启会话，让 Agent 重新加载技能列表"
 echo "  2) 国内先设代理：export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890"
-echo "  3) 试一句：python $DEST/scripts/find.py \"pdf form filling\""
+echo "  3) 开工前先跑：python $DEST/scripts/preflight.py \"本次任务关键词\""
 echo "  4) 可选：export GITHUB_TOKEN=xxx 提高 API 配额（60 → 5000 次/小时）"

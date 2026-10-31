@@ -1,6 +1,6 @@
 ---
 name: aceld-findskill
-description: 能力缺口驱动的 Agent Skill 检索、评估、安全体检与吸收流程。当现有技能做不了某一步（缺工具、缺方法、缺领域知识）、用户说「去找个技能」「搜一下有没有现成的 skill」「看看别人怎么做的」，或需要给已有技能补强 / 定期体检 / 升级依赖时使用。覆盖 skills.sh 检索、GitHub 定位 SKILL.md、硬性淘汰线、OWASP AST 安全扫描、吸收回写与版本漂移管理。
+description: Agent Skill 的开工前置检查、检索、评估、安全体检与吸收流程。开工前先跑 preflight 确认本地有没有更合适的技能、线上有没有更新的替代；现有技能做不了某一步（缺工具、缺方法、缺领域知识）、用户说「去找个技能」「搜一下有没有现成的 skill」「看看别人怎么做的」时，走 skills.sh 安装量榜与 GitHub 定位 SKILL.md，过五条硬性淘汰线与 OWASP AST 安全扫描，再吸收方法论（不搬代码）。也用于给已有技能补强、查上游更新、管理版本漂移。
 license: MIT
 metadata:
   author: aceld
@@ -20,17 +20,18 @@ metadata:
 ## 0. 一分钟速览
 
 ```
-① 缺口判定 → ② 多源检索 → ③ 硬性淘汰 → ④ 安全体检 → ⑤ 吸收回写 → ⑥ 登记体检
+⓿ 前置检查 → ① 缺口判定 → ② 多源检索 → ③ 硬性淘汰 → ④ 安全体检 → ⑤ 吸收回写 → ⑥ 登记体检
 ```
 
 | 阶段 | 一句话 | 脚本 | 参考 |
 |---|---|---|---|
+| ⓿ 前置检查 | 本地有没有能用的？线上有没有更好的？ | `preflight.py` | 本页 §2 |
 | ① 缺口判定 | 先问「真的缺吗」，别急着搜 | — | `references/01-gap.md` |
 | ② 多源检索 | skills.sh 看安装量，GitHub 看代码 | `find.py` | `references/02-sources.md` |
 | ③ 硬性淘汰 | 五条线，过不了直接扔 | `vet.py` | `references/03-vet.md` |
 | ④ 安全体检 | 装之前先当它是恶意的 | `vet.py` | `references/04-security.md` |
 | ⑤ 吸收回写 | 提炼方法论，不搬代码 | `absorb.py` | `references/05-absorb.md` |
-| ⑥ 登记体检 | 记来源、查更新、防漂移 | — | `references/06-maintenance.md` |
+| ⑥ 登记体检 | 记来源、查更新、防漂移 | `preflight.py --check-updates` | `references/06-maintenance.md` |
 
 ### 决策树：这句话该不该触发我
 
@@ -72,10 +73,14 @@ Skill 是**会被 Agent 当指令执行**的文本，比 npm 包更危险：一�
 ## 2. 怎么用（命令）
 
 ```bash
+# ⓿ 前置检查：本地有没有能用的？线上有没有更好的？（30 秒，三选一结论）
+python scripts/preflight.py "竖版视频 抖音 版式重排"
+python scripts/preflight.py --check-updates      # 已登记来源的上游有没有新提交
+python scripts/preflight.py --list               # 只看本地技能清单
+
 # ① 检索：给能力描述，不给产品名
 python scripts/find.py "pdf form filling" --min-installs 1000
 python scripts/find.py "kubernetes manifest review" --source github --min-stars 500
-python scripts/find.py "小红书图卡排版" --limit 20
 
 # ② 体检：id 用 skills.sh 的 owner/repo/skill 格式
 python scripts/vet.py anthropics/skills/pdf
@@ -85,9 +90,18 @@ python scripts/vet.py anthropics/skills/pdf --json out.json
 python scripts/absorb.py anthropics/skills/pdf
 ```
 
-`find.py` 输出候选表（安装量 / 星标 / 许可 / 最后提交），`vet.py` 输出
-`PASS / WARN / REJECT` 与逐条扣分理由，`absorb.py` 输出
-`INBOX_REPORT.md`（frontmatter、正文大纲、脚本清单、外部调用点、吸收建议位）。
+`preflight.py` 输出「本地匹配度 + 线上安装量 + 一句话结论」，`find.py` 输出候选表
+（安装量 / 星标 / 许可 / 最后提交），`vet.py` 输出 `PASS / WARN / REJECT` 与逐条扣分理由，
+`absorb.py` 输出 `INBOX_REPORT.md`（frontmatter、正文大纲、脚本清单、外部调用点、吸收建议位）。
+
+**preflight 的三种结论怎么接**：
+
+| 结论 | 下一步 |
+|---|---|
+| 直接用本地 X（匹配度 ≥35） | 回到 X 的流程做，**不要**再检索 |
+| 本地沾边（15–35） | 花 2 分钟 vet 线上最高安装量的那个，对比再决定 |
+| 本地没有 | 写清缺口 → `find.py` → `vet.py` → `absorb.py` |
+| 上游有更新 | `absorb.py --force` 重拉，比对指纹段看改了什么 |
 
 **网络**：脚本走 `https_proxy` / `http_proxy` 环境变量。国内直连 github.com 会被 SNI 拦，
 先 `export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890`。
@@ -123,32 +137,39 @@ GitHub 匿名 API 限 60 次/小时，量大时设 `GITHUB_TOKEN`。
 
 ---
 
-## 5. 给已有技能加「找技能」钩子
+## 5. 给已有技能加「开工前置检查」
 
-本技能的价值在于被别的技能调用。任何 aceld 技能的 `SKILL.md` 末尾都应有这样一节：
+本技能的价值在于被别的技能**主动调用**。任何 aceld 技能的 `SKILL.md` **最顶部**都应有这样一块：
 
 ```markdown
-## 能力缺口
-
-本技能流程走不下去时（缺工具 / 缺方法 / 缺领域知识），不要硬编：
-1. 用一句话写下缺口（输入 → 期望输出）
-2. 加载 `aceld-findskill`，按它的流程检索 + 体检
-3. 只吸收「方法论与检查清单」，脚本按本技能的约定重写
-4. 把结论补进对应 reference，并在本文件「已补强」小节记一行来源
+> ### ⚑ 开工前置检查（每次先跑，30 秒）
+> ```bash
+> python ~/.workbuddy-ai/skills/aceld-findskill/scripts/preflight.py "本次任务关键词"
+> ```
+> ① 直接用本地 X → 继续按本技能做；
+> ② 本地没有 / 线上更强 → 走 aceld-findskill 检索 + 体检，别硬编；
+> ③ 上游有更新 → 先看差异再决定。
 ```
 
-判断标准很简单：**如果这一步你在硬写一个自己没把握的实现，就是该去找技能的信号。**
+**必须放在顶部，不能放末尾**。放末尾等于没人看——Agent 读 SKILL.md 是从上往下读的，
+读到「阶段一」就开始干活了，永远不会翻到最后一节。
+
+同时在该技能里写清**自己覆盖不了什么**（如 `aceld-diagram` 不管时序图、`aceld-voice` 不管多语言配音），
+否则 Agent 会默认「有这个技能就能干这件事」，直接进 ② 的判断就失效了。
+
+判断标准：**如果这一步你在硬写一个自己没把握的实现，就是该跑 preflight 的信号。**
 
 ---
 
 ## 6. 交付前自查
 
+- [ ] 开工前跑了 `preflight.py`，且结论是「用本地 X」或已按 ②③ 处理？
 - [ ] 缺口写成了一句话（输入 → 输出），不是宽泛关键词？
 - [ ] 候选至少看了 3 个，不是拿第一个就用？
 - [ ] 五条硬性淘汰线都过了？`vet.py` 结论是 `PASS` 或可解释的 `WARN`？
 - [ ] 带脚本的候选，脚本逐行读过？
 - [ ] 吸收的是思路，不是 `cp -r`？
-- [ ] 来源（owner/repo/skill + commit hash）记进了技能库索引？
+- [ ] 来源（owner/repo/skill + commit hash）记进了 `SOURCES.md` 与 `.findskill-sources.json`？
 - [ ] 没有把任何东西写进 `~/.workbuddy-ai/skills/` 而未经用户同意？
 
 ---
@@ -163,6 +184,7 @@ GitHub 匿名 API 限 60 次/小时，量大时设 `GITHUB_TOKEN`。
 | `references/04-security.md` | OWASP AST 对照表、扫描规则、人工复核清单 |
 | `references/05-absorb.md` | 吸收五问、回写模板、与本地约定冲突怎么处理 |
 | `references/06-maintenance.md` | 技能库索引、版本漂移、定期体检节奏 |
+| `scripts/preflight.py` | 开工前置检查：本地匹配（IDF 加权）+ 线上候选 + 上游更新 |
 | `scripts/find.py` | 多源检索，输出候选表与 `candidates.json` |
 | `scripts/vet.py` | 单技能体检：frontmatter / 元数据 / 结构 / 安全扫描 / 结论 |
 | `scripts/absorb.py` | 下载到 inbox + 生成阅读报告（不安装、不执行） |

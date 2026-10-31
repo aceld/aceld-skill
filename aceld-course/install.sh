@@ -34,6 +34,12 @@ mkdir -p "$(dirname "$DEST")"
 cp -R "$SRC" "$DEST"
 
 echo "==> 已安装到：$DEST"
+
+# 若已装 aceld-findskill，登记来源，供 preflight.py --check-updates 查上游更新
+REG="$HOME/.workbuddy-ai/skills/aceld-findskill/scripts/register_source.py"
+PYBIN="$(command -v python3 || command -v python || true)"
+if [[ -f "$REG" && -n "$PYBIN" ]]; then "$PYBIN" "$REG" "$NAME" "aceld/aceld-skill" || true; fi
+
 echo
 echo "内容："
 find "$DEST" -maxdepth 2 -type f | sed "s|$DEST|  |" | sort
