@@ -1,0 +1,8 @@
+# aceld-findskill 无第三方依赖，Python 3.8+ 标准库即可
+#
+# 可选（有则更好，没有也能跑）：
+#   Node.js >= 22.20   —— 让 find.py 能顺带调用 `npx skills find`
+#
+# 环境变量：
+#   https_proxy / http_proxy   —— 国内访问 github 必需，如 http://127.0.0.1:7890
+#   GITHUB_TOKEN               —— 可选，把 GitHub API 配额从 60 提到 5000 次/小时

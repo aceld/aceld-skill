@@ -40,3 +40,8 @@ desktop.ini
 
 # ---- 架构图技能：生成的演示位图（可用 gen_diagram.py 重新生成，不入库）----
 aceld-diagram/examples/*.png
+
+# ---- findskill：检索缓存与 inbox ----
+.findskill/
+.aceld-skill-inbox/
+

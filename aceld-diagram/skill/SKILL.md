@@ -76,3 +76,29 @@ spec 字段（坐标自由摆放，详见 `skill/assets/diagram.example.json`）
 - `skill/scripts/gen_diagram.py` —— 零依赖 SVG 生成器（Python 标准库，含 YAML 兜底解析）
 - `skill/assets/diagram.example.json` —— spec 模板（KisFlow 架构示例）
 - `examples/kisflow_arch.json` + `.html` + `.svg` —— 生成效果示例
+
+---
+
+## 6. 能力缺口 → 动态找技能
+
+本技能覆盖的是「静态架构图」。遇到下面这些信号，**不要硬画**，先去网上找：
+
+| 信号 | 例子 |
+|---|---|
+| 要画的图形类型本技能没有 | 时序图、状态机、桑基图、甘特图、C4 模型 |
+| 想要另一种风格 | 手绘风、暗色风、等距 3D、极简黑白 |
+| 反复调不好 | 布局挤在一起调了半小时还挤 |
+
+流程（由 `aceld-findskill` 技能提供）：
+
+1. **写缺口** —— 一句话说清「输入 → 期望输出 → 约束」
+   （例：一份 API 调用流程 → 时序图 SVG，白底扁平风，与现有架构图配色一致）
+2. **检索** —— `python ~/.workbuddy-ai/skills/aceld-findskill/scripts/find.py "sequence diagram"`
+3. **体检** —— `vet.py owner/repo/skill`：五条硬性淘汰线 + 安全扫描，`REJECT` 的一律不用
+4. **吸收** —— 只拿「方法论与检查清单」，生成器按本技能的约定重写；**不复制别人的代码与原文**
+5. **回写** —— 补进 `references/style-guide.md`，并在 `SOURCES.md` 登记来源与 commit
+
+三条不许破：**不自动安装 / 不搬代码 / 没扫过安全的技能当恶意对待**。
+
+判断标准很简单：**如果这一步你在硬写一个自己没把握的实现，就是该去找技能的信号。**
+
