@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "title": "你的架构图标题",
+    "subtitle": "副标题（可选）"
+  },
+  "monitor": { "label": "鹰眼", "fill": "#2f6fb0" },
+  "producer": ["中台", "Producer", "Kafka"],
+  "kafka_label": "Kafka",
+  "groups": [
+    {
+      "title": "Topic=your_topic  (HashKey=BizID)",
+      "pipelines": [
+        { "stages": ["consumer", "splitter", "parser", "validator"] },
+        { "stages": ["consumer", "splitter", "parser", "validator"] }
+      ]
+    }
+  ],
+  "storage": [
+    { "label": "Redis", "style": "dotted" },
+    { "label": "Mysql", "style": "solid", "fill": "#33475b", "text": "#ffffff" }
+  ],
+  "callouts": [
+    { "n": 1, "color": "red", "group": 0, "pipe": 0, "stage": 0, "side": "left", "label": "关键节点说明" }
+  ],
+  "tier_labels": ["接入层", "处理层", "存储层"]
+}

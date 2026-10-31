@@ -1,0 +1,6 @@
+# ---- Aceld 架构图生成器依赖 ----
+# 生成器 gen_diagram.py 本身零依赖（仅用 Python 标准库）。
+# 若要使用 YAML 格式的 spec（而非 JSON），需安装 PyYAML：
+#   pip install pyyaml
+#
+# 仅查看效果：用浏览器打开生成的 .html 即可，无需任何额外库。
