@@ -217,6 +217,7 @@ description: 课程视频制作全流水线。涵盖知识点设计、口语化�
 | `gen_common.py` | 幻灯片 CSS + 动效 JS 库 | — |
 | `build_deck.py` | 组装 `deck.html` + `deck_meta.json`，校验触发词 | — |
 | `render_slides.py` | 逐页渲染成 mp4 + 时间轴 JSON | playwright, ffmpeg |
+| `render_parallel.py` | ★分片并行渲染（4 进程，45min → 12min）+ ffprobe 重建 timeline | playwright, ffmpeg |
 | `tts_cosy.py` | 配音 + ASR 质检 + 发音替换 | CosyVoice2, faster-whisper |
 | `align_asr.py` | 词级 ASR → 逐字时间表 | faster-whisper |
 | `compose.py` | 拼片 + 字幕 + 主播小窗 + 响度 | numpy, soundfile, ffmpeg |
@@ -231,6 +232,7 @@ description: 课程视频制作全流水线。涵盖知识点设计、口语化�
 ```bash
 python scripts/build_deck.py            # 在课程工程根目录执行
 python scripts/render_slides.py         # 加 --test 用假时长自检
+python scripts/render_parallel.py       # ★正式渲染用这个（--vertical 出竖版）
 python scripts/tts_cosy.py              # ONLY=3,7 只重配指定段
 python scripts/align_asr.py
 python scripts/compose.py

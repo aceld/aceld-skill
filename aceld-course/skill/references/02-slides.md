@@ -236,6 +236,38 @@ clips/slide_XX.mp4 + slide_timeline.json
 - 只渲染动画窗口内的帧（静止期靠重复帧填充），约 90ms/帧，30 页约 3000 帧 → 5~12 分钟
 - 每页结尾多留 **`TAIL=0.70s`**，必须与合成脚本的段间停顿一致
 
+### 6.0 ★分片并行渲染：27 页从 45 分钟压到 12 分钟
+
+单进程顺序渲染，**一页约 100 秒**（screenshot 是瓶颈，不是 ffmpeg），27 页要 45 分钟以上。
+一节课要出横版 + 竖版两套，就是 1.5 小时纯等。
+
+拆 4 个进程并行，同样的机器 12.5 分钟跑完，**快 3.6 倍**：
+
+```python
+slices = [[] for _ in range(4)]
+for k, p in enumerate(pages):
+    slices[k % 4].append(p)          # 交错分片，各片页数均衡
+
+for k, sl in enumerate(slices):
+    env["ONLY"] = ",".join(map(str, sl))   # 只渲这几页
+    env["TL"]   = f"timeline_part{k}.json" # ★ 各写各的 timeline
+    subprocess.Popen([PY, "render_slides.py"], env=env, ...)
+```
+
+**两个必须做对的地方**：
+
+1. **`ONLY` 模式下，不归自己渲的页绝对不能写进 timeline。**
+   原始实现是「跳过但 probe 一下已有 clip，有就记进 timeline」——并行时这会 probe 到
+   **上一版残留的旧 clip**，合并后同一页出现两三次、dur 还是旧的（27 页能合出 106 条）。
+   改成直接 `continue`。
+
+2. **合并时不要信分片写的 dur，用 `ffprobe` 按页序重建。**
+   分片渲染有 1/30 帧的对齐漂移，声明值本来就不可靠；重建只依赖两件事：
+   `deck_meta.json` 的页序、`clips/` 里文件的真实时长。见 `scripts/render_parallel.py`。
+
+**代价**：4 个 Chrome 同时吃 CPU，单页从 100s 涨到 155s，但总时长仍然大幅下降。
+机器只有 4 核时降到 2~3 片，别开 8 个。
+
 ### 6.1 ★静止帧填充：必须用硬链接帧序列
 
 | 做法 | 结果 |
