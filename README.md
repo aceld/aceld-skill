@@ -27,7 +27,7 @@
 | 技能 | 目录 | 说明 |
 |---|---|---|
 | Course Studio（AI 课程制作流水线） | [`aceld-course/`](aceld-course/) | 给一份讲稿，产出一节完整的课：动画幻灯片 → 配音 → 成片 → 图文 → 图卡 → 封面 |
-| Aceld 架构图绘制（工程架构师手绘风） | [`aceld-diagram/`](aceld-diagram/) | 白底扁平、纵向分层、粉彩组件、虚线分组、序号标注的架构图：风格规范 + 零依赖 SVG 生成器 |
+| Aceld 架构图绘制（draw.io 默认主题白底扁平风） | [`aceld-diagram/`](aceld-diagram/) | 圆角矩形模块、圆柱存储、虚线分组、便签标注、细线小箭头、左侧鹰眼监控列的架构图：风格规范 + 零依赖 SVG 生成器 |
 
 > 每个技能都是自包含的：进入对应子目录，运行里面的 `install.sh` / `install.ps1` 即可安装。
 

@@ -1,14 +1,14 @@
 # Aceld 架构图绘制技能（aceld-diagram）
 
-刘丹冰(Aceld) 的**工程架构师手绘风**架构图技能：白底扁平、纵向分层、莫兰迪粉彩组件、虚线分组、序号标注、左侧鹰眼监控列、Redis 虚线框 / Mysql 深蓝实底。
+刘丹冰(Aceld) 的 **draw.io 默认主题白底扁平风**架构图技能：圆角矩形模块、圆柱存储、虚线分组、便签标注、细线小箭头、左侧「鹰眼」监控列。
 
-把「Aceld 的图怎么画」沉淀成可复用规范 + 一个零依赖生成器，照着画或自动生成都行。
+把「Aceld 的图怎么画」沉淀成可复用规范 + 一个零依赖生成器，照着画或自动生成都行。风格提取自其 `鹰眼二期` / `KisFlow` 等 `.drawio` 源文件真实配色与图形。
 
 ## 这是什么
 
 一份**风格规范**（`skill/references/style-guide.md`）+ 一个**零依赖 SVG 生成器**（`skill/scripts/gen_diagram.py`）。
 
-- 想自动出图：写一份 JSON spec，跑生成器，得到 SVG / HTML。
+- 想自动出图：写一份 JSON spec（节点/边/分组坐标），跑生成器，得到 SVG / HTML。
 - 想手画或评审：照 style-guide 的清单与反模式执行。
 
 ## 快速开始
@@ -17,7 +17,7 @@
 # 1) 复制模板
 cp skill/assets/diagram.example.json ./my_diagram.json
 
-# 2) 改字段（groups / stages / callouts / storage …，无需坐标）
+# 2) 改坐标与字段（nodes / edges / groups / callouts …）
 
 # 3) 生成
 python skill/scripts/gen_diagram.py ./my_diagram.json -o my_diagram.html
@@ -28,22 +28,22 @@ python skill/scripts/gen_diagram.py ./my_diagram.json -o my_diagram.html
 
 ## 效果示例
 
-见 [`examples/realtime_pipeline.html`](examples/realtime_pipeline.html)（实时数据接入与分发架构），源 spec 在 [`examples/realtime_pipeline.json`](examples/realtime_pipeline.json)。
+见 [`examples/kisflow_arch.html`](examples/kisflow_arch.html)（KisFlow 流式计算引擎架构），源 spec 在 [`examples/kisflow_arch.json`](examples/kisflow_arch.json)。
 
 ## 风格速览
 
 | 要素 | Aceld 的画法 |
 |---|---|
 | 背景 | 纯白，扁平，无渐变/阴影 |
-| 分层 | 纵向 Tier，右侧青色竖排中文标签 |
-| 组件 | 圆角矩形 / 小圆点，莫兰迪粉彩 + 细灰边，同类同色 |
-| 分组 | 浅灰虚线圆角框（Kafka Topic / 消费组 / 层） |
-| 管道 | 一列小圆点纵向堆叠 + 向下箭头，多列重复 |
-| 序号标注 | 实心圆 + 白字数字，红/蓝区分语义 |
-| 监控 | 左侧蓝色「鹰眼」竖条 |
-| 存储 | Redis 虚线白框；Mysql 深蓝灰实底白字 |
+| 模块 | 圆角矩形，1px 同色描边，中英混排居中 |
+| 配色 | draw.io 默认调色板（蓝/绿/浅蓝/红/黄/灰/石板蓝/橙/紫），同类同色 |
+| 存储 | 圆柱（MySQL / Redis / 日志） |
+| 分组 | 虚线圆角框 + 标题（算子池 / 调度核心 / 外部依赖） |
+| 标注 | 便签（note）贴一旁 |
+| 监控 | 左侧蓝色「鹰眼」竖条（可选） |
+| 连线 | 1px 细线小箭头；虚线表控制/依赖 |
 
-完整规范、配色 token、适用场景与反模式见 [`skill/references/style-guide.md`](skill/references/style-guide.md)。
+完整规范、真实配色 token、适用场景与反模式见 [`skill/references/style-guide.md`](skill/references/style-guide.md)。
 
 ## 目录结构
 
@@ -59,10 +59,10 @@ aceld-diagram/
 │   ├── scripts/
 │   │   └── gen_diagram.py       零依赖 SVG 生成器
 │   └── assets/
-│       └── diagram.example.json spec 模板
+│       └── diagram.example.json spec 模板（KisFlow 示例）
 └── examples/
-    ├── realtime_pipeline.json   示例输入
-    └── realtime_pipeline.html   示例输出（浏览器查看）
+    ├── kisflow_arch.json        示例输入
+    └── kisflow_arch.html        示例输出（浏览器查看）
 ```
 
 ## 安装

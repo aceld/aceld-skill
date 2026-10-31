@@ -3,8 +3,11 @@
 """
 gen_diagram.py —— 生成「Aceld 风格」架构图 (SVG)
 
-把一份声明式 spec（JSON / YAML）渲染成扁平、分层、粉彩、带序号标注的架构图，
-复刻刘丹冰(Aceld) 工程架构师手绘风。零外部依赖（仅可选 PyYAML）。
+复刻刘丹冰(Aceld) 在 draw.io 里沉淀的架构图风格：白底、扁平、draw.io 默认主题配色
+（蓝/绿/浅蓝/红/黄/灰/橙/紫/石板蓝…配对应描边）、圆角矩形模块、虚线分组、数据库用圆柱、
+便签做标注、1px 细线 + 小箭头、左侧「鹰眼」监控列。
+
+声明式 spec（JSON 优先；YAML 需装 PyYAML），节点/边/面板可自由摆放或自动布局。
 
 用法：
     python gen_diagram.py spec.json                 # 生成 spec.html + spec.svg
@@ -18,27 +21,26 @@ import os
 import json
 
 
-# ====================== 配色 Token（默认值） ======================
-DEFAULT_PALETTE = {
-    "consumer":  "#f4c6d4",  # 粉
-    "splitter":  "#cfe8cf",  # 浅绿
-    "parser":    "#cfe9ef",  # 浅青
-    "validator": "#e3d7f1",  # 藕荷
-    "scheduler": "#f3e7c9",  # 米黄
-    "worker":    "#cfe0f0",  # 浅蓝
-    "router":    "#e0dcef",  # 浅紫
-    "dao":       "#f6efc9",  # 浅黄
-    "kafka":     "#dcdcdc",  # 浅灰
-    "default":   "#e8e8e8",
-    "monitor":   "#2f6fb0",  # 蓝（鹰眼）
-    "redis":     "#ffffff",
-    "mysql":     "#33475b",  # 深蓝灰
-    "teal":      "#1f8a8a",  # 主层标签 / Kafka
-    "red":       "#d9534f",
-    "blue":      "#2f6fb0",
-    "ink":       "#333333",
-    "edge":      "#555555",  # 组件深灰细边
-    "dash":      "#bbbbbb",  # 分组浅灰虚线
+# ====================== draw.io 默认主题配色 ======================
+# (fill, stroke, 默认文字色) —— Aceld 实测高频色来自 draw.io 默认调色板
+THEME = {
+    "blue":   ("#1ba1e2", "#006EAF", "#ffffff"),
+    "lblue":  ("#dae8fc", "#6c8ebf", "#000000"),
+    "cyan":   ("#b1ddf0", "#10739e", "#000000"),
+    "green":  ("#d5e8d4", "#82b366", "#000000"),
+    "sgreen": ("#60a917", "#2D7600", "#ffffff"),
+    "red":    ("#f8cecc", "#b85450", "#000000"),
+    "crimson":("#FF3333", "#C73500", "#ffffff"),
+    "yellow": ("#fff2cc", "#d6b656", "#000000"),
+    "amber":  ("#FFCC99", "#FF8000", "#000000"),
+    "orange": ("#fa6800", "#C73500", "#ffffff"),
+    "purple": ("#e1d5e7", "#9673a6", "#000000"),
+    "gray":   ("#E6E6E6", "#666666", "#000000"),
+    "lgray":  ("#f5f5f5", "#666666", "#000000"),
+    "slate":  ("#647687", "#314354", "#ffffff"),
+    "dark":   ("#36393d", "#000000", "#ffffff"),
+    "white":  ("#FFFFFF", "#36393d", "#000000"),
+    "black":  ("#000000", "#000000", "#ffffff"),
 }
 
 
@@ -172,316 +174,298 @@ def load_spec(path):
         return _mini_yaml(text)
 
 
-# ====================== XML 转义 ======================
 def esc(s):
     return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
-def _split_title(t):
-    if "(HashKey" in t:
-        i = t.index("(HashKey")
-        return [t[:i].strip(), t[i:].strip()]
-    if "  " in t:
-        return t.split("  ", 1)
-    return [t]
+def _hex2rgb(h):
+    h = h.lstrip("#")
+    if len(h) == 3:
+        h = "".join(c * 2 for c in h)
+    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+
+
+def _luminance(hexcolor):
+    try:
+        r, g, b = _hex2rgb(hexcolor)
+    except Exception:
+        return 1.0
+    return (0.299 * r + 0.587 * g + 0.114 * b) / 255.0
+
+
+def _est_text_w(s, fs=13):
+    return sum(fs if ord(ch) > 0x2E80 else fs * 0.55 for ch in str(s))
+
+
+F = "Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif"
 
 
 # ====================== 渲染 ======================
 class Diagram:
     def __init__(self, spec):
         self.spec = spec
-        self.pal = dict(DEFAULT_PALETTE)
+        self.pal = dict(THEME)
         self.pal.update(spec.get("palette", {}) or {})
-        self.MARGIN = 48
-        self.MON_W = 64
-        self.NODE_R = 32
-        self.STAGE_GAP = 64
-        self.PIPE_GAP = 140
-        self.GROUP_PAD_X = 30
-        self.GROUP_GAP = 44
-        self.GROUP_HEADER_H = 54
-        self.BOX_W = 158
-        self.BOX_H = 50
-        self.STORAGE_H = 66
-        self.PIPE_START_X = self.MARGIN + self.MON_W + 90
+        self.MARGIN = 40
         self.parts = []
-        self.pipes = []
-        self.group_bounds = []
-        self.band_tops = {}
-        self._layout()
+        self.nodes = {}
+        self.groups = []
+        self.panels = []
+        self.min_x = self.MARGIN
+        self.min_y = self.MARGIN
+        self.max_x = 0
+        self.max_y = 0
+        self._build()
         self._render()
 
-    # ---------- 布局 ----------
-    def _layout(self):
-        groups = self.spec.get("groups", [])
-        idx = 0
-        x_cursor = self.PIPE_START_X
-        self.pipes = []
-        self.group_bounds = []
-        for gi, g in enumerate(groups):
-            pls = g.get("pipelines", [])
-            xs = []
-            for pj, p in enumerate(pls):
-                stages = p.get("stages", [])
-                self.pipes.append((idx, x_cursor, gi, pj, stages))
-                xs.append(x_cursor)
-                idx += 1
-                x_cursor += self.PIPE_GAP
-            if pls:
-                left = min(xs) - self.NODE_R - self.GROUP_PAD_X
-                right = max(xs) + self.NODE_R + self.GROUP_PAD_X
-                self.group_bounds.append((left, right, gi, g.get("title", "")))
-                x_cursor += self.GROUP_GAP
-        n_pipes = idx
-        max_pipe_x = max([p[1] for p in self.pipes], default=self.PIPE_START_X)
-        self.content_right = max_pipe_x + self.NODE_R + 40
-        self.width = self.content_right + 175 + self.MARGIN
-
-        if self.group_bounds:
-            self.span_left = min(b[0] for b in self.group_bounds)
-            self.span_right = max(b[1] for b in self.group_bounds)
-            self.span_center = (self.span_left + self.span_right) / 2
+    def _resolve_theme(self, obj):
+        fill = obj.get("fill", "white")
+        if fill in self.pal:
+            f, s, t = self.pal[fill]
+        elif isinstance(fill, (list, tuple)) and len(fill) >= 2:
+            f, s = fill[0], fill[1]
+            t = fill[2] if len(fill) > 2 else None
+        elif isinstance(fill, str) and fill.startswith("#"):
+            f = fill
+            s = obj.get("stroke", "#36393d")
+            t = None
         else:
-            self.span_center = (self.PIPE_START_X + self.content_right) / 2
+            f, s, t = self.pal.get(fill, self.pal["white"])
+        if t is None:
+            t = obj.get("text_color") or ("#ffffff" if _luminance(f) < 0.62 else "#000000")
+        return f, s, t
 
-        y = self.MARGIN
-        self.title_y = y + 30
-        y += 64 + 12
+    def _track(self, x, y, w, h):
+        self.min_x = min(self.min_x, x)
+        self.min_y = min(self.min_y, y)
+        self.max_x = max(self.max_x, x + w)
+        self.max_y = max(self.max_y, y + h)
 
-        self.producer = self.spec.get("producer", [])
-        if self.producer:
-            self.producer_y = y
-            self.band_tops["producer"] = y + self.BOX_H / 2
-            y += self.BOX_H + 40
-        else:
-            self.producer_y = None
+    def _build(self):
+        spec = self.spec
+        for p in spec.get("panels", []):
+            x, y = float(p["x"]), float(p["y"])
+            w, h = float(p.get("w", 220)), float(p.get("h", 160))
+            f, s, t = self._resolve_theme(p)
+            self.panels.append({"x": x, "y": y, "w": w, "h": h, "fill": f,
+                                "stroke": s, "label": p.get("label", ""), "text": t})
+            self._track(x, y, w, h)
 
-        self.groups_top = y + 10
-        max_stages = max([len(p[4]) for p in self.pipes], default=1)
-        group_h = self.GROUP_HEADER_H + max_stages * self.STAGE_GAP + self.NODE_R + 72
-        self.groups_bottom = self.groups_top + group_h
-        self.band_tops["groups"] = (self.groups_top + self.groups_bottom) / 2
-        y = self.groups_bottom + 14
+        for nd in spec.get("nodes", []):
+            x, y = float(nd["x"]), float(nd["y"])
+            w = float(nd.get("w", 130))
+            h = float(nd.get("h", 48))
+            f, s, t = self._resolve_theme(nd)
+            self.nodes[nd["id"]] = {
+                "id": nd["id"], "x": x, "y": y, "w": w, "h": h,
+                "fill": f, "stroke": s, "text": t, "label": nd.get("label", nd["id"]),
+                "shape": nd.get("shape", "rect"), "fontSize": nd.get("fontSize", 13),
+                "bold": nd.get("bold", False),
+            }
+            self._track(x, y, w, h)
 
-        self.storage = self.spec.get("storage", [])
-        if self.storage:
-            self.storage_y = y
-            self.band_tops["storage"] = y + self.STORAGE_H / 2
-            y += self.STORAGE_H + 44
-        else:
-            self.storage_y = None
+        for g in spec.get("groups", []):
+            ids = g.get("nodes", [])
+            if not ids:
+                continue
+            xs = [self.nodes[i]["x"] for i in ids if i in self.nodes]
+            ys = [self.nodes[i]["y"] for i in ids if i in self.nodes]
+            xe = [self.nodes[i]["x"] + self.nodes[i]["w"] for i in ids if i in self.nodes]
+            ye = [self.nodes[i]["y"] + self.nodes[i]["h"] for i in ids if i in self.nodes]
+            pad = 16
+            bx, by = min(xs) - pad, min(ys) - pad - 16
+            bw, bh = (max(xe) - min(xs)) + pad * 2, (max(ye) - min(ys)) + pad * 2 + 16
+            self.groups.append({"x": bx, "y": by, "w": bw, "h": bh,
+                               "title": g.get("title", ""), "stroke": g.get("stroke", "#666666")})
+            self._track(bx, by, bw, bh)
 
-        self.height = y + self.MARGIN
+        mon = spec.get("monitor")
+        self.monitor_box = None
+        if mon:
+            top = min(self.min_y, (spec.get("panels") and min(p["y"] for p in spec["panels"]) or self.min_y)) - 10
+            bottom = self.max_y + 10
+            mw = 46
+            if isinstance(mon, dict):
+                f, s, t = self._resolve_theme(mon)
+                label = mon.get("label", "鹰眼")
+            else:
+                f, s, t = self.pal["blue"][0], self.pal["blue"][1], "#ffffff"
+                label = "鹰眼"
+            mx = self.min_x - mw - 14
+            self.monitor_box = {"x": mx, "y": top, "w": mw, "h": bottom - top,
+                                "fill": f, "stroke": s, "text": t, "label": label}
+            self._track(mx, top, mw, bottom - top)
 
-    # ---------- 小工具 ----------
+        # 左侧鹰眼列可能超出画布左界 → 整体右移
+        left = self.min_x
+        if self.monitor_box:
+            left = min(left, self.monitor_box["x"])
+        if left < self.MARGIN:
+            sh = self.MARGIN - left
+            for p in self.panels:
+                p["x"] += sh
+            for n in self.nodes.values():
+                n["x"] += sh
+            for g in self.groups:
+                g["x"] += sh
+            if self.monitor_box:
+                self.monitor_box["x"] += sh
+            self.min_x += sh
+            self.max_x += sh
+
+        self.width = self.max_x + self.MARGIN
+        self.height = self.max_y + self.MARGIN
+        cv = spec.get("canvas")
+        if cv:
+            self.width = max(self.width, cv.get("width", self.width))
+            self.height = max(self.height, cv.get("height", self.height))
+
+    # ---------- 图形基元 ----------
     def _add(self, s):
         self.parts.append(s)
 
-    def _arrow_marker(self):
-        return (
-            '<defs><marker id="ah" markerWidth="10" markerHeight="10" refX="8" refY="3" '
-            'orient="auto" markerUnits="strokeWidth">'
-            '<path d="M0,0 L8,3 L0,6 Z" fill="#777"/></marker>'
-            '<marker id="aht" markerWidth="10" markerHeight="10" refX="8" refY="3" '
-            'orient="auto" markerUnits="strokeWidth">'
-            '<path d="M0,0 L8,3 L0,6 Z" fill="{teal}"/></marker></defs>'
-        ).format(teal=self.pal["teal"])
+    def _arrow_marker(self, color, name):
+        return (f'<marker id="{name}" markerWidth="9" markerHeight="9" refX="7" refY="3" '
+                f'orient="auto" markerUnits="userSpaceOnUse">'
+                f'<path d="M0,0 L8,3 L0,6 Z" fill="{color}"/></marker>')
 
-    def _rounded(self, x, y, w, h, r=10, fill="#fff", stroke="#555", sw=1.4, dash=None):
+    def _rounded(self, x, y, w, h, r=8, fill="#fff", stroke="#36393d", sw=1.0, dash=None):
         d = dash or ""
-        return (
-            f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" rx="{r}" ry="{r}" '
-            f'fill="{fill}" stroke="{stroke}" stroke-width="{sw}" {d}/>'
-        )
+        return (f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" rx="{r}" ry="{r}" '
+                f'fill="{fill}" stroke="{stroke}" stroke-width="{sw}" {d}/>')
 
-    def _circle_node(self, cx, cy, r, fill, label, stroke=None):
-        stroke = stroke or self.pal["edge"]
-        self._add(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r:.1f}" fill="{fill}" '
-                  f'stroke="{stroke}" stroke-width="1.4"/>')
-        self._add(f'<text x="{cx:.1f}" y="{cy:.1f}" fill="{self.pal["ink"]}" '
-                  f'font-size="13" font-family="PingFang SC,Microsoft YaHei,Helvetica,Arial,sans-serif" '
-                  f'text-anchor="middle" dominant-baseline="central">{esc(label)}</text>')
+    def _cylinder(self, x, y, w, h, fill, stroke, sw=1.0):
+        ry = min(h * 0.16, w * 0.5, 13)
+        body = (f'<path d="M{x:.1f},{y+ry:.1f} '
+                f'L{x:.1f},{y+h-ry:.1f} '
+                f'A{ry:.1f},{ry:.1f} 0 0 0 {x+w:.1f},{y+h-ry:.1f} '
+                f'L{x+w:.1f},{y+ry:.1f} Z" '
+                f'fill="{fill}" stroke="{stroke}" stroke-width="{sw}"/>')
+        top = (f'<ellipse cx="{x+w/2:.1f}" cy="{y+ry:.1f}" rx="{w/2:.1f}" ry="{ry:.1f}" '
+               f'fill="{fill}" stroke="{stroke}" stroke-width="{sw}"/>')
+        return body + top
 
-    def _arrow(self, x1, y1, x2, y2, color="#777", w=1.4, dashed=False, marker="ah"):
-        da = 'stroke-dasharray="5,4" ' if dashed else ""
-        self._add(f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" '
-                  f'stroke="{color}" stroke-width="{w}" {da}marker-end="url(#{marker})"/>')
+    def _node_box(self, n):
+        x, y, w, h = n["x"], n["y"], n["w"], n["h"]
+        sh = n["shape"]
+        if sh == "cylinder":
+            return self._cylinder(x, y, w, h, n["fill"], n["stroke"], 1.0)
+        if sh == "circle":
+            cx, cy, r = x + w / 2, y + h / 2, min(w, h) / 2
+            return f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r:.1f}" fill="{n["fill"]}" stroke="{n["stroke"]}" stroke-width="1.0"/>'
+        if sh == "note":
+            fold = 12
+            return (f'<path d="M{x:.1f},{y:.1f} h{w-fold:.1f} l{fold:.1f},{fold:.1f} '
+                    f'v{h-fold:.1f} h{-w:.1f} Z" fill="{n["fill"]}" stroke="{n["stroke"]}" stroke-width="1.0"/>'
+                    f'<path d="M{x+w-fold:.1f},{y:.1f} v{fold:.1f} h{-fold:.1f}" '
+                    f'fill="none" stroke="{n["stroke"]}" stroke-width="1.0"/>')
+        return self._rounded(x, y, w, h, r=8, fill=n["fill"], stroke=n["stroke"], sw=1.0)
+
+    def _node_text(self, n):
+        cx, cy = n["x"] + n["w"] / 2, n["y"] + n["h"] / 2
+        fw = " font-weight='700'" if n.get("bold") else ""
+        return (f'<text x="{cx:.1f}" y="{cy:.1f}" fill="{n["text"]}" font-size="{n["fontSize"]}"{fw} '
+                f'font-family="{F}" text-anchor="middle" dominant-baseline="central">{esc(n["label"])}</text>')
+
+    def _edge(self, e, marks):
+        a = self.nodes.get(e["from"])
+        b = self.nodes.get(e["to"])
+        if not a or not b:
+            return
+        ax, ay = a["x"] + a["w"] / 2, a["y"] + a["h"] / 2
+        bx, by = b["x"] + b["w"] / 2, b["y"] + b["h"] / 2
+        p1 = _rect_edge(ax, ay, a["x"], a["y"], a["w"], a["h"], bx, by)
+        p2 = _rect_edge(bx, by, b["x"], b["y"], b["w"], b["h"], ax, ay)
+        color = e.get("color", "#666666")
+        dash = "stroke-dasharray='5,4' " if e.get("dashed") else ""
+        mname = "ah_" + color.lstrip("#")
+        if mname not in marks:
+            self._add(self._arrow_marker(color, mname))
+            marks.add(mname)
+        self._add(f'<line x1="{p1[0]:.1f}" y1="{p1[1]:.1f}" x2="{p2[0]:.1f}" y2="{p2[1]:.1f}" '
+                  f'stroke="{color}" stroke-width="1.0" {dash}marker-end="url(#{mname})"/>')
+        lab = e.get("label")
+        if lab:
+            mx, my = (p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2
+            tw = _est_text_w(lab, 11) + 8
+            self._add(f'<rect x="{mx-tw/2:.1f}" y="{my-9:.1f}" width="{tw:.1f}" height="16" '
+                      f'fill="#ffffff" stroke="none" opacity="0.92"/>')
+            self._add(f'<text x="{mx:.1f}" y="{my:.1f}" fill="#333" font-size="11" '
+                      f'font-family="{F}" text-anchor="middle" dominant-baseline="central">{esc(lab)}</text>')
 
     # ---------- 渲染 ----------
     def _render(self):
-        F = "PingFang SC,Microsoft YaHei,Helvetica,Arial,sans-serif"
         self._add(f'<rect x="0" y="0" width="{self.width:.1f}" height="{self.height:.1f}" fill="#ffffff"/>')
-        self._add(self._arrow_marker())
-
-        meta = self.spec.get("meta", {})
-        self._add(f'<text x="{self.MARGIN:.1f}" y="{self.title_y:.1f}" fill="{self.pal["ink"]}" '
-                  f'font-size="26" font-weight="700" font-family="{F}">{esc(meta.get("title", "架构图"))}</text>')
-        if meta.get("subtitle"):
-            self._add(f'<text x="{self.MARGIN:.1f}" y="{self.title_y + 22:.1f}" fill="#888" '
-                      f'font-size="14" font-family="{F}">{esc(meta["subtitle"])}</text>')
-
-        # 鹰眼监控列
-        mon = self.spec.get("monitor")
-        if mon:
-            top = (self.producer_y - 6) if self.producer_y is not None else (self.groups_top - 6)
-            bottom = (self.storage_y - 6) if self.storage_y is not None else (self.groups_bottom + 6)
-            mx = self.MARGIN + 6
-            self._add(self._rounded(mx, top, self.MON_W - 12, bottom - top, r=8,
-                                    fill=mon.get("fill", self.pal["monitor"]), stroke="none"))
-            midy = (top + bottom) / 2
-            cxm = mx + (self.MON_W - 12) / 2
-            self._add(f'<text x="{cxm:.1f}" y="{midy:.1f}" fill="#fff" font-size="15" font-weight="700" '
+        marks = set()
+        for p in self.panels:
+            self._add(self._rounded(p["x"], p["y"], p["w"], p["h"], r=10, fill=p["fill"],
+                                    stroke=p["stroke"], sw=1.0))
+            if p["label"]:
+                self._add(f'<text x="{p["x"]+12:.1f}" y="{p["y"]+20:.1f}" fill="{p["text"]}" '
+                          f'font-size="14" font-weight="700" font-family="{F}">{esc(p["label"])}</text>')
+        for g in self.groups:
+            self._add(self._rounded(g["x"], g["y"], g["w"], g["h"], r=10, fill="none",
+                                    stroke=g["stroke"], sw=1.0, dash="stroke-dasharray='7,5'"))
+            if g["title"]:
+                self._add(f'<text x="{g["x"]+10:.1f}" y="{g["y"]+13:.1f}" fill="#555" '
+                          f'font-size="12" font-weight="700" font-family="{F}">{esc(g["title"])}</text>')
+        if self.monitor_box:
+            mb = self.monitor_box
+            self._add(self._rounded(mb["x"], mb["y"], mb["w"], mb["h"], r=8, fill=mb["fill"],
+                                    stroke=mb["stroke"], sw=1.0))
+            cx = mb["x"] + mb["w"] / 2
+            my = mb["y"] + mb["h"] / 2
+            self._add(f'<text x="{cx:.1f}" y="{my:.1f}" fill="{mb["text"]}" font-size="14" font-weight="700" '
                       f'font-family="{F}" text-anchor="middle" dominant-baseline="central" '
-                      f'transform="rotate(-90 {cxm:.1f} {midy:.1f})">{esc(mon.get("label", "鹰眼"))}</text>')
-
-        # 接入层（producer 盒子横向居中于 group 跨度）
-        if self.producer and self.producer_y is not None:
-            n = len(self.producer)
-            total_w = n * self.BOX_W + (n - 1) * 40
-            start_x = self.span_center - total_w / 2
-            ys = self.producer_y
-            bx = [start_x + i * (self.BOX_W + 40) for i in range(n)]
-            for i, name in enumerate(self.producer):
-                self._add(self._rounded(bx[i], ys, self.BOX_W, self.BOX_H, r=10,
-                                        fill="#ffffff", stroke=self.pal["edge"], sw=1.4))
-                self._add(f'<text x="{bx[i] + self.BOX_W / 2:.1f}" y="{ys + self.BOX_H / 2:.1f}" '
-                          f'fill="{self.pal["ink"]}" font-size="16" font-weight="600" font-family="{F}" '
-                          f'text-anchor="middle" dominant-baseline="central">{esc(name)}</text>')
-                if i > 0:
-                    self._arrow(bx[i - 1] + self.BOX_W, ys + self.BOX_H / 2,
-                                bx[i], ys + self.BOX_H / 2, color=self.pal["teal"], w=1.6, marker="aht")
-
-            # 接入层 → 处理层：从 producer 行垂直落入每个 group 顶部
-            for (left, right, gi, gtitle) in self.group_bounds:
-                gcx = (left + right) / 2
-                self._arrow(gcx, ys + self.BOX_H, gcx, self.groups_top,
-                            color=self.pal["teal"], w=1.5, marker="aht")
-
-        # 处理层（groups）
-        for (left, right, gi, gtitle) in self.group_bounds:
-            top = self.groups_top
-            bottom = self.groups_bottom
-            self._add(self._rounded(left, top, right - left, bottom - top, r=12,
-                                    fill="none", stroke=self.pal["dash"], sw=1.4,
-                                    dash='stroke-dasharray="7,5"'))
-            if gtitle:
-                lines = _split_title(gtitle)
-                cxg = (left + right) / 2
-                self._add(f'<text x="{cxg:.1f}" y="{top + 20:.1f}" fill="{self.pal["ink"]}" '
-                          f'font-size="12" font-weight="700" font-family="{F}" '
-                          f'text-anchor="middle">{esc(lines[0])}</text>')
-                if len(lines) > 1:
-                    self._add(f'<text x="{cxg:.1f}" y="{top + 37:.1f}" fill="#666" '
-                              f'font-size="11" font-family="{F}" '
-                              f'text-anchor="middle">{esc(lines[1])}</text>')
-
-        # pipelines（圆点 + 向下箭头 + 拉取框）
-        for (pi, x, gi, pj, stages) in self.pipes:
-            ys = []
-            for si, stage in enumerate(stages):
-                cy = self.groups_top + self.GROUP_HEADER_H + self.NODE_R + si * self.STAGE_GAP
-                ys.append(cy)
-                fill = self.pal.get(stage, self.pal["default"])
-                self._circle_node(x, cy, self.NODE_R, fill, stage.capitalize())
-                if si > 0:
-                    self._arrow(x, ys[si - 1] + self.NODE_R, x, cy - self.NODE_R, color="#888", w=1.3)
-            last_y = ys[-1]
-            py = last_y + self.NODE_R + 26
-            self._add(self._rounded(x - 34, py, 68, 30, r=8, fill="#ffffff",
-                                    stroke=self.pal["edge"], sw=1.2))
-            self._add(f'<text x="{x:.1f}" y="{py + 15:.1f}" fill="#666" font-size="12" '
-                      f'font-family="{F}" text-anchor="middle" dominant-baseline="central">拉取</text>')
-
-        # Kafka teal 标签（右侧，处理层中部，竖排）
-        kafka_label = self.spec.get("kafka_label")
-        if kafka_label and self.group_bounds:
-            ry = (self.groups_top + self.groups_bottom) / 2
-            self._add(f'<text x="{self.content_right + 14:.1f}" y="{ry:.1f}" fill="{self.pal["teal"]}" '
-                      f'font-size="16" font-weight="700" font-family="{F}" '
-                      f'text-anchor="start" dominant-baseline="central" '
-                      f'transform="rotate(-90 {self.content_right + 14:.1f} {ry:.1f})">{esc(kafka_label)}</text>')
-
-        # 存储层
-        if self.storage and self.storage_y is not None:
-            n = len(self.storage)
-            total_w = n * 230 + (n - 1) * 30
-            start_x = self.span_center - total_w / 2
-            for i, s in enumerate(self.storage):
-                sx = start_x + i * (230 + 30)
-                style = s.get("style", "solid")
-                fill = s.get("fill", self.pal["redis"] if style == "dotted" else self.pal["mysql"])
-                stroke = self.pal["dash"] if style == "dotted" else "#22303d"
-                dash = 'stroke-dasharray="8,5"' if style == "dotted" else ""
-                txt = s.get("text", "#ffffff" if style == "solid" else self.pal["ink"])
-                self._add(self._rounded(sx, self.storage_y, 230, self.STORAGE_H, r=10,
-                                        fill=fill, stroke=stroke, sw=1.6, dash=dash))
-                self._add(f'<text x="{sx + 115:.1f}" y="{self.storage_y + self.STORAGE_H / 2:.1f}" '
-                          f'fill="{txt}" font-size="18" font-weight="700" font-family="{F}" '
-                          f'text-anchor="middle" dominant-baseline="central">{esc(s.get("label", ""))}</text>')
-                self._arrow(self.span_center, self.groups_bottom, sx + 115, self.storage_y,
-                            color="#888", w=1.4, dashed=True)
-
-        # 右侧 Tier 标签（青色，竖排）
-        tier_labels = self.spec.get("tier_labels")
-        if tier_labels:
-            for name, lab in zip(["producer", "groups", "storage"], tier_labels):
-                if name in self.band_tops:
-                    ry = self.band_tops[name]
-                    self._add(f'<text x="{self.content_right + 52:.1f}" y="{ry:.1f}" fill="{self.pal["teal"]}" '
-                              f'font-size="15" font-weight="700" font-family="{F}" '
-                              f'text-anchor="start" dominant-baseline="central" '
-                              f'transform="rotate(-90 {self.content_right + 52:.1f} {ry:.1f})">{esc(lab)}</text>')
-
-        # 序号标注 callouts
+                      f'transform="rotate(-90 {cx:.1f} {my:.1f})">{esc(mb["label"])}</text>')
+        for e in self.spec.get("edges", []):
+            self._edge(e, marks)
+        for n in self.nodes.values():
+            self._add(self._node_box(n))
+            self._add(self._node_text(n))
         for c in self.spec.get("callouts", []):
-            gi = c.get("group", 0)
-            pj = c.get("pipe", 0)
-            si = c.get("stage", 0)
-            node = next((p for p in self.pipes if p[2] == gi and p[3] == pj), None)
-            if not node:
-                continue
-            x = node[1]
-            cy = self.groups_top + self.GROUP_HEADER_H + self.NODE_R + si * self.STAGE_GAP
-            side = c.get("side", "left")
-            cx = x - self.NODE_R - 20 if side == "left" else x + self.NODE_R + 20
-            color = self.pal.get(c.get("color", "red"), self.pal["red"])
-            self._add(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="13" fill="{color}" stroke="#fff" stroke-width="2"/>')
-            self._add(f'<text x="{cx:.1f}" y="{cy:.1f}" fill="#fff" font-size="13" font-weight="700" '
-                      f'font-family="Helvetica,Arial,sans-serif" text-anchor="middle" '
-                      f'dominant-baseline="central">{c.get("n")}</text>')
-            lab = c.get("label")
-            if lab:
-                lx = cx - 20 if side == "left" else cx + 20
-                anchor = "end" if side == "left" else "start"
-                self._add(f'<text x="{lx:.1f}" y="{cy - 18:.1f}" fill="{self.pal["ink"]}" font-size="11" '
-                          f'font-family="{F}" text-anchor="{anchor}">{esc(lab)}</text>')
-
-        # 自定义连线
-        for con in self.spec.get("connectors", []):
-            x1, y1 = con["from"]
-            x2, y2 = con["to"]
-            self._arrow(x1, y1, x2, y2, color=con.get("color", "#888"), w=con.get("w", 1.4),
-                        dashed=con.get("dashed", False))
-            if con.get("label"):
-                self._add(f'<text x="{(x1 + x2) / 2:.1f}" y="{(y1 + y2) / 2 - 4:.1f}" fill="#888" '
-                          f'font-size="11" font-family="{F}" text-anchor="middle">{esc(con["label"])}</text>')
+            x, y = c.get("at", [0, 0])
+            text = c.get("text", "")
+            color = c.get("color", "#fff2cc")
+            tw = _est_text_w(text, 11) + 12
+            self._add(self._rounded(x - tw / 2, y - 16, tw, 30, r=4, fill=color, stroke="#d6b656", sw=1.0))
+            self._add(f'<text x="{x:.1f}" y="{y:.1f}" fill="#333" font-size="11" font-family="{F}" '
+                      f'text-anchor="middle" dominant-baseline="central">{esc(text)}</text>')
+        meta = self.spec.get("meta", {})
+        ty = self.MARGIN + 6
+        title_x = self.MARGIN
+        if self.monitor_box:
+            title_x = self.monitor_box["x"] + self.monitor_box["w"] + 16
+        self._add(f'<text x="{title_x:.1f}" y="{ty+18:.1f}" fill="#000" font-size="24" '
+                  f'font-weight="700" font-family="{F}">{esc(meta.get("title", "架构图"))}</text>')
+        if meta.get("subtitle"):
+            self._add(f'<text x="{title_x:.1f}" y="{ty+40:.1f}" fill="#888" font-size="13" '
+                      f'font-family="{F}">{esc(meta["subtitle"])}</text>')
 
     # ---------- 输出 ----------
     def svg(self):
-        return (
-            f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.width:.0f}" '
-            f'height="{self.height:.0f}" viewBox="0 0 {self.width:.0f} {self.height:.0f}">'
-            + "\n".join(self.parts) + "</svg>"
-        )
+        return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.width:.0f}" '
+                f'height="{self.height:.0f}" viewBox="0 0 {self.width:.0f} {self.height:.0f}">'
+                + "\n".join(self.parts) + "</svg>")
 
     def html(self):
-        return (
-            "<!DOCTYPE html><html lang='zh-CN'><head><meta charset='utf-8'>"
-            "<style>body{margin:0;background:#f5f6f8;display:flex;justify-content:center;"
-            "padding:24px;font-family:PingFang SC,Microsoft YaHei,Helvetica,Arial,sans-serif}"
-            ".sheet{background:#fff;box-shadow:0 2px 14px rgba(0,0,0,.08);border-radius:8px}</style>"
-            "</head><body><div class='sheet'>" + self.svg() + "</div></body></html>"
-        )
+        return ("<!DOCTYPE html><html lang='zh-CN'><head><meta charset='utf-8'>"
+                "<style>body{margin:0;background:#f5f6f8;display:flex;justify-content:center;"
+                f"padding:24px;font-family:{F}"
+                "}.sheet{background:#fff;box-shadow:0 2px 14px rgba(0,0,0,.08);border-radius:8px}</style>"
+                "</head><body><div class='sheet'>" + self.svg() + "</div></body></html>")
+
+
+def _rect_edge(cx, cy, x, y, w, h, tx, ty):
+    """从矩形中心 (cx,cy) 沿指向 (tx,ty) 的方向，求与矩形边界的交点。"""
+    dx, dy = tx - cx, ty - cy
+    if dx == 0 and dy == 0:
+        return cx, cy
+    hw, hh = w / 2, h / 2
+    sx = hw / abs(dx) if dx != 0 else float("inf")
+    sy = hh / abs(dy) if dy != 0 else float("inf")
+    s = min(sx, sy)
+    return cx + dx * s, cy + dy * s
 
 
 def main():
@@ -500,7 +484,6 @@ def main():
         out_html = os.path.splitext(inp)[0] + ".html"
     if out_svg is None:
         out_svg = os.path.splitext(inp)[0] + ".svg"
-
     spec = load_spec(inp)
     d = Diagram(spec)
     with open(out_html, "w", encoding="utf-8") as f:
