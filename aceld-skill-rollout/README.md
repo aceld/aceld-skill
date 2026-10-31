@@ -161,6 +161,7 @@ aceld-skill-rollout/
 | 用**仓库目录名**找本地目录 | `aceld-course/` 装出来其实是 `course-studio`，比的不是同一个技能 | 读 `SKILL.md` 的 `name:` 决定本地目录名（`read_skill_name()`） |
 | `cp -R` / `copytree` 带进 `__pycache__` | 本地技能目录里一堆 `.pyc` | 装完 `clean_pycache()` 清掉 |
 | 提交推送完就收工 | 本地还是旧版，**且没有任何报错** | `publish.py` 把四步绑成一个动作 |
+| 备份就地改名成 `xxx.bak.时间戳` | 加载器把备份也当技能扫 → 同一技能在列表出现 2~4 次，**用户找不到技能** | 备份一律放 `~/.workbuddy-ai/skills-backup/`（技能目录外） |
 
 ---
 

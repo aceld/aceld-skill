@@ -262,6 +262,13 @@ def main():
             got = {it["where"]: r["has"] for it, k, r in rows if it["skill"] == n}
             if len(set(got.values())) > 1:
                 problems.append("%s 仓库与本地不一致（%s）" % (n, got))
+        # 备份目录留在技能目录里 → 加载器会把它们也当技能扫，
+        # 同一个技能在列表里出现好几次，用户根本找不到哪个是真的（踩过）
+        if os.path.isdir(a.local):
+            for d in sorted(os.listdir(a.local)):
+                if is_backup(d) and os.path.isdir(os.path.join(a.local, d)):
+                    problems.append("备份目录留在技能目录里：%s（会被当成同名技能，"
+                                    "列表出现重复；应移到 skills-backup/）" % d)
 
     # 表格
     print("%-34s %-14s %-6s %-12s %s" % ("技能", "归属", "有块", "位置", "版本/生效"))

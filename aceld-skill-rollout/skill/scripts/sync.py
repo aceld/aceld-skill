@@ -42,6 +42,16 @@ def clean_pycache(root):
         shutil.rmtree(h, ignore_errors=True)
 
 
+def backup_root(local):
+    """备份目录放在技能目录**外面**（与 skills/ 同级）。
+
+    ★踩过的坑：备份留在 `<skills>/xxx.bak.20261031` 里，技能加载器会把
+    **每个子目录**都当技能扫，于是 aceld-findskill 在列表里出现 3 次
+    （1 个真的 + 2 个备份），用户根本分不清哪个是真的，直接「找不到技能」。
+    """
+    return os.path.join(os.path.dirname(os.path.abspath(local)), "skills-backup")
+
+
 def same_tree(a, b):
     fa, fb = tree_files(a), tree_files(b)
     if fa != fb:
@@ -112,9 +122,11 @@ def main():
 
     for name, src, dest, how in todo:
         if os.path.isdir(dest):
-            bak = dest + ".bak." + time.strftime("%Y%m%d%H%M%S")
+            broot = backup_root(a.local)
+            os.makedirs(broot, exist_ok=True)
+            bak = os.path.join(broot, name + ".bak." + time.strftime("%Y%m%d%H%M%S"))
             shutil.move(dest, bak)
-            print("  ✓ %-24s 已备份到 %s" % (name, os.path.basename(bak)))
+            print("  ✓ %-24s 已备份到 %s" % (name, bak))
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         shutil.copytree(src, dest)
         clean_pycache(dest)

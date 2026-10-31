@@ -112,6 +112,10 @@ python scripts/publish.py -m "..." --dry-run
 > 仓库 `aceld-course/` 装出来是 `course-studio`。按目录名同步会拿
 > 「254 行通用开源版」覆盖本地的「1634 行个人工作版」——两者结构都不一样，覆盖就是丢工作。
 > 现在 `aceld-course/`（个人版）根本不在比对范围内，不会被碰。
+>
+> **备份放在 `~/.workbuddy-ai/skills-backup/`，不在 `skills/` 里面。**
+> 加载器按子目录扫技能，`xxx.bak.时间戳` 留在 `skills/` 里会被当成「同名技能」，
+> 同一个技能在列表里出现 2~4 次，用户会直接反馈「找不到某个技能」。
 
 ---
 

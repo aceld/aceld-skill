@@ -29,7 +29,11 @@ if (-not (Test-Path (Join-Path $Src "SKILL.md"))) {
 }
 
 if (Test-Path $Dest) {
-    $Backup = "$Dest.bak." + (Get-Date -Format "yyyyMMddHHmmss")
+    # ★备份必须放在技能目录外面：加载器会把 skills\ 下每个子目录都当技能扫，
+    #   xxx.bak.2026... 留在里面就变成「同名技能的第二份」，列表里一堆重复。
+    $BackupRoot = Join-Path (Split-Path (Split-Path $Dest -Parent) -Parent) "skills-backup"
+    New-Item -ItemType Directory -Force -Path $BackupRoot | Out-Null
+    $Backup = Join-Path $BackupRoot ($Name + ".bak." + (Get-Date -Format "yyyyMMddHHmmss"))
     Write-Host "==> 已存在同名技能，备份到：$Backup" -ForegroundColor Yellow
     Move-Item -Path $Dest -Destination $Backup
 }

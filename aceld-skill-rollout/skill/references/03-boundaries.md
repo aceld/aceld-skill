@@ -136,24 +136,63 @@ python sync.py --mirror --apply                # 以仓库为准，覆盖所有�
 ```
 
 `--mirror` 是 `publish.py` 用的模式：既然提交了，本地就该跟仓库一样。
-备份是 `shutil.move(dest, dest + ".bak.YYYYmmddHHMMSS")`——
+备份是 `shutil.move(dest, <skills-backup>/<name>.bak.YYYYmmddHHMMSS)`——
 **移动**不是复制，磁盘不翻倍，且原目录一定不残留。
 
-**回滚**：把 `.bak.<时间戳>` 改回原名即可。
+**回滚**：把 `skills-backup/<name>.bak.<时间戳>` 移回 `skills/<name>` 即可。
 
 ---
 
-## 5. 备份文件会被扫描排除
+## 5. 备份目录绝对不能放在 skills/ 里面（真实事故）
 
-`.bak` 目录里也有 `SKILL.md`，如果不排除，`audit.py` 会把它们当成
-「一堆缺块的技能」报出来，噪音淹没真问题。
+第一版 `sync.py` / `install.sh` 的备份是就地改名：
+
+```python
+bak = dest + ".bak." + time.strftime("%Y%m%d%H%M%S")   # ← 错
+shutil.move(dest, bak)
+```
+
+看着很自然：原目录不见了、备份就在旁边、回滚方便。**但它会让技能消失。**
+
+技能加载器扫描 `~/.workbuddy-ai/skills/` 时，是**按子目录**逐个加载的，
+它不认识 `.bak.` 这个命名约定。于是每装一次就多一个「同名技能」：
+
+| 技能 | 真目录 | `.bak` 目录 | 列表里出现 |
+|---|---|---|---|
+| `aceld-course` | 1 | 0 | 1 次 |
+| `aceld-diagram` | 1 | 1 | **2 次** |
+| `aceld-findskill` | 1 | 2 | **3 次** |
+| `aceld-skill-rollout` | 1 | 3 | **4 次** |
+
+用户的反馈是「**我怎么找不到 aceld-findskill 技能**」——
+列表里同一个名字出现三遍、还都带着过期内容，根本分不清哪个是真的。
+
+### 正确做法：备份放技能目录外面
+
+```python
+def backup_root(local):
+    """与 skills/ 同级，例如 ~/.workbuddy-ai/skills-backup/"""
+    return os.path.join(os.path.dirname(os.path.abspath(local)), "skills-backup")
+```
+
+`install.sh` / `install.ps1` 同理，`$BACKUP_ROOT="$(dirname "$(dirname "$DEST")")/skills-backup"`。
+
+### `audit.py --verify` 会把残留报出来
+
+```
+✗ 备份目录留在技能目录里：aceld-findskill.bak.20261031121932
+  （会被当成同名技能，列表出现重复；应移到 skills-backup/）
+```
+
+`is_backup()` 仍然保留，用于让 `audit.py` / `sync.py` **跳过**散落的备份：
 
 ```python
 def is_backup(name):
     return ".bak" in name or name.endswith(".zip")
 ```
 
-`scan_repo` / `scan_local` 都先过这道。
+注意两者的区别：`is_backup` 只解决「我的扫描器别被自己骗」，
+**解决不了「加载器被备份骗」**——那个只能靠把备份移出去。
 
 ---
 

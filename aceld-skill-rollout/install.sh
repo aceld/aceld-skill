@@ -25,7 +25,11 @@ echo "==> 源目录：$SRC"
 [[ -f "$SRC/SKILL.md" ]] || { echo "!! 找不到 skill/SKILL.md，请在 aceld-skill-rollout 目录运行 install.sh"; exit 1; }
 
 if [[ -d "$DEST" ]]; then
-  BACKUP="$DEST.bak.$(date +%Y%m%d%H%M%S)"
+  # ★备份必须放在技能目录外面：加载器会把 <skills>/ 下每个子目录都当技能扫，
+  #   xxx.bak.2026... 留在里面就变成「同名技能的第二份」，列表里一堆重复。
+  BACKUP_ROOT="$(dirname "$(dirname "$DEST")")/skills-backup"
+  mkdir -p "$BACKUP_ROOT"
+  BACKUP="$BACKUP_ROOT/$NAME.bak.$(date +%Y%m%d%H%M%S)"
   echo "==> 已存在同名技能，备份到：$BACKUP"
   mv "$DEST" "$BACKUP"
 fi
