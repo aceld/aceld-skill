@@ -22,7 +22,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 echo "==> 源目录：$SRC"
-[[ -f "$SRC/SKILL.md" ]] || { echo "!! 找不到 skill/SKILL.md，请在仓库根目录运行"; exit 1; }
+[[ -f "$SRC/SKILL.md" ]] || { echo "!! 找不到 skill/SKILL.md，请在 aceld-course 目录运行 install.sh"; exit 1; }
 
 if [[ -d "$DEST" ]]; then
   BACKUP="$DEST.bak.$(date +%Y%m%d%H%M%S)"

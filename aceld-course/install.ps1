@@ -24,7 +24,7 @@ if (-not $Dest) {
 
 Write-Host "==> 源目录：$Src" -ForegroundColor Cyan
 if (-not (Test-Path (Join-Path $Src "SKILL.md"))) {
-    Write-Host "!! 找不到 skill\SKILL.md，请在仓库根目录运行" -ForegroundColor Red
+    Write-Host "!! 找不到 skill\SKILL.md，请在 aceld-course 目录运行 install.ps1" -ForegroundColor Red
     exit 1
 }
 
