@@ -247,7 +247,7 @@ pip install -r requirements.txt
 
 ## 出处与许可
 
-本流水线由 [@aceld](https://github.com/aceld) 在制作 5 节 30 分钟技术长课的过程中逐步沉淀，原为个人私用技能，现整理为通用版本开源。
+本流水线由 [刘丹冰Aceld](https://github.com/aceld) 在制作 5 节 30 分钟技术长课的过程中逐步沉淀，原为个人私用技能，现整理为通用版本开源。
 
 代码以 [MIT License](LICENSE) 发布，可自由用于商业项目。
 

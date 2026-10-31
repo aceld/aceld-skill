@@ -1,8 +1,8 @@
-# Aceld 架构图绘制技能（aceld-diagram）
+# 刘丹冰Aceld 架构图绘制技能（aceld-diagram）
 
-刘丹冰(Aceld) 的 **draw.io 默认主题白底扁平风**架构图技能：圆角矩形模块、圆柱存储、虚线分组、便签标注、细线小箭头、左侧「鹰眼」监控列。
+刘丹冰Aceld 的 **draw.io 默认主题白底扁平风**架构图技能：圆角矩形模块、圆柱存储、虚线分组、便签标注、细线小箭头、左侧「鹰眼」监控列。
 
-把「Aceld 的图怎么画」沉淀成可复用规范 + 一个零依赖生成器，照着画或自动生成都行。风格提取自其 `鹰眼二期` / `KisFlow` 等 `.drawio` 源文件真实配色与图形。
+把「刘丹冰Aceld 的图怎么画」沉淀成可复用规范 + 一个零依赖生成器，照着画或自动生成都行。风格提取自其 `鹰眼二期` / `KisFlow` 等 `.drawio` 源文件真实配色与图形。
 
 ## 这是什么
 
@@ -32,7 +32,7 @@ python skill/scripts/gen_diagram.py ./my_diagram.json -o my_diagram.html
 
 ## 风格速览
 
-| 要素 | Aceld 的画法 |
+| 要素 | 刘丹冰Aceld 的画法 |
 |---|---|
 | 背景 | 纯白，扁平，无渐变/阴影 |
 | 模块 | 圆角矩形，1px 同色描边，中英混排居中 |
@@ -83,7 +83,7 @@ cd aceld-skill/aceld-diagram
 bash install.sh
 ```
 
-装完重启会话，对 Agent 说「用 Aceld 的风格画一张 XX 架构图」即可。
+装完重启会话，对 Agent 说「用刘丹冰Aceld 的风格画一张 XX 架构图」即可。
 
 ## 许可
 

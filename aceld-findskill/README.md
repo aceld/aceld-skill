@@ -1,6 +1,6 @@
 # aceld-findskill · 能力缺口 → 找到并吸收别人的技能
 
-刘丹冰(Aceld) 的 **Agent Skill 检索与吸收技能**：当手上技能做不到某一步时，
+刘丹冰Aceld 的 **Agent Skill 检索与吸收技能**：当手上技能做不到某一步时，
 怎么在互联网上找到真能用的那个，安全地拿过来，变成自己的一部分。
 
 核心不是「搜」，是**判断力**：判断该不该搜、判断哪个能用、判断哪些代码不能碰、
@@ -44,7 +44,7 @@ python skill/scripts/absorb.py anthropics/skills/pdf
 ```
 $ python skill/scripts/preflight.py "配音 音色克隆"
 【本地】
-  100.0  aceld-voice   复现「刘丹冰（Aceld）」的音色、主播形象与讲课风格…
+  100.0  aceld-voice   复现「刘丹冰Aceld」的音色、主播形象与讲课风格…
   100.0  aceld-course  「刘丹冰Aceld」课程制作全套流水线…
 【线上】skills.sh 按安装量
     3.9k  feicaiclub/video-spec-builder/video-spec-builder
