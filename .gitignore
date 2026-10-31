@@ -1,0 +1,39 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# ---- 构建产物（每个课程目录里都会生成）----
+frames/
+clips/
+deck.html
+deck_meta.json
+slide_timeline.json
+video_base.mp4
+subs.ass
+_qc_tmp.wav
+*.log
+
+# ---- 课程素材（体积大，不入库）----
+voice/seg*/
+voice/segments*/
+*.wav
+*.mp3
+*.mp4
+*.mov
+tts_engines/
+pretrained_models/
+
+# ---- 本地配置（含个人路径）----
+course.yaml
+config.local.yaml
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

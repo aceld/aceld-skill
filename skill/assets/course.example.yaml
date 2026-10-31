@@ -1,0 +1,109 @@
+# ============================================================
+# Course Studio 配置模板
+# 复制到你的课程工作目录，改名为 course.yaml，按需修改。
+# 所有脚本都从这里取参数，业务脚本里不要再写死路径。
+# ============================================================
+
+# ---------- 身份 ----------
+# 会出现在：幻灯片右上署名、封面、文章落款、片尾
+author: "你的名字"
+
+# 课程系列名，会出现在幻灯片左上角面包屑
+course_title: "我的课程系列"
+
+# 课次标签格式，{n} 会被替换成课次数字
+lesson_label: "第 {n} 课"
+
+# 文章/片尾签名（可用 {author} 占位）
+signature: "我是{author}，我们下节课，不见不散"
+
+
+# ---------- 世界观主题（可选） ----------
+# plain  = 不用包装，直接讲技术
+# custom = 用 theme.file 里的术语表做修辞包装（示例见 theme.example.yaml）
+theme:
+  mode: plain
+  file: ""
+
+
+# ---------- 配音 ----------
+voice:
+  engine: cosyvoice2
+
+  # ★ 最关键的一项：你自己录的 8~12 秒干净人声
+  #   要求：首尾干净、说完最后一个字就停、正常语速、无背景音
+  #   参考音频不干净 → 每段句尾都会冒出怪音
+  ref_file: "assets/voice_ref/my_voice.wav"
+
+  # 上面这段音频里说的话，一字不差写在这里（标点也要对）
+  ref_text: ""
+
+  # ★ 保持 1.0。speed 是对频谱做线性插值拉伸，0.6 会明显发闷且无法调回
+  speed: 1.0
+
+  # 句间停顿（秒）。CosyVoice 内部按标点切分，这里只控制分段之间的间隙
+  gap_sent: 0.60
+
+  # 发音替换表：只改「送进 TTS 的文本」，字幕仍显示原文
+  # 用途一：多音字纠正    ["转圈", "赚圈"]
+  # 用途二：英文音译      ["Harness", "哈内斯"]
+  # 用途三：分开拼写      ["sandbox", "Sand Box"]
+  repl: []
+  # repl:
+  #   - ["Harness", "哈内斯"]
+  #   - ["转圈", "赚圈"]
+  #   - ["一千行", "一千航"]
+  #   - ["sandbox", "Sand Box"]
+
+
+# ---------- 路径 ----------
+paths:
+  # 课程工程根目录（work/ 的父级）。相对路径以 course.yaml 所在目录为基准
+  root: "."
+
+  # ffmpeg 写成命令名会走 PATH；也可以写绝对路径
+  ffmpeg: "ffmpeg"
+  ffprobe: "ffprobe"
+
+  # Playwright 启动的浏览器通道：chrome / msedge / chromium
+  chrome_channel: "chrome"
+
+  # 配音相关（阶段④才用得到）
+  cosyvoice: "./tts_engines/CosyVoice"
+  cosyvoice_model: "./tts_engines/pretrained_models/CosyVoice2-0.5B"
+  whisper_model: "large-v3"
+
+
+# ---------- 视频规格 ----------
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+
+  # 每页画面比配音多留的尾巴（秒），与分片渲染的 TAIL 必须一致
+  tail: 0.70
+
+  crf: 19
+  preset: "medium"
+
+  # 主播小窗视频；null = 不要小窗，成片就是纯课件 + 字幕
+  # 素材要求：1080p 以上、正面机位、时长不短于成片（短了会自动循环）
+  avatar: null
+
+  # 小窗位置与尺寸 [x, y, w, h]
+  avatar_box: [1500, 840, 420, 240]
+
+
+# ---------- 字幕 ----------
+subtitle:
+  font: "Microsoft YaHei"
+  size: 44
+  # 每行最多字数，超过按标点切分（不要按字数硬切，会断在词中间）
+  max_chars: 20
+  # 是否在字幕下方压一条半透明暗色带（浅色课件上更易读）
+  band: true
+
+
+# ---------- 产物 ----------
+output:
+  dir: "dist"
