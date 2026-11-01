@@ -19,6 +19,7 @@ spec 字段见 skill/assets/diagram.example.json
 import sys
 import os
 import json
+import math
 
 
 # ====================== draw.io 默认主题配色 ======================
@@ -328,9 +329,9 @@ class Diagram:
         self.parts.append(s)
 
     def _arrow_marker(self, color, name):
-        return (f'<marker id="{name}" markerWidth="11" markerHeight="11" refX="8.5" refY="3.6" '
+        return (f'<marker id="{name}" markerWidth="13" markerHeight="13" refX="10" refY="4" '
                 f'orient="auto" markerUnits="userSpaceOnUse">'
-                f'<path d="M0,0 L9,3.6 L0,7.2 Z" fill="{color}"/></marker>')
+                f'<path d="M0,0 L11,4 L0,8 Z" fill="{color}"/></marker>')
 
     def _rounded(self, x, y, w, h, r=8, fill="#fff", stroke="#36393d", sw=1.0, dash=None):
         d = dash or ""
@@ -380,13 +381,20 @@ class Diagram:
         bcx, bcy = b["x"] + b["w"] / 2, b["y"] + b["h"] / 2
         p1 = _rect_edge(acx, acy, a["x"], a["y"], a["w"], a["h"], bcx, bcy)
         p2 = _rect_edge(bcx, bcy, b["x"], b["y"], b["w"], b["h"], acx, acy)
+        # 端点留白：让线段不要压在边框上，箭头也留出间隙
+        dx, dy = bcx - acx, bcy - acy
+        L = math.hypot(dx, dy) or 1.0
+        ux, uy = dx / L, dy / L
+        stub = 4.0
+        p1 = (p1[0] + ux * stub, p1[1] + uy * stub)
+        p2 = (p2[0] - ux * stub, p2[1] - uy * stub)
         color = e.get("color", "#5a5a5a")
         dashed = bool(e.get("dashed"))
         dash = "stroke-dasharray='6,4' " if dashed else ""
         d = _ortho_path(p1, p2)
-        halo = (f'<path d="{d}" fill="none" stroke="#ffffff" stroke-width="4.8" '
+        halo = (f'<path d="{d}" fill="none" stroke="#ffffff" stroke-width="6.0" '
                 f'stroke-linejoin="round" stroke-linecap="round" {dash}/>')
-        line = (f'<path d="{d}" fill="none" stroke="{color}" stroke-width="1.8" '
+        line = (f'<path d="{d}" fill="none" stroke="{color}" stroke-width="2.2" '
                 f'stroke-linejoin="round" stroke-linecap="round" {dash}marker-end="url(#ah_{color.lstrip("#")})"/>')
         lab = e.get("label")
         label_bg = label_tx = None
@@ -400,10 +408,25 @@ class Diagram:
         return {"color": color, "halo": halo, "line": line,
                 "label_bg": label_bg, "label_tx": label_tx}
 
+    # ---------- 层级虚线分隔 ----------
+    def _render_tiers(self):
+        tiers = self.spec.get("tiers")
+        if not tiers:
+            return
+        left = (self.monitor_box["x"] + self.monitor_box["w"] + 12) if self.monitor_box else self.MARGIN
+        right = self.width - self.MARGIN
+        for t in tiers:
+            y = float(t["y"])
+            if t.get("line", True):
+                self._add(f'<line x1="{left:.1f}" y1="{y:.1f}" x2="{right:.1f}" y2="{y:.1f}" '
+                          f'stroke="#9aa0a6" stroke-width="1.2" stroke-dasharray="8,5"/>')
+            ty = (y - 7) if t.get("line", True) else y
+            self._add(f'<text x="{left:.1f}" y="{ty:.1f}" fill="#55606a" font-size="13" '
+                      f'font-weight="700" font-family="{F}" text-anchor="start">{esc(t["label"])}</text>')
+
     # ---------- 渲染 ----------
     def _render(self):
         self._add(f'<rect x="0" y="0" width="{self.width:.1f}" height="{self.height:.1f}" fill="#ffffff"/>')
-        marks = set()
         for p in self.panels:
             self._add(self._rounded(p["x"], p["y"], p["w"], p["h"], r=10, fill=p["fill"],
                                     stroke=p["stroke"], sw=1.0))
@@ -431,7 +454,13 @@ class Diagram:
                 self._add(f'<text x="{cx:.1f}" y="{y:.1f}" fill="{mb["text"]}" font-size="16" '
                           f'font-weight="700" font-family="{F}" text-anchor="middle" '
                           f'dominant-baseline="central">{esc(ch)}</text>')
-        # 先画全部边的白色光晕（跨线时留白），再画彩色边，避免交叉处糊在一起
+        # 层级虚线分隔（画在节点之下，线条落在层间空隙）
+        self._render_tiers()
+        # 节点（盒子 + 文字）
+        for n in self.nodes.values():
+            self._add(self._node_box(n))
+            self._add(self._node_text(n))
+        # 连线（白色光晕 + 彩色线 + 箭头）画在节点之上，保证箭头不被遮挡
         edge_geoms = [g for g in (self._edge_geom(e) for e in self.spec.get("edges", [])) if g]
         for g in edge_geoms:
             self._add(g["halo"])
@@ -445,9 +474,6 @@ class Diagram:
             if g["label_bg"]:
                 self._add(g["label_bg"])
                 self._add(g["label_tx"])
-        for n in self.nodes.values():
-            self._add(self._node_box(n))
-            self._add(self._node_text(n))
         for c in self.spec.get("callouts", []):
             x, y = c.get("at", [0, 0])
             text = c.get("text", "")

@@ -5,30 +5,30 @@
   },
   "monitor": { "label": "鹰眼" },
   "nodes": [
-    { "id": "source",     "x": 120, "y": 100, "w": 130, "h": 52, "fill": "lblue",  "label": "数据源 Source" },
-    { "id": "flow",       "x": 400, "y": 100, "w": 170, "h": 52, "fill": "cyan",   "label": "Flow 数据流" },
-    { "id": "result",     "x": 850, "y": 100, "w": 130, "h": 52, "fill": "green",  "label": "结果输出 Result" },
+    { "id": "source",     "x": 120, "y": 100, "w": 130, "h": 52, "fill": "slate",  "label": "数据源 Source" },
+    { "id": "flow",       "x": 400, "y": 100, "w": 170, "h": 52, "fill": "blue",   "label": "Flow 数据流" },
+    { "id": "result",     "x": 850, "y": 100, "w": 130, "h": 52, "fill": "sgreen", "label": "结果输出 Result" },
 
-    { "id": "f1", "x": 150, "y": 230, "w": 110, "h": 46, "fill": "green",  "label": "Func-A" },
-    { "id": "f2", "x": 290, "y": 230, "w": 110, "h": 46, "fill": "green",  "label": "Func-B" },
-    { "id": "f3", "x": 430, "y": 230, "w": 110, "h": 46, "fill": "green",  "label": "Func-C" },
-    { "id": "f4", "x": 570, "y": 230, "w": 110, "h": 46, "fill": "green",  "label": "Func-D" },
-    { "id": "f5", "x": 710, "y": 230, "w": 110, "h": 46, "fill": "green",  "label": "Func-E" },
+    { "id": "f1", "x": 150, "y": 230, "w": 110, "h": 46, "fill": "orange", "label": "Func-A" },
+    { "id": "f2", "x": 290, "y": 230, "w": 110, "h": 46, "fill": "orange", "label": "Func-B" },
+    { "id": "f3", "x": 430, "y": 230, "w": 110, "h": 46, "fill": "orange", "label": "Func-C" },
+    { "id": "f4", "x": 570, "y": 230, "w": 110, "h": 46, "fill": "orange", "label": "Func-D" },
+    { "id": "f5", "x": 710, "y": 230, "w": 110, "h": 46, "fill": "orange", "label": "Func-E" },
 
-    { "id": "scheduler",  "x": 300, "y": 360, "w": 180, "h": 50, "fill": "gray",   "label": "Scheduler 调度器" },
-    { "id": "controller", "x": 560, "y": 360, "w": 180, "h": 50, "fill": "gray",   "label": "Controller 控制器" },
+    { "id": "scheduler",  "x": 300, "y": 360, "w": 180, "h": 50, "fill": "dark",   "label": "Scheduler 调度器" },
+    { "id": "controller", "x": 560, "y": 360, "w": 180, "h": 50, "fill": "blue",   "label": "Controller 控制器" },
 
-    { "id": "pool",   "x": 300, "y": 490, "w": 180, "h": 46, "fill": "yellow", "label": "ConnPool 连接池" },
-    { "id": "config", "x": 560, "y": 490, "w": 180, "h": 46, "fill": "purple", "label": "Config 配置" },
+    { "id": "pool",   "x": 300, "y": 490, "w": 180, "h": 46, "fill": "crimson", "label": "ConnPool 连接池" },
+    { "id": "config", "x": 560, "y": 490, "w": 180, "h": 46, "fill": "orange",  "label": "Config 配置" },
 
-    { "id": "redis", "x": 300, "y": 610, "w": 120, "h": 72, "fill": "red",    "shape": "cylinder", "label": "Redis 缓存" },
-    { "id": "mysql", "x": 460, "y": 610, "w": 120, "h": 72, "fill": "lblue",  "shape": "cylinder", "label": "MySQL 存储" },
-    { "id": "es",    "x": 620, "y": 610, "w": 120, "h": 72, "fill": "lgray",  "shape": "cylinder", "label": "LogStore 日志" }
+    { "id": "redis", "x": 300, "y": 640, "w": 120, "h": 72, "fill": "crimson", "shape": "cylinder", "label": "Redis 缓存" },
+    { "id": "mysql", "x": 460, "y": 640, "w": 120, "h": 72, "fill": "blue",    "shape": "cylinder", "label": "MySQL 存储" },
+    { "id": "es",    "x": 620, "y": 640, "w": 120, "h": 72, "fill": "slate",   "shape": "cylinder", "label": "LogStore 日志" }
   ],
   "groups": [
-    { "nodes": ["f1","f2","f3","f4","f5"], "title": "Function 算子池", "stroke": "#82b366" },
-    { "nodes": ["scheduler","controller"], "title": "调度核心", "stroke": "#6c8ebf" },
-    { "nodes": ["redis","mysql","es"], "title": "外部依赖", "stroke": "#888888" }
+    { "nodes": ["f1","f2","f3","f4","f5"], "title": "Function 算子池", "stroke": "#314354" },
+    { "nodes": ["scheduler","controller","pool","config"], "title": "调度核心", "stroke": "#000000" },
+    { "nodes": ["redis","mysql","es"], "title": "外部依赖", "stroke": "#C73500" }
   ],
   "edges": [
     { "from": "source", "to": "flow" },
@@ -46,8 +46,10 @@
     { "from": "f3", "to": "mysql", "label": "落库" },
     { "from": "f5", "to": "es",    "label": "日志" }
   ],
-  "callouts": [
-    { "at": [930, 250], "text": "算子可插拔" },
-    { "at": [930, 470], "text": "配置热更新" }
+  "tiers": [
+    { "label": "① 接入与数据流层", "y": 168 },
+    { "label": "② 算子计算层", "y": 314 },
+    { "label": "③ 调度治理层（算子可插拔 · 配置热更新）", "y": 584 },
+    { "label": "④ 存储与日志层", "y": 672, "line": false }
   ]
 }
