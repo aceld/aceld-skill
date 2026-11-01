@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "title": "短链服务 ShortLink",
+    "subtitle": "短链生成与跳转服务 · 典型微服务分层架构"
+  },
+  "nodes": [
+    { "id": "client",  "x": 290, "y": 110, "w": 160, "h": 50, "fill": "slate",  "label": "外部客户端 Client" },
+    { "id": "gateway", "x": 290, "y": 220, "w": 160, "h": 52, "fill": "blue",   "label": "API 网关 Gateway" },
+    { "id": "svc",     "x": 270, "y": 380, "w": 200, "h": 64, "fill": "blue",   "label": "ShortLink 短链服务" },
+    { "id": "idgen",   "x": 270, "y": 560, "w": 180, "h": 52, "fill": "orange", "label": "IDGen 发号器" },
+    { "id": "redis",   "x": 170, "y": 720, "w": 140, "h": 76, "fill": "crimson", "shape": "cylinder", "label": "Redis 缓存" },
+    { "id": "mysql",   "x": 340, "y": 720, "w": 140, "h": 76, "fill": "blue",    "shape": "cylinder", "label": "MySQL 存储" },
+    { "id": "kafka",   "x": 510, "y": 720, "w": 140, "h": 76, "fill": "slate",   "shape": "cylinder", "label": "Kafka 埋点" }
+  ],
+  "groups": [
+    { "nodes": ["client","gateway"], "title": "接入层 · Access", "stroke": "#6FA8CF", "fill": "#EAF3FA" },
+    { "nodes": ["svc"], "title": "服务层 · Service", "stroke": "#6DBE8B", "fill": "#EAF6EE" },
+    { "nodes": ["idgen","redis","mysql","kafka"], "title": "依赖与存储 · Dependency", "stroke": "#9AA7B5", "fill": "#EFF2F6" }
+  ],
+  "edges": [
+    { "from": "client",  "to": "gateway", "label": "HTTP" },
+    { "from": "gateway", "to": "svc",     "label": "路由" },
+    { "from": "svc",     "to": "idgen",   "dashed": true, "label": "取号" },
+    { "from": "svc",     "to": "redis",   "label": "读缓存" },
+    { "from": "svc",     "to": "mysql",   "label": "持久化" },
+    { "from": "svc",     "to": "kafka",   "dashed": true, "label": "埋点" }
+  ]
+}

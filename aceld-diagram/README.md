@@ -26,12 +26,28 @@ python skill/scripts/gen_diagram.py ./my_diagram.json -o my_diagram.html
 
 无网络、无第三方库即可运行（YAML 才需要 `pyyaml`）。
 
-## 效果示例
+## 成品案例
 
-- **竖版（默认推荐，适合文章/讲义）**：[`examples/kisflow_arch_portrait.html`](examples/kisflow_arch_portrait.html)，源 spec [`examples/kisflow_arch_portrait.json`](examples/kisflow_arch_portrait.json)（923×1246）。
-- **横版（适合 PPT / 宽屏）**：[`examples/kisflow_arch.html`](examples/kisflow_arch.html)，源 spec [`examples/kisflow_arch.json`](examples/kisflow_arch.json)。
+下面都是用本技能实际画出的架构图（预览为竖版；点开可看高清 PNG 与可编辑 spec）：
 
-> 文档多为「高度不限、宽度有限」，所以**默认出竖版**，避免横向被裁；需要大屏时再出横版。
+### ① KisFlow 流式计算引擎 · 竖版
+![KisFlow 架构图](cases/kisflow.png)
+
+源 spec：[`examples/kisflow_arch_portrait.json`](examples/kisflow_arch_portrait.json)（竖版）· [`examples/kisflow_arch.json`](examples/kisflow_arch.json)（横版）
+
+### ② Zinx TCP 服务器框架 · 竖版（左侧跨维度列 = 接口层）
+![Zinx 架构图](cases/zinx.png)
+
+源 spec：[`examples/zinx_arch.json`](examples/zinx_arch.json)
+
+> 左侧那条纵贯全图的 `接口层` 就是**跨维度列**的正确用法：放「贯穿所有模块的通用/横切模块」（接口层 / 监控 / 安全 / 全局配置），按图内容命名，**不是固定的「鹰眼」**。
+
+### ③ 短链服务 ShortLink · 竖版（微服务分层）
+![ShortLink 架构图](cases/shorturl.png)
+
+源 spec：[`examples/shorturl_arch.json`](examples/shorturl_arch.json)
+
+> 版式默认**竖版**（文档高度不限、宽度有限，竖版不被横向裁切）；PPT / 大屏再改坐标出横版。
 
 ## 风格速览
 
@@ -56,6 +72,10 @@ aceld-diagram/
 ├── install.sh / install.ps1     一键安装（把 skill/ 拷到技能目录）
 ├── requirements.txt
 ├── README.md                    本文件
+├── cases/                       成品案例预览图（README 画廊用）
+│   ├── kisflow.png
+│   ├── zinx.png
+│   └── shorturl.png
 ├── skill/
 │   ├── SKILL.md                 技能入口
 │   ├── references/
@@ -64,9 +84,10 @@ aceld-diagram/
 │   │   └── gen_diagram.py       零依赖 SVG 生成器
 │   └── assets/
 │       └── diagram.example.json spec 模板（KisFlow 示例）
-└── examples/
-    ├── kisflow_arch.json        示例输入
-    └── kisflow_arch.html        示例输出（浏览器查看）
+└── examples/                    可编辑 spec + 生成结果（json / svg / html）
+    ├── kisflow_arch.json / kisflow_arch_portrait.json
+    ├── zinx_arch.json
+    └── shorturl_arch.json
 ```
 
 ## 安装

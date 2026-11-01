@@ -289,6 +289,21 @@ class Diagram:
                 g["x"] = gx0
                 g["w"] = gx1 - gx0
 
+        # 顶部自动留出标题空间：内容/分组顶到标题时整体下移
+        _ys = [n["y"] for n in self.nodes.values()] + [g["y"] for g in self.groups] + [p["y"] for p in self.panels]
+        _min_y = min(_ys) if _ys else self.MARGIN
+        _floor = self.MARGIN + 70
+        if _min_y < _floor:
+            _dy = _floor - _min_y
+            for p in self.panels:
+                p["y"] += _dy
+            for n in self.nodes.values():
+                n["y"] += _dy
+            for g in self.groups:
+                g["y"] += _dy
+            self.min_y += _dy
+            self.max_y += _dy
+
         mon = spec.get("monitor")
         # 内容（节点/分组/面板）统一左对齐到 MARGIN；有跨维度列时再预留列宽，避免左侧大片留白
         content_xs = [n["x"] for n in self.nodes.values()] + [g["x"] for g in self.groups] + \

@@ -97,7 +97,8 @@ spec 字段（坐标自由摆放，详见 `skill/assets/diagram.example.json`）
 - `references/style-guide.md` —— 风格提炼 + 真实配色 token + 适用场景 + 反模式（**画前必读**）
 - `skill/scripts/gen_diagram.py` —— 零依赖 SVG 生成器（Python 标准库，含 YAML 兜底解析）
 - `skill/assets/diagram.example.json` —— spec 模板（KisFlow 架构示例）
-- `examples/kisflow_arch.json` + `.html` + `.svg` —— 生成效果示例
+- `examples/` —— 可编辑 spec + 生成结果（`kisflow_arch*` 竖/横、`zinx_arch`、`shorturl_arch`）
+- `cases/` —— 成品案例预览图（README 画廊：KisFlow / Zinx / 短链服务）
 
 ---
 

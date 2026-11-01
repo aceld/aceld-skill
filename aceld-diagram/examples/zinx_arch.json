@@ -1,0 +1,53 @@
+{
+  "meta": {
+    "title": "Zinx 轻量级 TCP 服务器框架",
+    "subtitle": "Golang 并发服务器框架 · 请求处理链路架构（Connection → Decode → Dispatch → Router）"
+  },
+  "monitor": { "label": "接口层", "fill": "slate" },
+  "nodes": [
+    { "id": "client",    "x": 330, "y": 110, "w": 180, "h": 50, "fill": "slate",  "label": "外部客户端 Client" },
+    { "id": "server",    "x": 330, "y": 230, "w": 180, "h": 52, "fill": "blue",   "label": "Server 服务端" },
+    { "id": "conn",      "x": 330, "y": 320, "w": 180, "h": 52, "fill": "blue",   "label": "Connection 连接" },
+    { "id": "heartbeat", "x": 560, "y": 230, "w": 180, "h": 52, "fill": "orange", "label": "Heartbeat 心跳" },
+    { "id": "connmgr",   "x": 560, "y": 320, "w": 180, "h": 52, "fill": "orange", "label": "ConnManager 连接管理" },
+
+    { "id": "decoder",   "x": 250, "y": 480, "w": 175, "h": 52, "fill": "sgreen", "label": "Decoder 解码器" },
+    { "id": "datapack",  "x": 445, "y": 480, "w": 175, "h": 52, "fill": "sgreen", "label": "DataPack 拆包组包" },
+    { "id": "message",   "x": 640, "y": 480, "w": 175, "h": 52, "fill": "sgreen", "label": "Message 消息" },
+
+    { "id": "msghandler", "x": 250, "y": 640, "w": 175, "h": 52, "fill": "dark", "label": "MsgHandler 消息分发" },
+    { "id": "workerpool", "x": 445, "y": 640, "w": 175, "h": 52, "fill": "dark", "label": "WorkerPool 工作池" },
+    { "id": "request",    "x": 640, "y": 640, "w": 175, "h": 52, "fill": "dark", "label": "Request 请求" },
+
+    { "id": "router", "x": 400, "y": 850, "w": 220, "h": 64, "fill": "crimson", "label": "Router 业务路由" },
+
+    { "id": "config",  "x": 300, "y": 1010, "w": 140, "h": 50, "fill": "slate", "label": "Config 配置" },
+    { "id": "logger",  "x": 460, "y": 1010, "w": 140, "h": 50, "fill": "slate", "label": "Logger 日志" },
+    { "id": "timer",   "x": 620, "y": 1010, "w": 140, "h": 50, "fill": "slate", "label": "Timer 定时器" },
+    { "id": "asyncop", "x": 380, "y": 1090, "w": 140, "h": 50, "fill": "slate", "label": "AsyncOp 异步" },
+    { "id": "utils",   "x": 540, "y": 1090, "w": 140, "h": 50, "fill": "slate", "label": "Utils 工具" }
+  ],
+  "groups": [
+    { "nodes": ["server","conn","connmgr","heartbeat"], "title": "接入与网络层 · Network", "stroke": "#6FA8CF", "fill": "#EAF3FA" },
+    { "nodes": ["decoder","datapack","message"], "title": "编解码层 · Codec", "stroke": "#6DBE8B", "fill": "#EAF6EE" },
+    { "nodes": ["msghandler","workerpool","request"], "title": "分发与处理层 · Dispatch", "stroke": "#9AA0A6", "fill": "#F0F1F3" },
+    { "nodes": ["router"], "title": "业务路由层 · Business", "stroke": "#D98B84", "fill": "#FDECEA" },
+    { "nodes": ["config","logger","timer","asyncop","utils"], "title": "支撑设施 · Infrastructure", "stroke": "#9AA7B5", "fill": "#EFF2F6" }
+  ],
+  "edges": [
+    { "from": "client",  "to": "server",  "label": "TCP" },
+    { "from": "server",  "to": "conn",    "label": "Accept" },
+    { "from": "conn",    "to": "decoder", "label": "读字节流" },
+    { "from": "decoder", "to": "datapack" },
+    { "from": "datapack","to": "message" },
+    { "from": "message", "to": "msghandler" },
+    { "from": "msghandler", "to": "workerpool" },
+    { "from": "workerpool", "to": "request" },
+    { "from": "request", "to": "router", "label": "Handle" },
+    { "from": "conn",    "to": "connmgr",   "dashed": true, "label": "注册" },
+    { "from": "conn",    "to": "heartbeat", "dashed": true, "label": "心跳" }
+  ],
+  "callouts": [
+    { "at": [510, 933], "text": "响应 → conn.SendMsg 回写客户端" }
+  ]
+}
