@@ -3,7 +3,6 @@
     "title": "KisFlow 流式计算引擎",
     "subtitle": "实时数据流处理框架 · Aceld 风格架构图"
   },
-  "monitor": { "label": "鹰眼" },
   "nodes": [
     { "id": "source",     "x": 120, "y": 100, "w": 130, "h": 52, "fill": "slate",  "label": "数据源 Source" },
     { "id": "flow",       "x": 400, "y": 100, "w": 170, "h": 52, "fill": "blue",   "label": "Flow 数据流" },
@@ -45,11 +44,5 @@
     { "from": "f1", "to": "redis", "label": "写缓存" },
     { "from": "f3", "to": "mysql", "label": "落库" },
     { "from": "f5", "to": "es",    "label": "日志" }
-  ],
-  "tiers": [
-    { "label": "① 接入与数据流层", "y": 168 },
-    { "label": "② 算子计算层", "y": 314 },
-    { "label": "③ 调度治理层（算子可插拔 · 配置热更新）", "y": 584 },
-    { "label": "④ 存储与日志层", "y": 672, "line": false }
   ]
 }

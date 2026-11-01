@@ -290,42 +290,45 @@ class Diagram:
                 g["w"] = gx1 - gx0
 
         mon = spec.get("monitor")
-        self.monitor_box = None
-        if mon:
-            top = min(self.min_y, (spec.get("panels") and min(p["y"] for p in spec["panels"]) or self.min_y)) - 10
-            bottom = self.max_y + 10
-            mw = 54
-            if isinstance(mon, dict):
-                m = dict(mon)
-                if "fill" not in m:
-                    m["fill"] = "blue"
-                f, s, t = self._resolve_theme(m)
-                label = m.get("label", "鹰眼")
-            else:
-                f, s, t = self.pal["blue"][0], self.pal["blue"][1], "#ffffff"
-                label = "鹰眼"
-            mx = self.min_x - mw - 14
-            self.monitor_box = {"x": mx, "y": top, "w": mw, "h": bottom - top,
-                                "fill": f, "stroke": s, "text": t, "label": label}
-            self._track(mx, top, mw, bottom - top)
-
-        # 左侧鹰眼列可能超出画布左界 → 整体右移
-        left = self.min_x
-        if self.monitor_box:
-            left = min(left, self.monitor_box["x"])
-        if left < self.MARGIN:
-            sh = self.MARGIN - left
+        # 内容（节点/分组/面板）统一左对齐到 MARGIN；有跨维度列时再预留列宽，避免左侧大片留白
+        content_xs = [n["x"] for n in self.nodes.values()] + [g["x"] for g in self.groups] + \
+                     [p["x"] for p in self.panels]
+        content_min_x = min(content_xs) if content_xs else self.MARGIN
+        mw = 54
+        target = self.MARGIN + (mw + 14 if mon else 0)
+        sh = target - content_min_x
+        if abs(sh) > 0.01:
             for p in self.panels:
                 p["x"] += sh
             for n in self.nodes.values():
                 n["x"] += sh
             for g in self.groups:
                 g["x"] += sh
-            if self.monitor_box:
-                self.monitor_box["x"] += sh
-            self.min_x += sh
-            self.max_x += sh
 
+        self.monitor_box = None
+        if mon:
+            top = self.min_y - 10
+            bottom = self.max_y + 10
+            if isinstance(mon, dict):
+                m = dict(mon)
+                if "fill" not in m:
+                    m["fill"] = "blue"
+                f, s, t = self._resolve_theme(m)
+                label = m.get("label", "全局")
+            else:
+                f, s, t = self.pal["blue"][0], self.pal["blue"][1], "#ffffff"
+                label = "全局"
+            self.monitor_box = {"x": self.MARGIN, "y": top, "w": mw, "h": bottom - top,
+                                "fill": f, "stroke": s, "text": t, "label": label}
+
+        # 重新计算画布范围
+        xs = ([n["x"] for n in self.nodes.values()] + [n["x"] + n["w"] for n in self.nodes.values()] +
+              [g["x"] for g in self.groups] + [g["x"] + g["w"] for g in self.groups] +
+              [p["x"] for p in self.panels] + [p["x"] + p["w"] for p in self.panels])
+        if self.monitor_box:
+            xs += [self.monitor_box["x"], self.monitor_box["x"] + self.monitor_box["w"]]
+        self.min_x = min(xs) if xs else self.MARGIN
+        self.max_x = max(xs) if xs else self.MARGIN
         self.width = self.max_x + self.MARGIN
         self.height = self.max_y + self.MARGIN
         cv = spec.get("canvas")
