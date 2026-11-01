@@ -273,11 +273,13 @@ class Diagram:
             ys = [self.nodes[i]["y"] for i in ids if i in self.nodes]
             xe = [self.nodes[i]["x"] + self.nodes[i]["w"] for i in ids if i in self.nodes]
             ye = [self.nodes[i]["y"] + self.nodes[i]["h"] for i in ids if i in self.nodes]
-            pad = 22
+            pad = 24
             bx, by = min(xs) - pad, min(ys) - pad - 18
-            bw, bh = (max(xe) - min(xs)) + pad * 2, (max(ye) - min(ys)) + pad * 2 + 28
+            bw, bh = (max(xe) - min(xs)) + pad * 2, (max(ye) - min(ys)) + pad * 2 + 34
             self.groups.append({"x": bx, "y": by, "w": bw, "h": bh,
-                               "title": g.get("title", ""), "stroke": g.get("stroke", "#666666")})
+                               "title": g.get("title", ""),
+                               "stroke": g.get("stroke", "#666666"),
+                               "fill": g.get("fill", "#F5F8FB")})
             self._track(bx, by, bw, bh)
 
         mon = spec.get("monitor")
@@ -340,9 +342,10 @@ class Diagram:
 
     def _cylinder(self, x, y, w, h, fill, stroke, sw=1.0):
         ry = min(h * 0.16, w * 0.5, 13)
+        rx = w / 2.0  # 底弧必须用椭圆 rx=w/2，否则半径过小会被 SVG 自动放大成半圆、底部溢出
         body = (f'<path d="M{x:.1f},{y+ry:.1f} '
                 f'L{x:.1f},{y+h-ry:.1f} '
-                f'A{ry:.1f},{ry:.1f} 0 0 0 {x+w:.1f},{y+h-ry:.1f} '
+                f'A{rx:.1f},{ry:.1f} 0 0 0 {x+w:.1f},{y+h-ry:.1f} '
                 f'L{x+w:.1f},{y+ry:.1f} Z" '
                 f'fill="{fill}" stroke="{stroke}" stroke-width="{sw}"/>')
         top = (f'<ellipse cx="{x+w/2:.1f}" cy="{y+ry:.1f}" rx="{w/2:.1f}" ry="{ry:.1f}" '
@@ -372,41 +375,156 @@ class Diagram:
         return (f'<text x="{cx:.1f}" y="{cy:.1f}" fill="{n["text"]}" font-size="{n["fontSize"]}"{fw} '
                 f'font-family="{F}" text-anchor="middle" dominant-baseline="central">{esc(n["label"])}</text>')
 
-    def _edge_geom(self, e):
+    # 连线端点留白：源头留 3px、目标留 8px（保证箭头整支落在盒子外，不被节点遮住）
+    STUB_SRC = 3.0
+    STUB_DST = 8.0
+
+    def _edge_sides(self, a, b, hint=None):
+        """返回 (a 出口边, b 入口边, 是否竖直)，边取 top/bottom/left/right。"""
+        ax, ay, aw, ah = a["x"], a["y"], a["w"], a["h"]
+        bx, by, bw, bh = b["x"], b["y"], b["w"], b["h"]
+        acx, acy = ax + aw / 2, ay + ah / 2
+        bcx, bcy = bx + bw / 2, by + bh / 2
+        v_sep = 1 if by >= ay + ah else (-1 if ay >= by + bh else 0)
+        h_sep = 1 if bx >= ax + aw else (-1 if ax >= bx + bw else 0)
+        if hint == "h":
+            vertical = False
+        elif hint == "v":
+            vertical = True
+        else:
+            vertical = (v_sep != 0)
+        if vertical:
+            if v_sep == -1 or (v_sep == 0 and bcy < acy):
+                return "top", "bottom", True
+            return "bottom", "top", True
+        if h_sep == -1 or (h_sep == 0 and bcx < acx):
+            return "left", "right", False
+        return "right", "left", False
+
+    def _route(self, a, b, hint=None, o1=0.0, o2=0.0):
+        """正交路由：上下分离→竖进竖出；同行/并排→横进横出。o1/o2 为两端沿边偏移（端口分配）。"""
+        acx, acy = a["x"] + a["w"] / 2, a["y"] + a["h"] / 2
+        bcx, bcy = b["x"] + b["w"] / 2, b["y"] + b["h"] / 2
+        s1, s2, vertical = self._edge_sides(a, b, hint)
+        ss, sd = self.STUB_SRC, self.STUB_DST
+        if s1 == "top":
+            p1 = (acx + o1, a["y"] - ss)
+        elif s1 == "bottom":
+            p1 = (acx + o1, a["y"] + a["h"] + ss)
+        elif s1 == "left":
+            p1 = (a["x"] - ss, acy + o1)
+        else:
+            p1 = (a["x"] + a["w"] + ss, acy + o1)
+        if s2 == "top":
+            p2 = (bcx + o2, b["y"] - sd)
+        elif s2 == "bottom":
+            p2 = (bcx + o2, b["y"] + b["h"] + sd)
+        elif s2 == "left":
+            p2 = (b["x"] - sd, bcy + o2)
+        else:
+            p2 = (b["x"] + b["w"] + sd, bcy + o2)
+        if vertical:
+            my = (p1[1] + p2[1]) / 2
+            d = (f"M{p1[0]:.1f},{p1[1]:.1f} L{p1[0]:.1f},{my:.1f} "
+                 f"L{p2[0]:.1f},{my:.1f} L{p2[0]:.1f},{p2[1]:.1f}")
+            midx = (p1[0] + p2[0]) / 2
+            cands = [
+                (p1[0] + 13, (p1[1] + my) / 2),   # 源头竖直段右侧（避开分组标题）
+                (p1[0] - 13, (p1[1] + my) / 2),   # 左侧
+                (midx, my - 12),                  # 拐点上方
+                (midx, my + 15),                  # 拐点下方
+                (p2[0] + 13, (p2[1] + my) / 2),   # 目标端右侧
+            ]
+        else:
+            mx = (p1[0] + p2[0]) / 2
+            d = (f"M{p1[0]:.1f},{p1[1]:.1f} L{mx:.1f},{p1[1]:.1f} "
+                 f"L{mx:.1f},{p2[1]:.1f} L{p2[0]:.1f},{p2[1]:.1f}")
+            midy = (p1[1] + p2[1]) / 2
+            cands = [
+                (mx, midy - 12),
+                (mx, midy + 15),
+                (p1[0] + (p2[0] - p1[0]) * 0.3, midy - 12),
+                (p1[0] + (p2[0] - p1[0]) * 0.7, midy - 12),
+            ]
+        return {"p1": p1, "p2": p2, "d": d, "lab_candidates": cands}
+
+    def _assign_ports(self, edges):
+        """同一节点的同一条边若有多条连线，按对端位置均匀错开，避免端口重叠、箭头被压。"""
+        from collections import defaultdict
+        ends = defaultdict(list)
+        for i, e in enumerate(edges):
+            a = self.nodes.get(e["from"])
+            b = self.nodes.get(e["to"])
+            if not a or not b:
+                continue
+            s1, s2, _ = self._edge_sides(a, b, e.get("route"))
+            acx, acy = a["x"] + a["w"] / 2, a["y"] + a["h"] / 2
+            bcx, bcy = b["x"] + b["w"] / 2, b["y"] + b["h"] / 2
+            ends[(e["from"], s1)].append((i, 0, bcx if s1 in ("top", "bottom") else bcy))
+            ends[(e["to"], s2)].append((i, 1, acx if s2 in ("top", "bottom") else acy))
+        off = {}
+        for key, lst in ends.items():
+            lst.sort(key=lambda t: t[2])
+            n = len(lst)
+            for k, (i, end, _) in enumerate(lst):
+                off[(i, end)] = (k - (n - 1) / 2) * 24.0
+        return [(off.get((i, 0), 0.0), off.get((i, 1), 0.0)) for i in range(len(edges))]
+
+    def _edge_geom(self, e, o1=0.0, o2=0.0):
         a = self.nodes.get(e["from"])
         b = self.nodes.get(e["to"])
         if not a or not b:
             return None
-        acx, acy = a["x"] + a["w"] / 2, a["y"] + a["h"] / 2
-        bcx, bcy = b["x"] + b["w"] / 2, b["y"] + b["h"] / 2
-        p1 = _rect_edge(acx, acy, a["x"], a["y"], a["w"], a["h"], bcx, bcy)
-        p2 = _rect_edge(bcx, bcy, b["x"], b["y"], b["w"], b["h"], acx, acy)
-        # 端点留白：让线段不要压在边框上，箭头也留出间隙
-        dx, dy = bcx - acx, bcy - acy
-        L = math.hypot(dx, dy) or 1.0
-        ux, uy = dx / L, dy / L
-        stub = 4.0
-        p1 = (p1[0] + ux * stub, p1[1] + uy * stub)
-        p2 = (p2[0] - ux * stub, p2[1] - uy * stub)
+        r = self._route(a, b, e.get("route"), o1, o2)
+        d = r["d"]
         color = e.get("color", "#5a5a5a")
         dashed = bool(e.get("dashed"))
         dash = "stroke-dasharray='6,4' " if dashed else ""
-        d = _ortho_path(p1, p2)
-        halo = (f'<path d="{d}" fill="none" stroke="#ffffff" stroke-width="6.0" '
+        halo = (f'<path d="{d}" fill="none" stroke="#ffffff" stroke-width="7.0" '
                 f'stroke-linejoin="round" stroke-linecap="round" {dash}/>')
         line = (f'<path d="{d}" fill="none" stroke="{color}" stroke-width="2.2" '
                 f'stroke-linejoin="round" stroke-linecap="round" {dash}marker-end="url(#ah_{color.lstrip("#")})"/>')
-        lab = e.get("label")
-        label_bg = label_tx = None
-        if lab:
-            mx, my = (p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2
-            tw = _est_text_w(lab, 12.5) + 10
-            label_bg = (f'<rect x="{mx-tw/2:.1f}" y="{my-11:.1f}" width="{tw:.1f}" height="20" '
-                        f'rx="3" fill="#ffffff" stroke="none" opacity="0.95"/>')
-            label_tx = (f'<text x="{mx:.1f}" y="{my:.1f}" fill="#333" font-size="12.5" '
-                        f'font-family="{F}" text-anchor="middle" dominant-baseline="central">{esc(lab)}</text>')
         return {"color": color, "halo": halo, "line": line,
-                "label_bg": label_bg, "label_tx": label_tx}
+                "label": e.get("label"), "lab_candidates": r["lab_candidates"]}
+
+    def _place_labels(self, edge_geoms):
+        """为连线标签选位：避开节点、分组标题、鹰眼列与已放置的标签，杜绝文字互相覆盖。"""
+        obstacles = []
+        for n in self.nodes.values():
+            obstacles.append((n["x"], n["y"], n["w"], n["h"]))
+        for g in self.groups:
+            if g["title"]:
+                tw = _est_text_w(g["title"], 13) + 8
+                obstacles.append((g["x"] + 6, g["y"] + 3, tw, 20))
+        if self.monitor_box:
+            mb = self.monitor_box
+            obstacles.append((mb["x"], mb["y"], mb["w"], mb["h"]))
+        placed = []
+
+        def overlaps(r):
+            for o in obstacles + placed:
+                if not (r[0] + r[2] <= o[0] or o[0] + o[2] <= r[0] or
+                        r[1] + r[3] <= o[1] or o[1] + o[3] <= r[1]):
+                    return True
+            return False
+
+        for g in edge_geoms:
+            if not g["label"]:
+                continue
+            tw = _est_text_w(g["label"], 12.5) + 10
+            m = 3
+            chosen = None
+            for (cx, cy) in g["lab_candidates"]:
+                r = (cx - tw / 2 - m, cy - 9 - m, tw + m * 2, 18 + m * 2)
+                if not overlaps(r):
+                    chosen = (cx, cy, r)
+                    break
+            if chosen is None:
+                cx, cy = g["lab_candidates"][0]
+                chosen = (cx, cy, (cx - tw / 2, cy - 9, tw, 18))
+            g["label_at"] = (chosen[0], chosen[1])
+            g["label_tw"] = tw
+            placed.append(chosen[2])
 
     # ---------- 层级虚线分隔 ----------
     def _render_tiers(self):
@@ -427,18 +545,18 @@ class Diagram:
     # ---------- 渲染 ----------
     def _render(self):
         self._add(f'<rect x="0" y="0" width="{self.width:.1f}" height="{self.height:.1f}" fill="#ffffff"/>')
+        # 背景面板
         for p in self.panels:
             self._add(self._rounded(p["x"], p["y"], p["w"], p["h"], r=10, fill=p["fill"],
                                     stroke=p["stroke"], sw=1.0))
             if p["label"]:
                 self._add(f'<text x="{p["x"]+12:.1f}" y="{p["y"]+20:.1f}" fill="{p["text"]}" '
                           f'font-size="14" font-weight="700" font-family="{F}">{esc(p["label"])}</text>')
+        # 分组浅色底（只填充；边框与标题最后再画，保证清晰）
         for g in self.groups:
-            self._add(self._rounded(g["x"], g["y"], g["w"], g["h"], r=10, fill="none",
-                                    stroke=g["stroke"], sw=1.0, dash="stroke-dasharray='7,5'"))
-            if g["title"]:
-                self._add(f'<text x="{g["x"]+12:.1f}" y="{g["y"]+15:.1f}" fill="#555" '
-                          f'font-size="13" font-weight="700" font-family="{F}">{esc(g["title"])}</text>')
+            self._add(self._rounded(g["x"], g["y"], g["w"], g["h"], r=10, fill=g["fill"],
+                                    stroke="none", sw=0))
+        # 鹰眼监控列
         if self.monitor_box:
             mb = self.monitor_box
             self._add(self._rounded(mb["x"], mb["y"], mb["w"], mb["h"], r=8, fill=mb["fill"],
@@ -454,26 +572,47 @@ class Diagram:
                 self._add(f'<text x="{cx:.1f}" y="{y:.1f}" fill="{mb["text"]}" font-size="16" '
                           f'font-weight="700" font-family="{F}" text-anchor="middle" '
                           f'dominant-baseline="central">{esc(ch)}</text>')
-        # 层级虚线分隔（画在节点之下，线条落在层间空隙）
+        # 层级虚线分隔
         self._render_tiers()
-        # 节点（盒子 + 文字）
-        for n in self.nodes.values():
-            self._add(self._node_box(n))
-            self._add(self._node_text(n))
-        # 连线（白色光晕 + 彩色线 + 箭头）画在节点之上，保证箭头不被遮挡
-        edge_geoms = [g for g in (self._edge_geom(e) for e in self.spec.get("edges", [])) if g]
-        for g in edge_geoms:
-            self._add(g["halo"])
+        # 连线：逐条「白晕→彩线」，白晕切断先前线条形成跨线桥；画在节点之下 → 遇盒自动被遮
+        edges = self.spec.get("edges", [])
+        ports = self._assign_ports(edges)
+        edge_geoms = [g for g in (self._edge_geom(e, ports[i][0], ports[i][1])
+                                  for i, e in enumerate(edges)) if g]
+        self._place_labels(edge_geoms)
         added_marks = set()
         for g in edge_geoms:
             mn = "ah_" + g["color"].lstrip("#")
             if mn not in added_marks:
                 self._add(self._arrow_marker(g["color"], mn))
                 added_marks.add(mn)
+        for g in edge_geoms:
+            self._add(g["halo"])
             self._add(g["line"])
-            if g["label_bg"]:
-                self._add(g["label_bg"])
-                self._add(g["label_tx"])
+        # 节点（盒子 + 文字）画在连线之上 → 跨过矩形的线被遮挡
+        for n in self.nodes.values():
+            self._add(self._node_box(n))
+            self._add(self._node_text(n))
+        # 连线标签画在最上层，避免被节点/底色盖住
+        for g in edge_geoms:
+            if g.get("label"):
+                mx, my = g["label_at"]
+                tw = g["label_tw"]
+                self._add(f'<rect x="{mx-tw/2:.1f}" y="{my-10:.1f}" width="{tw:.1f}" height="19" '
+                          f'rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>')
+                self._add(f'<text x="{mx:.1f}" y="{my:.1f}" fill="#333" font-size="12.5" '
+                          f'font-family="{F}" text-anchor="middle" dominant-baseline="central">{esc(g["label"])}</text>')
+        # 分组虚线边框 + 标题（最后画，确保不被连线覆盖）
+        for g in self.groups:
+            self._add(self._rounded(g["x"], g["y"], g["w"], g["h"], r=10, fill="none",
+                                    stroke=g["stroke"], sw=1.2, dash="stroke-dasharray='7,5'"))
+            if g["title"]:
+                tw = _est_text_w(g["title"], 13) + 12
+                self._add(f'<rect x="{g["x"]+6:.1f}" y="{g["y"]+4:.1f}" width="{tw:.1f}" height="19" '
+                          f'rx="3" fill="{g["fill"]}" stroke="none"/>')
+                self._add(f'<text x="{g["x"]+12:.1f}" y="{g["y"]+15:.1f}" fill="#3a4550" '
+                          f'font-size="13" font-weight="700" font-family="{F}">{esc(g["title"])}</text>')
+        # 便签
         for c in self.spec.get("callouts", []):
             x, y = c.get("at", [0, 0])
             text = c.get("text", "")

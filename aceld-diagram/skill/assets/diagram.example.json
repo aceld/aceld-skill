@@ -26,9 +26,9 @@
     { "id": "es",    "x": 620, "y": 640, "w": 120, "h": 72, "fill": "slate",   "shape": "cylinder", "label": "LogStore 日志" }
   ],
   "groups": [
-    { "nodes": ["f1","f2","f3","f4","f5"], "title": "Function 算子池", "stroke": "#314354" },
-    { "nodes": ["scheduler","controller","pool","config"], "title": "调度核心", "stroke": "#000000" },
-    { "nodes": ["redis","mysql","es"], "title": "外部依赖", "stroke": "#C73500" }
+    { "nodes": ["f1","f2","f3","f4","f5"], "title": "Function 算子池", "stroke": "#D98B57", "fill": "#FFF4E9" },
+    { "nodes": ["scheduler","controller","pool","config"], "title": "调度核心", "stroke": "#8FA9C4", "fill": "#EAF1F9" },
+    { "nodes": ["redis","mysql","es"], "title": "外部依赖", "stroke": "#D98B84", "fill": "#FDECEA" }
   ],
   "edges": [
     { "from": "source", "to": "flow" },
