@@ -28,7 +28,10 @@ python skill/scripts/gen_diagram.py ./my_diagram.json -o my_diagram.html
 
 ## 效果示例
 
-见 [`examples/kisflow_arch.html`](examples/kisflow_arch.html)（KisFlow 流式计算引擎架构），源 spec 在 [`examples/kisflow_arch.json`](examples/kisflow_arch.json)。
+- **竖版（默认推荐，适合文章/讲义）**：[`examples/kisflow_arch_portrait.html`](examples/kisflow_arch_portrait.html)，源 spec [`examples/kisflow_arch_portrait.json`](examples/kisflow_arch_portrait.json)（923×1246）。
+- **横版（适合 PPT / 宽屏）**：[`examples/kisflow_arch.html`](examples/kisflow_arch.html)，源 spec [`examples/kisflow_arch.json`](examples/kisflow_arch.json)。
+
+> 文档多为「高度不限、宽度有限」，所以**默认出竖版**，避免横向被裁；需要大屏时再出横版。
 
 ## 风格速览
 

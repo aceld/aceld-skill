@@ -281,6 +281,13 @@ class Diagram:
                                "stroke": g.get("stroke", "#666666"),
                                "fill": g.get("fill", "#F5F8FB")})
             self._track(bx, by, bw, bh)
+        # 所有分组统一为同一宽度（取并集左右界），形成等宽的层带
+        if self.groups:
+            gx0 = min(g["x"] for g in self.groups)
+            gx1 = max(g["x"] + g["w"] for g in self.groups)
+            for g in self.groups:
+                g["x"] = gx0
+                g["w"] = gx1 - gx0
 
         mon = spec.get("monitor")
         self.monitor_box = None
@@ -325,6 +332,14 @@ class Diagram:
         if cv:
             self.width = max(self.width, cv.get("width", self.width))
             self.height = max(self.height, cv.get("height", self.height))
+
+        # 连线需要避开的「禁线」：分组上下/左右边、层级虚线 y、鹰眼左右边
+        self.fb_y = sorted({g["y"] for g in self.groups} | {g["y"] + g["h"] for g in self.groups} |
+                           {float(t["y"]) for t in spec.get("tiers", [])})
+        _fx = {g["x"] for g in self.groups} | {g["x"] + g["w"] for g in self.groups}
+        if self.monitor_box:
+            _fx |= {self.monitor_box["x"], self.monitor_box["x"] + self.monitor_box["w"]}
+        self.fb_x = sorted(_fx)
 
     # ---------- 图形基元 ----------
     def _add(self, s):
@@ -379,6 +394,29 @@ class Diagram:
     STUB_SRC = 3.0
     STUB_DST = 8.0
 
+    @staticmethod
+    def _jog(lo, hi, forbidden, tol=7.0):
+        """在 [lo,hi] 内选一个不与禁线（分组边/层级线）重合的折点位置。"""
+        lo, hi = min(lo, hi), max(lo, hi)
+        for frac in (0.5, 0.42, 0.58, 0.35, 0.65, 0.28, 0.72):
+            v = lo + (hi - lo) * frac
+            if all(abs(v - f) >= tol for f in forbidden):
+                return v
+        return lo + (hi - lo) * 0.5
+
+    @staticmethod
+    def _nudge(v, lo, hi, forbidden, tol=6.0, step=8.0):
+        """若端口坐标贴近某条禁线，则沿边挪开 step，仍限制在盒子范围内。"""
+        for f in forbidden:
+            if abs(v - f) < tol:
+                cand = f + step
+                if cand > hi:
+                    cand = f - step
+                if lo <= cand <= hi:
+                    v = cand
+                break
+        return max(lo, min(hi, v))
+
     def _edge_sides(self, a, b, hint=None):
         """返回 (a 出口边, b 入口边, 是否竖直)，边取 top/bottom/left/right。"""
         ax, ay, aw, ah = a["x"], a["y"], a["w"], a["h"]
@@ -423,8 +461,11 @@ class Diagram:
             p2 = (b["x"] - sd, bcy + o2)
         else:
             p2 = (b["x"] + b["w"] + sd, bcy + o2)
+        # 端口避让：竖直线的 x 别压在分组左右边上；水平折线 y 别压在分组上下边/层级线上
         if vertical:
-            my = (p1[1] + p2[1]) / 2
+            p1 = (self._nudge(p1[0], a["x"] + 6, a["x"] + a["w"] - 6, self.fb_x), p1[1])
+            p2 = (self._nudge(p2[0], b["x"] + 6, b["x"] + b["w"] - 6, self.fb_x), p2[1])
+            my = self._jog(p1[1], p2[1], self.fb_y)
             d = (f"M{p1[0]:.1f},{p1[1]:.1f} L{p1[0]:.1f},{my:.1f} "
                  f"L{p2[0]:.1f},{my:.1f} L{p2[0]:.1f},{p2[1]:.1f}")
             midx = (p1[0] + p2[0]) / 2
@@ -436,7 +477,9 @@ class Diagram:
                 (p2[0] + 13, (p2[1] + my) / 2),   # 目标端右侧
             ]
         else:
-            mx = (p1[0] + p2[0]) / 2
+            p1 = (p1[0], self._nudge(p1[1], a["y"] + 6, a["y"] + a["h"] - 6, self.fb_y))
+            p2 = (p2[0], self._nudge(p2[1], b["y"] + 6, b["y"] + b["h"] - 6, self.fb_y))
+            mx = self._jog(p1[0], p2[0], self.fb_x)
             d = (f"M{p1[0]:.1f},{p1[1]:.1f} L{mx:.1f},{p1[1]:.1f} "
                  f"L{mx:.1f},{p2[1]:.1f} L{p2[0]:.1f},{p2[1]:.1f}")
             midy = (p1[1] + p2[1]) / 2

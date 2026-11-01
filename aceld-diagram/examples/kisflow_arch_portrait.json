@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "title": "KisFlow 流式计算引擎",
+    "subtitle": "实时数据流处理框架 · 竖版 · Aceld 风格"
+  },
+  "monitor": { "label": "鹰眼" },
+  "nodes": [
+    { "id": "source",     "x": 215, "y": 110, "w": 140, "h": 50, "fill": "slate",  "label": "数据源 Source" },
+    { "id": "flow",       "x": 395, "y": 110, "w": 140, "h": 50, "fill": "blue",   "label": "Flow 数据流" },
+    { "id": "result",     "x": 620, "y": 110, "w": 140, "h": 50, "fill": "sgreen", "label": "结果输出 Result" },
+
+    { "id": "f1", "x": 215, "y": 360, "w": 96, "h": 46, "fill": "orange", "label": "Func-A" },
+    { "id": "f2", "x": 335, "y": 360, "w": 96, "h": 46, "fill": "orange", "label": "Func-B" },
+    { "id": "f3", "x": 455, "y": 360, "w": 96, "h": 46, "fill": "orange", "label": "Func-C" },
+    { "id": "f4", "x": 575, "y": 360, "w": 96, "h": 46, "fill": "orange", "label": "Func-D" },
+    { "id": "f5", "x": 695, "y": 360, "w": 96, "h": 46, "fill": "orange", "label": "Func-E" },
+
+    { "id": "scheduler",  "x": 285, "y": 640, "w": 170, "h": 50, "fill": "dark",   "label": "Scheduler 调度器" },
+    { "id": "controller", "x": 545, "y": 640, "w": 170, "h": 50, "fill": "blue",   "label": "Controller 控制器" },
+
+    { "id": "pool",   "x": 285, "y": 820, "w": 170, "h": 50, "fill": "crimson", "label": "ConnPool 连接池" },
+    { "id": "config", "x": 545, "y": 820, "w": 170, "h": 50, "fill": "orange",  "label": "Config 配置" },
+
+    { "id": "redis", "x": 190, "y": 1080, "w": 140, "h": 76, "fill": "crimson", "shape": "cylinder", "label": "Redis 缓存" },
+    { "id": "mysql", "x": 355, "y": 1080, "w": 140, "h": 76, "fill": "blue",    "shape": "cylinder", "label": "MySQL 存储" },
+    { "id": "es",    "x": 520, "y": 1080, "w": 140, "h": 76, "fill": "slate",   "shape": "cylinder", "label": "LogStore 日志" }
+  ],
+  "groups": [
+    { "nodes": ["f1","f2","f3","f4","f5"], "title": "Function 算子池", "stroke": "#D98B57", "fill": "#FFF4E9" },
+    { "nodes": ["scheduler","controller","pool","config"], "title": "调度核心", "stroke": "#8FA9C4", "fill": "#EAF1F9" },
+    { "nodes": ["redis","mysql","es"], "title": "外部依赖", "stroke": "#D98B84", "fill": "#FDECEA" }
+  ],
+  "edges": [
+    { "from": "source", "to": "flow" },
+    { "from": "flow",   "to": "f1" },
+    { "from": "f1", "to": "f2" },
+    { "from": "f2", "to": "f3" },
+    { "from": "f3", "to": "f4" },
+    { "from": "f4", "to": "f5" },
+    { "from": "f5", "to": "result" },
+    { "from": "controller", "to": "scheduler",  "dashed": true, "label": "管理" },
+    { "from": "scheduler",  "to": "f1",         "dashed": true, "label": "调度" },
+    { "from": "config",     "to": "scheduler" },
+    { "from": "pool",       "to": "mysql",      "dashed": true, "label": "连接" },
+    { "from": "f1", "to": "redis", "label": "写缓存" },
+    { "from": "f3", "to": "mysql", "label": "落库" },
+    { "from": "f5", "to": "es",    "label": "日志" }
+  ],
+  "tiers": [
+    { "label": "① 接入与数据流层", "y": 250 },
+    { "label": "② 算子计算层", "y": 510 },
+    { "label": "③ 调度治理层（算子可插拔 · 配置热更新）", "y": 960 },
+    { "label": "④ 存储与日志层", "y": 1100, "line": false }
+  ]
+}

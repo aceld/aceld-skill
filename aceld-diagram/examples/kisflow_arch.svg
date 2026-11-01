@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1088" height="802" viewBox="0 0 1088 802"><rect x="0" y="0" width="1088.0" height="802.0" fill="#ffffff"/>
 <rect x="194.0" y="188.0" width="718.0" height="128.0" rx="10" ry="10" fill="#FFF4E9" stroke="none" stroke-width="0" />
-<rect x="344.0" y="318.0" width="488.0" height="258.0" rx="10" ry="10" fill="#EAF1F9" stroke="none" stroke-width="0" />
-<rect x="344.0" y="598.0" width="488.0" height="154.0" rx="10" ry="10" fill="#FDECEA" stroke="none" stroke-width="0" />
+<rect x="194.0" y="318.0" width="718.0" height="258.0" rx="10" ry="10" fill="#EAF1F9" stroke="none" stroke-width="0" />
+<rect x="194.0" y="598.0" width="718.0" height="154.0" rx="10" ry="10" fill="#FDECEA" stroke="none" stroke-width="0" />
 <rect x="40.0" y="30.0" width="54.0" height="732.0" rx="8" ry="8" fill="#1ba1e2" stroke="#006EAF" stroke-width="1.2" />
 <text x="67.0" y="386.0" fill="#ffffff" font-size="16" font-weight="700" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">鹰</text>
 <text x="67.0" y="406.0" fill="#ffffff" font-size="16" font-weight="700" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">眼</text>
@@ -15,8 +15,8 @@
 <marker id="ah_5a5a5a" markerWidth="13" markerHeight="13" refX="10" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L11,4 L0,8 Z" fill="#5a5a5a"/></marker>
 <path d="M321.0,126.0 L390.5,126.0 L390.5,126.0 L460.0,126.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
 <path d="M321.0,126.0 L390.5,126.0 L390.5,126.0 L460.0,126.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
-<path d="M553.0,155.0 L553.0,188.5 L273.0,188.5 L273.0,222.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M553.0,155.0 L553.0,188.5 L273.0,188.5 L273.0,222.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
+<path d="M553.0,155.0 L553.0,178.4 L273.0,178.4 L273.0,222.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M553.0,155.0 L553.0,178.4 L273.0,178.4 L273.0,222.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
 <path d="M331.0,253.0 L340.5,253.0 L340.5,253.0 L350.0,253.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
 <path d="M331.0,253.0 L340.5,253.0 L340.5,253.0 L350.0,253.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
 <path d="M471.0,253.0 L480.5,253.0 L480.5,253.0 L490.0,253.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
@@ -25,16 +25,16 @@
 <path d="M611.0,253.0 L620.5,253.0 L620.5,253.0 L630.0,253.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
 <path d="M751.0,253.0 L760.5,253.0 L760.5,253.0 L770.0,253.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
 <path d="M751.0,253.0 L760.5,253.0 L760.5,253.0 L770.0,253.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
-<path d="M833.0,227.0 L833.0,193.5 L983.0,193.5 L983.0,160.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M833.0,227.0 L833.0,193.5 L983.0,193.5 L983.0,160.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
+<path d="M833.0,227.0 L833.0,198.9 L983.0,198.9 L983.0,160.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M833.0,227.0 L833.0,198.9 L983.0,198.9 L983.0,160.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
 <path d="M625.0,385.0 L590.5,385.0 L590.5,385.0 L556.0,385.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
 <path d="M625.0,385.0 L590.5,385.0 L590.5,385.0 L556.0,385.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' marker-end="url(#ah_5a5a5a)"/>
-<path d="M458.0,357.0 L458.0,320.5 L285.0,320.5 L285.0,284.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
-<path d="M458.0,357.0 L458.0,320.5 L285.0,320.5 L285.0,284.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' marker-end="url(#ah_5a5a5a)"/>
+<path d="M458.0,357.0 L458.0,326.3 L285.0,326.3 L285.0,284.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
+<path d="M458.0,357.0 L458.0,326.3 L285.0,326.3 L285.0,284.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' marker-end="url(#ah_5a5a5a)"/>
 <path d="M718.0,487.0 L718.0,452.5 L458.0,452.5 L458.0,418.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
 <path d="M718.0,487.0 L718.0,452.5 L458.0,452.5 L458.0,418.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
-<path d="M458.0,539.0 L458.0,585.5 L576.0,585.5 L576.0,632.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
-<path d="M458.0,539.0 L458.0,585.5 L576.0,585.5 L576.0,632.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' marker-end="url(#ah_5a5a5a)"/>
+<path d="M458.0,539.0 L458.0,565.0 L576.0,565.0 L576.0,632.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
+<path d="M458.0,539.0 L458.0,565.0 L576.0,565.0 L576.0,632.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' marker-end="url(#ah_5a5a5a)"/>
 <path d="M261.0,279.0 L261.0,455.5 L428.0,455.5 L428.0,632.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
 <path d="M261.0,279.0 L261.0,455.5 L428.0,455.5 L428.0,632.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
 <path d="M553.0,279.0 L553.0,455.5 L600.0,455.5 L600.0,632.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
@@ -73,10 +73,10 @@
 <text x="748.0" y="676.0" fill="#ffffff" font-size="15" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">LogStore 日志</text>
 <rect x="573.0" y="363.0" width="35.0" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
 <text x="590.5" y="373.0" fill="#333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">管理</text>
-<rect x="453.5" y="328.8" width="35.0" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
-<text x="471.0" y="338.8" fill="#333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">调度</text>
-<rect x="453.5" y="552.2" width="35.0" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
-<text x="471.0" y="562.2" fill="#333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">连接</text>
+<rect x="453.5" y="331.7" width="35.0" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
+<text x="471.0" y="341.7" fill="#333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">调度</text>
+<rect x="453.5" y="542.0" width="35.0" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
+<text x="471.0" y="552.0" fill="#333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">连接</text>
 <rect x="250.2" y="357.2" width="47.5" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
 <text x="274.0" y="367.2" fill="#333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">写缓存</text>
 <rect x="559.0" y="433.5" width="35.0" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
@@ -86,11 +86,11 @@
 <rect x="194.0" y="188.0" width="718.0" height="128.0" rx="10" ry="10" fill="none" stroke="#D98B57" stroke-width="1.2" stroke-dasharray='7,5'/>
 <rect x="200.0" y="192.0" width="115.4" height="19" rx="3" fill="#FFF4E9" stroke="none"/>
 <text x="206.0" y="203.0" fill="#3a4550" font-size="13" font-weight="700" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif">Function 算子池</text>
-<rect x="344.0" y="318.0" width="488.0" height="258.0" rx="10" ry="10" fill="none" stroke="#8FA9C4" stroke-width="1.2" stroke-dasharray='7,5'/>
-<rect x="350.0" y="322.0" width="64.0" height="19" rx="3" fill="#EAF1F9" stroke="none"/>
-<text x="356.0" y="333.0" fill="#3a4550" font-size="13" font-weight="700" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif">调度核心</text>
-<rect x="344.0" y="598.0" width="488.0" height="154.0" rx="10" ry="10" fill="none" stroke="#D98B84" stroke-width="1.2" stroke-dasharray='7,5'/>
-<rect x="350.0" y="602.0" width="64.0" height="19" rx="3" fill="#FDECEA" stroke="none"/>
-<text x="356.0" y="613.0" fill="#3a4550" font-size="13" font-weight="700" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif">外部依赖</text>
+<rect x="194.0" y="318.0" width="718.0" height="258.0" rx="10" ry="10" fill="none" stroke="#8FA9C4" stroke-width="1.2" stroke-dasharray='7,5'/>
+<rect x="200.0" y="322.0" width="64.0" height="19" rx="3" fill="#EAF1F9" stroke="none"/>
+<text x="206.0" y="333.0" fill="#3a4550" font-size="13" font-weight="700" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif">调度核心</text>
+<rect x="194.0" y="598.0" width="718.0" height="154.0" rx="10" ry="10" fill="none" stroke="#D98B84" stroke-width="1.2" stroke-dasharray='7,5'/>
+<rect x="200.0" y="602.0" width="64.0" height="19" rx="3" fill="#FDECEA" stroke="none"/>
+<text x="206.0" y="613.0" fill="#3a4550" font-size="13" font-weight="700" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif">外部依赖</text>
 <text x="110.0" y="66.0" fill="#000" font-size="26" font-weight="700" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif">KisFlow 流式计算引擎</text>
 <text x="110.0" y="90.0" fill="#888" font-size="14" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif">实时数据流处理框架 · Aceld 风格架构图</text></svg>
