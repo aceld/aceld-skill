@@ -141,6 +141,17 @@ GRADIENT  : 0（必须为 0，微信会拦渐变）
 复制 `assets/theme-aceld.json` 改 `colors`，`banner` / `footer` 设成 `null` 就不渲染。
 也可以用 `--no-banner --no-footer` 单独关掉。
 
+### 发布前先看效果
+
+```bash
+python scripts/preview.py --html work/公众号版.html --img-dir 文章配图 --out-dir preview
+```
+
+不用登录、不用开调试端口：把占位图片换成本地文件，按 414px 手机宽度渲染，
+自动挑「开头 / 配图 / 代码块」三段出图，上下边缘吸附到段落边界。
+打印 `OVERFLOW_X` 就说明有东西撑破了视口，粘进微信前先修。
+给 README 出效果图、或肉眼过一遍排版，都用它。
+
 ---
 
 ## 四、发布：粘进编辑器 → 存草稿
@@ -208,6 +219,7 @@ aceld-wechat/
 ├── SKILL.md
 ├── scripts/
 │   ├── md2wechat.py      markdown → 内联样式 HTML（自检渐变）
+│   ├── preview.py        手机端效果图 / 发布前排版检查
 │   ├── publish.py        粘贴 → mmbiz → 存草稿（零凭据，绝不发表）
 │   └── doctor.py         发布前环境自检
 ├── assets/

@@ -1,5 +1,6 @@
 # ---- Aceld 公众号写作与发布技能 依赖 ----
 # 排版脚本 md2wechat.py：仅用标准库（pygments 可选，装了才有代码高亮）
+# 预览脚本 preview.py：playwright（本地渲染）+ pillow（压图），不连 CDP
 # 发布脚本 publish.py：playwright（连 CDP）+ pillow（压图）
 #
 #   pip install playwright pillow pygments

@@ -1,14 +1,47 @@
 # 刘丹冰Aceld 公众号写作与发布技能（aceld-wechat）
 
-把「公众号文章怎么写、怎么排版、怎么发」沉淀成一套规范 + 三个脚本。
+把「公众号文章怎么写、怎么排版、怎么发」沉淀成一套规范 + 四个脚本。
 **零凭据**：不碰账号密码、不用 AppID/AppSecret、不存 Cookie 和 token。
 
 ## 这是什么
 
 - **写作规范**：`skill/references/article-style.md` —— 标题公式、现象→病机→解法骨架、去 AI 味、配图节奏、发布前自检清单
 - **排版脚本**：`skill/scripts/md2wechat.py` —— markdown → 微信内联样式 HTML（主题可换）
+- **效果预览**：`skill/scripts/preview.py` —— 按手机宽度渲染效果图，顺手检查有没有溢出
 - **发布脚本**：`skill/scripts/publish.py` —— 粘进编辑器、图片自动转 mmbiz、**只存草稿绝不发表**
 - **环境自检**：`skill/scripts/doctor.py` —— 端口 / 登录 / 选择器 / 按钮，一次全查
+
+## 效果预览
+
+下面是《凡人AI修仙》第六课用这套脚本排出来、在 **414px 手机宽度**下渲染的真实效果
+（公众号里就是这个样子）：
+
+<p align="center">
+  <img src="docs/screenshots/01-header.jpg" width="260" alt="开头：封面卡、导语与章节卡">
+  <img src="docs/screenshots/02-figure.jpg" width="260" alt="配图：架构图、图注与高亮段落">
+  <img src="docs/screenshots/03-code.jpg" width="260" alt="代码块与行内标记">
+</p>
+
+<p align="center"><sub>左：封面卡 / 导语 / 章节卡　·　中：架构配图与图注　·　右：代码块、行内代码与高亮</sub></p>
+
+粘进公众号编辑器后的实际草稿页（只裁了正文区域，**账号、头像、后台菜单都在裁剪范围外**）：
+
+<p align="center"><img src="docs/screenshots/editor-draft.jpg" width="600" alt="公众号草稿编辑页"></p>
+
+脚本只点「保存为草稿」，右下角的「发表」留给人自己点。
+
+三张手机图不用手工截，直接从排版产物生成，也能当发布前的排版检查：
+
+```bash
+python skill/scripts/preview.py \
+  --html work/公众号版.html \
+  --img-dir 文章配图 \
+  --out-dir docs/screenshots
+```
+
+脚本把占位图片 URL 换成本地文件、按公众号宽度渲染，自动挑「开头 / 配图 / 代码块」三段；
+**上下边缘吸附到段落边界**，所以不会出现半截表格或半行字。有横向溢出会打 `OVERFLOW_X`。
+不联网、不连调试端口、不碰编辑器，跟发布流程完全隔离。
 
 ## 为什么不走官方 API
 
@@ -47,6 +80,9 @@ python skill/scripts/doctor.py
 # 4) 排版
 python skill/scripts/md2wechat.py --src 文章.md --out work/公众号版.html
 
+# 4.5) 先看效果（可选，不需要登录）
+python skill/scripts/preview.py --html work/公众号版.html --img-dir 文章配图 --out-dir preview
+
 # 5) 存草稿
 python skill/scripts/publish.py --html work/公众号版.html --meta work/meta.json --img-dir 文章配图 --new
 ```
@@ -66,6 +102,9 @@ token 是运行时从地址栏现抓的，进程结束就没了。`assets/theme-
 banner 文案都只是**示例**，改成你自己的；不想进仓库就用
 `assets/theme.local.json`（已在 `.gitignore`）。
 
+`docs/screenshots/` 里的图只含文章排版：手机效果图由纯 HTML 本地渲染，
+编辑器图已裁掉头像、账号名、左侧菜单和顶部工具栏，URL 与 token 从未入镜。
+
 ## 目录
 
 ```
@@ -73,9 +112,11 @@ aceld-wechat/
 ├── README.md
 ├── install.sh / install.ps1
 ├── requirements.txt
+├── docs/
+│   └── screenshots/       效果预览图（手机端 3 张 + 编辑器 1 张）
 └── skill/
     ├── SKILL.md
-    ├── scripts/{md2wechat,publish,doctor}.py
+    ├── scripts/{md2wechat,preview,publish,doctor}.py
     ├── assets/theme-aceld.json
     └── references/{wechat-constraints,article-style}.md
 ```
