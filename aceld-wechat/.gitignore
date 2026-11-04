@@ -1,0 +1,15 @@
+# 本地私有主题（署名、声明、banner 文案不想进仓库就放这里）
+skill/assets/theme.local.json
+
+# 运行产物
+work/
+*.log
+doctor.png
+after_save.png
+paste_failed.png
+_probe*.png
+
+# Python
+__pycache__/
+*.pyc
+.venv/

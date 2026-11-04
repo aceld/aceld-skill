@@ -1,0 +1,13 @@
+# ---- Aceld 公众号写作与发布技能 依赖 ----
+# 排版脚本 md2wechat.py：仅用标准库（pygments 可选，装了才有代码高亮）
+# 发布脚本 publish.py：playwright（连 CDP）+ pillow（压图）
+#
+#   pip install playwright pillow pygments
+#   playwright install chromium   # 可选：连系统 Chrome 时不需要
+#
+# 说明：publish.py 用 connect_over_cdp 连你已登录的 Chrome，
+# 不下载浏览器也能跑；若要用 playwright 自带浏览器才需要 playwright install。
+
+playwright>=1.40
+pillow>=9.0
+pygments>=2.15

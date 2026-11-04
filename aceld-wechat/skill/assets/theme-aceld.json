@@ -1,0 +1,50 @@
+{
+  "_comment": "示例主题：与 aceld-diagram 白底扁平配图同源（蓝 #1b7fb8 / 橙 #e07a00 / 石板 #647687）。换配色只改 colors，不用动脚本。",
+  "colors": {
+    "ink": "#1f2733",
+    "title": "#0f172a",
+    "dim": "#5b6b7f",
+    "accent": "#1b7fb8",
+    "accent2": "#e07a00",
+    "slate": "#647687",
+    "bold": "#0e5f8a",
+    "bgSoft": "#f4f7fa",
+    "border": "#e3e9f0",
+    "hlBg": "#fff3c4",
+    "hlTxt": "#7a4d00",
+    "pageBg": "#f6f9fc",
+    "cardBg": "#edf4fa",
+    "cardBg2": "#fdf6e9",
+    "cardBorder": "#e4eef6"
+  },
+  "banner": {
+    "eyebrow": "FAN REN  AI  XIU XIAN",
+    "eyebrowColor": "#7dd3fc",
+    "title": "《凡人AI修仙》 第六课",
+    "sub": "守心之道 · 智能体长任务，为什么不跑偏<br/>五种死法、三层病机、五道闸门",
+    "subColor": "#c7d6e6",
+    "bg": "#0f2b3d",
+    "tags": [
+      { "text": "五道闸门", "fg": "#04121c", "bg": "#22d3ee" },
+      { "text": "12 张架构图", "fg": "#2a1a00", "bg": "#fbbf24" }
+    ]
+  },
+  "notice": {
+    "label": "⚠️ 声明",
+    "text": "本课程除知识内容由本人输出，视频制作/录制、文案编写、语音合成、文章排版与各平台发布均由 AI 辅助完成，用的是低成本模型。若出现发音不准等瑕疵，请理解。",
+    "bg": "#fff8e8",
+    "border": "#ffe2ab",
+    "color": "#8a6a33",
+    "strongColor": "#c07a12"
+  },
+  "divider": { "img": "divider.png", "width": 520 },
+  "topBand": { "img": "divider_top.png", "maxWidth": 640 },
+  "footer": {
+    "sign": "我是刘丹冰 Aceld",
+    "paras": [
+      "《凡人AI修仙》系列持续更新中。",
+      "如果这篇文章对你有用，欢迎**点个「赞」和「在看」**，也欢迎转发给身边正在「引气入体」的道友。"
+    ],
+    "tail": "— 我们下节，不见不散 —"
+  }
+}
