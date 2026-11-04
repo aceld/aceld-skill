@@ -24,6 +24,9 @@ description: 刘丹冰(Aceld) 风格的架构图绘制技能。沉淀其「draw.
 <!-- aceld-rollout:end -->
 
 **本技能覆盖不了**：时序图 / 状态机 / 桑基图 / 甘特图 —— 遇到直接走 ②，别用矩形硬拼。
+**同样覆盖不了数据图**（折线 / U 型曲线 / 柱状 / 散点）：生成器只有节点、连线、分组、便签四种基元。
+数据图请手写 SVG，但**必须沿用本技能的色板、字号、标题位置**（见 `references/style-guide.md` §九），
+否则同一篇文章里会像两个人画的。
 
 ---
 
@@ -31,7 +34,7 @@ description: 刘丹冰(Aceld) 风格的架构图绘制技能。沉淀其「draw.
 
 Aceld 的图是**白底、扁平、draw.io 默认主题**的：圆角矩形模块（1px 同色描边）、圆柱做存储、虚线框分组、便签做标注、细线小箭头、**左侧蓝色「鹰眼」监控列**纵贯全图。颜色取自 draw.io 内置调色板，同类语义同色。
 
-**版式默认竖版**（文档多为「高不限、宽有限」，约 4:5~3:4 最易嵌入文章/讲义，不会被横向裁切）；大屏/PPT 才用横版。竖版示例 `examples/kisflow_arch_portrait.json`，横版示例 `examples/kisflow_arch.json`。
+**版式默认竖版**（文档多为「高不限、宽有限」，约 4:5~3:4 最易嵌入文章/讲义，不会被横向裁切）；大屏/PPT 才用横版。两种版式共用同一份 spec，只改坐标与 `canvas` 宽高：竖版缩窄模块宽度、拉大层间纵向间距、存储放最底部横排，拓扑不变。
 
 ## 1. 核心风格清单（画之前先记住）
 
@@ -46,6 +49,7 @@ Aceld 的图是**白底、扁平、draw.io 默认主题**的：圆角矩形模�
 9. **正交连线 + 小三角箭头**：线略粗（~2.2px）、箭头小而克制。**上下分离→竖进竖出**（A 在 B 上方就竖直出入，不从侧边绕），同行并排才横进横出；端点留隙（头 3px / 箭 8px）使整支箭头落在盒外；**连线画在节点之下**（跨盒时被遮住，不盖住别的模块）；同边多线自动错开端口；逐条「白晕→彩线」形成**跨线桥**；连线标签自动避开节点/标题/其它标签。实线表主数据流，虚线表控制/依赖（如 `调度`、`管理`、`连接`）。
 10. **自由摆放、多图岛**：模块是手摆坐标而非自动布局；一张图可有多个相对独立的子系统，靠分组框区分。
 11. **顺序链可用 chevron/step**：折角箭头块或起止圆表达处理顺序。
+12. **连线不许重合、不许穿节点**：两条线走同一段路，看起来就是一条粗线或一条断线；线穿过方框会被节点盖掉，连箭头一起消失。生成器会在结束时打印重合告警（`!! 连线重合 N 处`），**看到就改**：调坐标、加 `via` 绕行，或改用 `buses` 合并。
 
 ## 2. 两种用法
 
@@ -54,11 +58,12 @@ Aceld 的图是**白底、扁平、draw.io 默认主题**的：圆角矩形模�
 编辑一份声明式 spec（JSON 即可，YAML 需装 PyYAML），运行生成器产出 SVG/HTML：
 
 ```bash
-python skill/scripts/gen_diagram.py skill/assets/diagram.example.json -o out.html
+# 路径相对于本技能目录（skills/aceld-diagram/）
+python scripts/gen_diagram.py assets/diagram.example.json -o out.html
 # 同时得到 out.html（浏览器看）和 out.svg
 ```
 
-spec 字段（坐标自由摆放，详见 `skill/assets/diagram.example.json`）：
+spec 字段（坐标自由摆放，详见 `assets/diagram.example.json`）：
 
 | 字段 | 作用 |
 |---|---|
@@ -67,10 +72,12 @@ spec 字段（坐标自由摆放，详见 `skill/assets/diagram.example.json`）
 | `nodes[]` | 模块：`{id,x,y,w,h,fill(配色token),shape(rect\|cylinder\|note\|circle),label,fontSize,bold}` |
 | `groups[]` | 虚线分组：`{nodes:[id...], title, stroke, fill}`（`fill` 为浅色底） |
 | `tiers[]` | 层级虚线分隔（可选）：`{y:数值, label:"层级名 · 说明"}` |
-| `edges[]` | 连线：`{from,to,color,dashed,label,route}`（`route:"v"/"h"` 可强制竖直/水平；默认按上下/并排自动判断；自动算端口 + 小箭头） |
+| `edges[]` | 连线：`{from,to,color,dashed,label,route,via}`（`route:"v"/"h"` 可强制竖直/水平；默认按上下/并排自动判断；自动算端口 + 小箭头；`via:[[x,y],…]` 给显式路点，绕开节点用） |
+| `buses[]` | 总线：`{from,to,color,dashed,label,y,x,entry}`。`from` 或 `to` 有一侧写成数组 → 多线并成一主干（汇流/分流），根治「N 条平行线贴在一起」 |
 | `callouts[]` | 便签标注：`{at:[x,y], text, color}` |
 | `panels[]` | 背景大色块：`{x,y,w,h,fill,label}`（可选） |
 | `palette` | 覆盖/新增配色 token（可选） |
+| `canvas` | 画布 `{width,height}`（可选）。只放大不缩小；便签/分组贴边时用它兜底留白 |
 
 `fill` 取 style-guide 的配色 token（如 `blue/green/lblue/red/yellow/slate/orange/purple/gray`）；实心深色（`blue/orange/slate/sgreen`）自动配白字，浅色配黑字。改坐标与字段即可，**无需手写 SVG**。
 
@@ -83,7 +90,7 @@ spec 字段（坐标自由摆放，详见 `skill/assets/diagram.example.json`）
 ```
 用户要画图？
 ├─ 能给出组件/依赖清单 → 用法 A：写 JSON spec（nodes/edges/groups）跑生成器
-├─ 只是想看「Aceld 风格长啥样」→ 直接打开 examples/kisflow_arch.html
+├─ 只是想看「Aceld 风格长啥样」→ 跑 assets/diagram.example.json，看产出的 html
 └─ 要手画 / 评审一张图 → 用法 B：按 style-guide 清单核对
 ```
 
@@ -94,11 +101,12 @@ spec 字段（坐标自由摆放，详见 `skill/assets/diagram.example.json`）
 
 ## 5. 参考
 
-- `references/style-guide.md` —— 风格提炼 + 真实配色 token + 适用场景 + 反模式（**画前必读**）
-- `skill/scripts/gen_diagram.py` —— 零依赖 SVG 生成器（Python 标准库，含 YAML 兜底解析）
-- `skill/assets/diagram.example.json` —— spec 模板（KisFlow 架构示例）
-- `examples/` —— 可编辑 spec + 生成结果（`kisflow_arch*` 竖/横、`zinx_arch`、`shorturl_arch`）
-- `cases/` —— 成品案例预览图（README 画廊：KisFlow / Zinx / 短链服务）
+- `references/style-guide.md` —— 风格提炼 + 真实配色 token + **出图前三问 / 出图后自检** + 数据图做法 + 反模式（**画前必读**）
+- `references/SOURCES.md` —— 方法来源登记：借鉴了谁的判断顺序、落到哪一节、commit 与许可
+- `scripts/gen_diagram.py` —— 零依赖 SVG 生成器（Python 标准库，含 YAML 兜底解析）
+- `assets/diagram.example.json` —— spec 模板（KisFlow 架构示例）
+- 仓库版另有 `examples/`（可编辑 spec + 生成结果）与 `cases/`（成品预览图），随仓库分发；
+  本地安装版只装 `skill/` 子目录，**不含这两者**，需要时去仓库取
 
 ---
 

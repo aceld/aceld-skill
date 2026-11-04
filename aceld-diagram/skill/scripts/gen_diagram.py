@@ -14,7 +14,7 @@ gen_diagram.py —— 生成「Aceld 风格」架构图 (SVG)
     python gen_diagram.py spec.json -o out.html     # 指定 html 输出
     python gen_diagram.py spec.yaml --svg out.svg   # 同时导出 svg
 
-spec 字段见 skill/assets/diagram.example.json
+spec 字段见 assets/diagram.example.json
 """
 import sys
 import os
@@ -301,6 +301,11 @@ class Diagram:
                 n["y"] += _dy
             for g in self.groups:
                 g["y"] += _dy
+            for c in spec.get("callouts", []):   # 便签跟着内容走，否则相对节点错位
+                c["at"][1] += _dy
+            for e in spec.get("edges", []):      # 路点同理
+                for p in (e.get("via") or []):
+                    p[1] += _dy
             self.min_y += _dy
             self.max_y += _dy
 
@@ -319,6 +324,11 @@ class Diagram:
                 n["x"] += sh
             for g in self.groups:
                 g["x"] += sh
+            for c in spec.get("callouts", []):   # 同上：便签不跟随会偏到节点之外
+                c["at"][0] += sh
+            for e in spec.get("edges", []):
+                for p in (e.get("via") or []):
+                    p[0] += sh
 
         self.monitor_box = None
         if mon:
@@ -342,6 +352,13 @@ class Diagram:
               [p["x"] for p in self.panels] + [p["x"] + p["w"] for p in self.panels])
         if self.monitor_box:
             xs += [self.monitor_box["x"], self.monitor_box["x"] + self.monitor_box["w"]]
+        # 便签同样占画布：不纳入包围盒，贴底的便签会被裁掉半截
+        # （历史坑：只好给每张图手填 canvas.height 兜底）
+        for c in spec.get("callouts", []):
+            cx, cy = c.get("at", [0, 0])
+            cw = _est_text_w(c.get("text", ""), 13) + 14
+            xs += [cx - cw / 2, cx + cw / 2]
+            self.max_y = max(self.max_y, cy + 14)
         self.min_x = min(xs) if xs else self.MARGIN
         self.max_x = max(xs) if xs else self.MARGIN
         self.width = self.max_x + self.MARGIN
@@ -457,8 +474,58 @@ class Diagram:
             return "left", "right", False
         return "right", "left", False
 
-    def _route(self, a, b, hint=None, o1=0.0, o2=0.0):
+    def _port_toward(self, n, tx, ty, stub=None):
+        """取节点边缘上「朝向 (tx,ty)」的端口点：水平差大就走左右，否则走上下。"""
+        ss = self.STUB_SRC if stub is None else stub
+        cx, cy = n["x"] + n["w"] / 2, n["y"] + n["h"] / 2
+        dx, dy = tx - cx, ty - cy
+        if abs(dx) >= abs(dy):
+            if dx >= 0:
+                return (n["x"] + n["w"] + ss, cy), "right"
+            return (n["x"] - ss, cy), "left"
+        if dy >= 0:
+            return (cx, n["y"] + n["h"] + ss), "bottom"
+        return (cx, n["y"] - ss), "top"
+
+    @staticmethod
+    def _ortho_join(pts):
+        """把任意折线正交化：相邻两点若两个坐标都不同，插入拐点（先水平后垂直），并去掉重复点。"""
+        out = [tuple(pts[0])]
+        for p in pts[1:]:
+            p = tuple(p)
+            lx, ly = out[-1]
+            if abs(lx - p[0]) > 0.5 and abs(ly - p[1]) > 0.5:
+                out.append((p[0], ly))
+            out.append(p)
+        ded = [out[0]]
+        for p in out[1:]:
+            if abs(p[0] - ded[-1][0]) > 0.5 or abs(p[1] - ded[-1][1]) > 0.5:
+                ded.append(p)
+        return ded
+
+    def _route_via(self, a, b, via):
+        """显式路点路由：起止端口自动取「朝向首个/末个路点」的边缘，中间按路点正交折线。
+        自动布线算不出「绕开节点、走外侧通道」的路径，这类关系必须由 spec 指定路点。"""
+        pts = [(float(p[0]), float(p[1])) for p in via]
+        start, _ = self._port_toward(a, pts[0][0], pts[0][1])
+        end, _ = self._port_toward(b, pts[-1][0], pts[-1][1])
+        path = self._ortho_join([start] + pts + [end])
+        d = "M%.1f,%.1f" % path[0]
+        for p in path[1:]:
+            d += " L%.1f,%.1f" % p
+        cands = []
+        for i in range(len(path) - 1):
+            (x1, y1), (x2, y2) = path[i], path[i + 1]
+            if abs(y1 - y2) < 0.5 and abs(x1 - x2) > 70:
+                cands.append(((x1 + x2) / 2, y1 - 12))
+        if not cands:
+            cands = [(path[0][0] + 13, (path[0][1] + path[-1][1]) / 2)]
+        return {"p1": start, "p2": end, "d": d, "pts": path, "lab_candidates": cands}
+
+    def _route(self, a, b, hint=None, o1=0.0, o2=0.0, via=None):
         """正交路由：上下分离→竖进竖出；同行/并排→横进横出。o1/o2 为两端沿边偏移（端口分配）。"""
+        if via:
+            return self._route_via(a, b, via)
         acx, acy = a["x"] + a["w"] / 2, a["y"] + a["h"] / 2
         bcx, bcy = b["x"] + b["w"] / 2, b["y"] + b["h"] / 2
         s1, s2, vertical = self._edge_sides(a, b, hint)
@@ -483,9 +550,14 @@ class Diagram:
         if vertical:
             p1 = (self._nudge(p1[0], a["x"] + 6, a["x"] + a["w"] - 6, self.fb_x), p1[1])
             p2 = (self._nudge(p2[0], b["x"] + 6, b["x"] + b["w"] - 6, self.fb_x), p2[1])
+            # 两端 x 只差一点点 → 拉成一条直线。否则会出现几像素的折角，看着就是「线歪了」
+            if abs(p1[0] - p2[0]) <= 14:
+                x = (p1[0] + p2[0]) / 2
+                p1, p2 = (x, p1[1]), (x, p2[1])
             my = self._jog(p1[1], p2[1], self.fb_y)
             d = (f"M{p1[0]:.1f},{p1[1]:.1f} L{p1[0]:.1f},{my:.1f} "
                  f"L{p2[0]:.1f},{my:.1f} L{p2[0]:.1f},{p2[1]:.1f}")
+            pts = [p1, (p1[0], my), (p2[0], my), p2]
             midx = (p1[0] + p2[0]) / 2
             cands = [
                 (p1[0] + 13, (p1[1] + my) / 2),   # 源头竖直段右侧（避开分组标题）
@@ -497,9 +569,13 @@ class Diagram:
         else:
             p1 = (p1[0], self._nudge(p1[1], a["y"] + 6, a["y"] + a["h"] - 6, self.fb_y))
             p2 = (p2[0], self._nudge(p2[1], b["y"] + 6, b["y"] + b["h"] - 6, self.fb_y))
+            if abs(p1[1] - p2[1]) <= 14:
+                y = (p1[1] + p2[1]) / 2
+                p1, p2 = (p1[0], y), (p2[0], y)
             mx = self._jog(p1[0], p2[0], self.fb_x)
             d = (f"M{p1[0]:.1f},{p1[1]:.1f} L{mx:.1f},{p1[1]:.1f} "
                  f"L{mx:.1f},{p2[1]:.1f} L{p2[0]:.1f},{p2[1]:.1f}")
+            pts = [p1, (mx, p1[1]), (mx, p2[1]), p2]
             midy = (p1[1] + p2[1]) / 2
             cands = [
                 (mx, midy - 12),
@@ -507,13 +583,15 @@ class Diagram:
                 (p1[0] + (p2[0] - p1[0]) * 0.3, midy - 12),
                 (p1[0] + (p2[0] - p1[0]) * 0.7, midy - 12),
             ]
-        return {"p1": p1, "p2": p2, "d": d, "lab_candidates": cands}
+        return {"p1": p1, "p2": p2, "d": d, "pts": pts, "lab_candidates": cands}
 
     def _assign_ports(self, edges):
         """同一节点的同一条边若有多条连线，按对端位置均匀错开，避免端口重叠、箭头被压。"""
         from collections import defaultdict
         ends = defaultdict(list)
         for i, e in enumerate(edges):
+            if e.get("via"):
+                continue  # 显式路点的边自己控制路径，不参与端口错开
             a = self.nodes.get(e["from"])
             b = self.nodes.get(e["to"])
             if not a or not b:
@@ -536,7 +614,7 @@ class Diagram:
         b = self.nodes.get(e["to"])
         if not a or not b:
             return None
-        r = self._route(a, b, e.get("route"), o1, o2)
+        r = self._route(a, b, e.get("route"), o1, o2, e.get("via"))
         d = r["d"]
         color = e.get("color", "#5a5a5a")
         dashed = bool(e.get("dashed"))
@@ -545,8 +623,119 @@ class Diagram:
                 f'stroke-linejoin="round" stroke-linecap="round" {dash}/>')
         line = (f'<path d="{d}" fill="none" stroke="{color}" stroke-width="2.2" '
                 f'stroke-linejoin="round" stroke-linecap="round" {dash}marker-end="url(#ah_{color.lstrip("#")})"/>')
-        return {"color": color, "halo": halo, "line": line,
+        return {"color": color, "halo": halo, "line": line, "pts": r["pts"],
                 "label": e.get("label"), "lab_candidates": r["lab_candidates"]}
+
+    # ---------- 总线：多线并一 ----------
+    def _bus_geoms(self):
+        """总线：多源汇入同一目标（汇流）/ 单一源分流到多目标（分流）。
+        一根主干 + 若干短支线，替代「N 条平行线贴在一起」——那种画法必然重合。"""
+        out = []
+        for bus in self.spec.get("buses", []):
+            f, t = bus.get("from"), bus.get("to")
+            fs = [f] if isinstance(f, str) else list(f or [])
+            ts = [t] if isinstance(t, str) else list(t or [])
+            fn = [self.nodes[i] for i in fs if i in self.nodes]
+            tn = [self.nodes[i] for i in ts if i in self.nodes]
+            if not fn or not tn:
+                continue
+            color = bus.get("color", "#5a5a5a")
+            if len(fn) > 1 and len(tn) == 1:
+                paths = self._merge_bus(fn, tn[0], bus)
+            elif len(fn) == 1 and len(tn) > 1:
+                paths = self._split_bus(fn[0], tn, bus)
+            else:
+                continue
+            if not paths:
+                continue
+            dash = "stroke-dasharray='6,4' " if bus.get("dashed") else ""
+            parts, pts, cands = [], [], []
+            for p in paths:
+                p_pts = p["pts"]
+                d = "M%.1f,%.1f" % p_pts[0]
+                for q in p_pts[1:]:
+                    d += " L%.1f,%.1f" % q
+                mark = f'marker-end="url(#ah_{color.lstrip("#")})"' if p["arrow"] else ""
+                halo = (f'<path d="{d}" fill="none" stroke="#ffffff" stroke-width="7.0" '
+                        f'stroke-linejoin="round" stroke-linecap="round" {dash}/>')
+                line = (f'<path d="{d}" fill="none" stroke="{color}" stroke-width="2.2" '
+                        f'stroke-linejoin="round" stroke-linecap="round" {dash}{mark}/>')
+                parts.append({"halo": halo, "line": line, "pts": p_pts})
+                pts += p_pts
+                for i in range(len(p_pts) - 1):
+                    (x1, y1), (x2, y2) = p_pts[i], p_pts[i + 1]
+                    if abs(y1 - y2) < 0.5 and abs(x1 - x2) > 70:
+                        cands.append(((x1 + x2) / 2, y1 - 12))
+                    elif abs(x1 - x2) < 0.5 and abs(y1 - y2) > 50:
+                        cands.append((x1 + 14, (y1 + y2) / 2))
+            out.append({"color": color, "parts": parts, "pts": pts,
+                        "label": bus.get("label"),
+                        "lab_candidates": cands or [(pts[0][0] + 14, pts[0][1])]})
+        return out
+
+    def _merge_bus(self, fn, tn, bus):
+        """多源 → 单目标：各源竖下到主干，主干水平一段，再从入口点竖下到目标。"""
+        bottoms = [n["y"] + n["h"] for n in fn]
+        by = bus.get("y")
+        if by is None:
+            by = (max(bottoms) + tn["y"]) / 2
+        xs = [n["x"] + n["w"] / 2 for n in fn]
+        tx = bus.get("entry")
+        if tx is None:
+            tx = tn["x"] + tn["w"] / 2
+        lo, hi = min(xs + [tx]), max(xs + [tx])
+        paths = []
+        for n in fn:
+            cx = n["x"] + n["w"] / 2
+            paths.append({"pts": [(cx, n["y"] + n["h"] + self.STUB_SRC), (cx, by)], "arrow": False})
+        paths.append({"pts": [(lo, by), (hi, by)], "arrow": False})
+        paths.append({"pts": [(tx, by), (tx, tn["y"] - self.STUB_DST)], "arrow": True})
+        return paths
+
+    def _split_bus(self, fn, tn, bus):
+        """单源 → 多目标：源横出到主干，主干竖直一段，再横进各目标。"""
+        bx = bus.get("x")
+        rights = fn["x"] + fn["w"]
+        if bx is None:
+            bx = (rights + min(n["x"] for n in tn)) / 2
+        ys = [n["y"] + n["h"] / 2 for n in tn]
+        fy = bus.get("entry")
+        if fy is None:
+            fy = fn["y"] + fn["h"] / 2
+        lo, hi = min(ys + [fy]), max(ys + [fy])
+        paths = [{"pts": [(rights + self.STUB_SRC, fy), (bx, fy)], "arrow": False},
+                 {"pts": [(bx, lo), (bx, hi)], "arrow": False}]
+        for n in tn:
+            ty = n["y"] + n["h"] / 2
+            paths.append({"pts": [(bx, ty), (n["x"] - self.STUB_DST, ty)], "arrow": True})
+        return paths
+
+    # ---------- 自检：连线重合 ----------
+    def _check_overlaps(self, geoms):
+        """两条线走在同一段路上，看起来就是一条粗线或一条断线。生成时直接报出来。"""
+        segs = []
+        for gi, g in enumerate(geoms):
+            pts = g["pts"]
+            for i in range(len(pts) - 1):
+                (x1, y1), (x2, y2) = pts[i], pts[i + 1]
+                if abs(y1 - y2) < 0.5 and abs(x1 - x2) > 4:
+                    segs.append((gi, "h", round(y1, 1), min(x1, x2), max(x1, x2)))
+                elif abs(x1 - x2) < 0.5 and abs(y1 - y2) > 4:
+                    segs.append((gi, "v", round(x1, 1), min(y1, y2), max(y1, y2)))
+        hits = []
+        for i in range(len(segs)):
+            for j in range(i + 1, len(segs)):
+                a, b = segs[i], segs[j]
+                if a[0] == b[0] or a[1] != b[1]:
+                    continue
+                if abs(a[2] - b[2]) > 1.5:
+                    continue
+                ov = min(a[4], b[4]) - max(a[3], b[3])
+                if ov > 6:
+                    hits.append({"a": a[0], "b": b[0], "dir": a[1],
+                                 "at": a[2], "len": round(ov, 1)})
+        self.warnings = hits
+        return hits
 
     def _place_labels(self, edge_geoms):
         """为连线标签选位：避开节点、分组标题、鹰眼列与已放置的标签，杜绝文字互相覆盖。"""
@@ -640,9 +829,11 @@ class Diagram:
         ports = self._assign_ports(edges)
         edge_geoms = [g for g in (self._edge_geom(e, ports[i][0], ports[i][1])
                                   for i, e in enumerate(edges)) if g]
-        self._place_labels(edge_geoms)
+        bus_geoms = self._bus_geoms()
+        all_geoms = edge_geoms + bus_geoms
+        self._place_labels(all_geoms)
         added_marks = set()
-        for g in edge_geoms:
+        for g in all_geoms:
             mn = "ah_" + g["color"].lstrip("#")
             if mn not in added_marks:
                 self._add(self._arrow_marker(g["color"], mn))
@@ -650,13 +841,17 @@ class Diagram:
         for g in edge_geoms:
             self._add(g["halo"])
             self._add(g["line"])
+        for g in bus_geoms:
+            for p in g["parts"]:
+                self._add(p["halo"])
+                self._add(p["line"])
         # 节点（盒子 + 文字）画在连线之上 → 跨过矩形的线被遮挡
         for n in self.nodes.values():
             self._add(self._node_box(n))
             self._add(self._node_text(n))
         # 连线标签画在最上层，避免被节点/底色盖住
-        for g in edge_geoms:
-            if g.get("label"):
+        for g in all_geoms:
+            if g.get("label") and g.get("label_at"):
                 mx, my = g["label_at"]
                 tw = g["label_tw"]
                 self._add(f'<rect x="{mx-tw/2:.1f}" y="{my-10:.1f}" width="{tw:.1f}" height="19" '
@@ -692,6 +887,7 @@ class Diagram:
         if meta.get("subtitle"):
             self._add(f'<text x="{title_x:.1f}" y="{ty+44:.1f}" fill="#888" font-size="14" '
                       f'font-family="{F}">{esc(meta["subtitle"])}</text>')
+        self._check_overlaps(all_geoms)
 
     # ---------- 输出 ----------
     def svg(self):
@@ -756,6 +952,13 @@ def main():
     with open(out_svg, "w", encoding="utf-8") as f:
         f.write(d.svg())
     print(f"OK -> {out_html}\nOK -> {out_svg}  ({d.width:.0f}x{d.height:.0f})")
+    warns = getattr(d, "warnings", None)
+    if warns:
+        print(f"!! 连线重合 {len(warns)} 处 —— 两条线走在同一段路上，看起来会像一条粗线或断线：")
+        for w in warns:
+            axis = "y" if w["dir"] == "h" else "x"
+            print(f"   geom#{w['a']} 与 geom#{w['b']} 在 {axis}={w['at']:.0f} 上重叠 {w['len']:.0f}px"
+                  f" —— 调坐标，或改用 buses 合并")
 
 
 if __name__ == "__main__":
