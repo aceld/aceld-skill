@@ -29,14 +29,6 @@
       { "text": "12 张架构图", "fg": "#2a1a00", "bg": "#fbbf24" }
     ]
   },
-  "notice": {
-    "label": "⚠️ 声明",
-    "text": "本课程除知识内容由本人输出，视频制作/录制、文案编写、语音合成、文章排版与各平台发布均由 AI 辅助完成，用的是低成本模型。若出现发音不准等瑕疵，请理解。",
-    "bg": "#fff8e8",
-    "border": "#ffe2ab",
-    "color": "#8a6a33",
-    "strongColor": "#c07a12"
-  },
   "divider": { "img": "divider.png", "width": 520 },
   "topBand": { "img": "divider_top.png", "maxWidth": 640 },
   "footer": {

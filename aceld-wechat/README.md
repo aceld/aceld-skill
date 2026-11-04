@@ -63,7 +63,7 @@ python skill/scripts/publish.py --html work/公众号版.html --meta work/meta.j
 - 服务器 IP
 
 token 是运行时从地址栏现抓的，进程结束就没了。`assets/theme-aceld.json` 里的署名、
-声明、banner 文案都只是**示例**，改成你自己的；不想进仓库就用
+banner 文案都只是**示例**，改成你自己的；不想进仓库就用
 `assets/theme.local.json`（已在 `.gitignore`）。
 
 ## 目录

@@ -32,7 +32,7 @@ FALLBACK = {
         "hlBg": "#fff3c4", "hlTxt": "#7a4d00", "pageBg": "#f6f9fc",
         "cardBg": "#edf4fa", "cardBg2": "#fdf6e9", "cardBorder": "#e4eef6",
     },
-    "banner": None, "notice": None, "footer": None,
+    "banner": None, "footer": None,
     "divider": None, "topBand": None,
 }
 
@@ -43,7 +43,7 @@ def load_theme(path):
         with open(path, encoding="utf-8") as f:
             user = json.load(f)
         th["colors"].update(user.get("colors") or {})
-        for k in ("banner", "notice", "footer", "divider", "topBand"):
+        for k in ("banner", "footer", "divider", "topBand"):
             if k in user:
                 th[k] = user[k]
     return th
@@ -137,21 +137,6 @@ class Renderer:
             '<p style="margin:16px 0 0;">%s</p>'
             '</section></section>'
             % (b.get("bg", "#0f2b3d"), eyebrow, self.esc(b.get("title", "")), sub, tags)
-        )
-
-    def notice(self):
-        n = self.t.get("notice")
-        if not n:
-            return ""
-        return (
-            '<section style="margin:0 0 18px;padding:13px 16px;border-radius:10px;'
-            'background:%s;border:1px solid %s;">'
-            '<p style="margin:0;font-size:13px;line-height:1.8;color:%s;'
-            'letter-spacing:0.3px;text-align:justify;">'
-            '<strong style="color:%s;">%s</strong>　%s</p></section>'
-            % (n.get("bg", "#fff8e8"), n.get("border", "#ffe2ab"), n.get("color", "#8a6a33"),
-               n.get("strongColor", "#c07a12"), self.esc(n.get("label", "")),
-               self.esc(n.get("text", "")))
         )
 
     def footer(self):
@@ -494,7 +479,6 @@ def main():
     ap.add_argument("--img-prefix", default="文章配图/", help="md 里图片路径要剥掉的前缀")
     ap.add_argument("--no-banner", action="store_true")
     ap.add_argument("--no-footer", action="store_true")
-    ap.add_argument("--no-notice", action="store_true")
     a = ap.parse_args()
 
     theme = load_theme(a.theme)
@@ -502,8 +486,6 @@ def main():
         theme["banner"] = None
     if a.no_footer:
         theme["footer"] = None
-    if a.no_notice:
-        theme["notice"] = None
 
     r = Renderer(theme, a.img_base, a.img_prefix)
     with open(a.src, encoding="utf-8") as f:
@@ -512,7 +494,7 @@ def main():
 
     full = ('<section style="background:%s;padding:16px 12px 22px;">'
             % theme["colors"]["pageBg"]
-            + r.notice() + "\n" + r.top_band() + "\n" + r.banner() + "\n"
+            + r.top_band() + "\n" + r.banner() + "\n"
             + body + "\n" + r.footer() + '</section>')
 
     with open(a.out, "w", encoding="utf-8") as f:

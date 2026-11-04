@@ -37,7 +37,7 @@ description: 微信公众号文章编写与发布全流程。涵盖「怎么写�
 | Cookie / token | 不落盘。token 每次从地址栏现抓，进程结束就没了 |
 | 作者名 / 公众号名 | 只在 `assets/theme-*.json` 里作为**示例文案**，改成你自己的 |
 
-想把个人文案（署名、声明、banner）放本地而不进仓库，就用 `assets/theme.local.json`
+想把个人文案（署名、banner）放本地而不进仓库，就用 `assets/theme.local.json`
 并确认 `.gitignore` 里有它。
 
 ---
@@ -138,8 +138,8 @@ GRADIENT  : 0（必须为 0，微信会拦渐变）
 
 ### 换配色 / 换文案
 
-复制 `assets/theme-aceld.json` 改 `colors`，`banner` / `notice` / `footer` 设成 `null` 就不渲染。
-也可以用 `--no-banner --no-footer --no-notice` 单独关掉。
+复制 `assets/theme-aceld.json` 改 `colors`，`banner` / `footer` 设成 `null` 就不渲染。
+也可以用 `--no-banner --no-footer` 单独关掉。
 
 ---
 
@@ -211,7 +211,7 @@ aceld-wechat/
 │   ├── publish.py        粘贴 → mmbiz → 存草稿（零凭据，绝不发表）
 │   └── doctor.py         发布前环境自检
 ├── assets/
-│   └── theme-aceld.json  示例主题（配色 + banner/notice/footer 文案）
+│   └── theme-aceld.json  示例主题（配色 + banner/footer 文案）
 └── references/
     ├── wechat-constraints.md   微信编辑器 8 类硬约束 + 踩坑记录
     └── article-style.md        标题、结构、去 AI 味、自检清单
