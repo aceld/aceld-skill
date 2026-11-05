@@ -9,28 +9,28 @@
 <text x="67.0" y="610.0" fill="#ffffff" font-size="16" font-weight="700" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">口</text>
 <text x="67.0" y="630.0" fill="#ffffff" font-size="16" font-weight="700" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">层</text>
 <marker id="ah_5a5a5a" markerWidth="13" markerHeight="13" refX="10" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L11,4 L0,8 Z" fill="#5a5a5a"/></marker>
-<path d="M302.0,163.0 L302.0,197.2 L302.0,197.2 L302.0,222.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M302.0,163.0 L302.0,197.2 L302.0,197.2 L302.0,222.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
-<path d="M302.0,285.0 L302.0,298.5 L290.0,298.5 L290.0,312.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M302.0,285.0 L302.0,298.5 L290.0,298.5 L290.0,312.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
-<path d="M302.0,375.0 L302.0,423.5 L219.5,423.5 L219.5,472.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M302.0,375.0 L302.0,423.5 L219.5,423.5 L219.5,472.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
-<path d="M310.0,506.0 L314.5,506.0 L314.5,506.0 L319.0,506.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M310.0,506.0 L314.5,506.0 L314.5,506.0 L319.0,506.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
-<path d="M505.0,506.0 L509.5,506.0 L509.5,506.0 L514.0,506.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M505.0,506.0 L509.5,506.0 L509.5,506.0 L514.0,506.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
+<path d="M302.0,163.0 L302.0,222.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M302.0,163.0 L302.0,222.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M296.0,285.0 L296.0,312.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M296.0,285.0 L296.0,312.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M260.8,375.0 L260.8,472.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M260.8,375.0 L260.8,472.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M310.0,506.0 L319.0,506.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M310.0,506.0 L319.0,506.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M505.0,506.0 L514.0,506.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M505.0,506.0 L514.0,506.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
 <path d="M609.5,535.0 L609.5,583.5 L219.5,583.5 L219.5,632.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M609.5,535.0 L609.5,583.5 L219.5,583.5 L219.5,632.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
-<path d="M310.0,666.0 L314.5,666.0 L314.5,666.0 L319.0,666.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M310.0,666.0 L314.5,666.0 L314.5,666.0 L319.0,666.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
-<path d="M505.0,666.0 L509.5,666.0 L509.5,666.0 L514.0,666.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M505.0,666.0 L509.5,666.0 L509.5,666.0 L514.0,666.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
+<path d="M609.5,535.0 L609.5,583.5 L219.5,583.5 L219.5,632.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M310.0,666.0 L319.0,666.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M310.0,666.0 L319.0,666.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M505.0,666.0 L514.0,666.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M505.0,666.0 L514.0,666.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
 <path d="M609.5,695.0 L609.5,768.5 L392.0,768.5 L392.0,842.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M609.5,695.0 L609.5,768.5 L392.0,768.5 L392.0,842.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
-<path d="M395.0,346.0 L414.5,346.0 L414.5,346.0 L434.0,346.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
-<path d="M395.0,346.0 L414.5,346.0 L414.5,346.0 L434.0,346.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' marker-end="url(#ah_5a5a5a)"/>
+<path d="M609.5,695.0 L609.5,768.5 L392.0,768.5 L392.0,842.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M395.0,346.0 L434.0,346.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
+<path d="M395.0,346.0 L434.0,346.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
 <path d="M314.0,317.0 L314.0,303.5 L532.0,303.5 L532.0,290.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
-<path d="M314.0,317.0 L314.0,303.5 L532.0,303.5 L532.0,290.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' marker-end="url(#ah_5a5a5a)"/>
+<path d="M314.0,317.0 L314.0,303.5 L532.0,303.5 L532.0,290.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
 <rect x="212.0" y="110.0" width="180.0" height="50.0" rx="8" ry="8" fill="#647687" stroke="#314354" stroke-width="1.2" />
 <text x="302.0" y="135.0" fill="#ffffff" font-size="15" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">外部客户端 Client</text>
 <rect x="212.0" y="230.0" width="180.0" height="52.0" rx="8" ry="8" fill="#1ba1e2" stroke="#006EAF" stroke-width="1.2" />
@@ -65,12 +65,12 @@
 <text x="332.0" y="1115.0" fill="#ffffff" font-size="15" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">AsyncOp 异步</text>
 <rect x="422.0" y="1090.0" width="140.0" height="50.0" rx="8" ry="8" fill="#647687" stroke="#314354" stroke-width="1.2" />
 <text x="492.0" y="1115.0" fill="#ffffff" font-size="15" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">Utils 工具</text>
-<rect x="299.7" y="170.1" width="30.6" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
-<text x="315.0" y="180.1" fill="#333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">TCP</text>
-<rect x="277.4" y="295.2" width="51.3" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
-<text x="303.0" y="305.2" fill="#333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">Accept</text>
-<rect x="285.0" y="389.2" width="60.0" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
-<text x="315.0" y="399.2" fill="#333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">读字节流</text>
+<rect x="299.7" y="182.5" width="30.6" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
+<text x="315.0" y="192.5" fill="#333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">TCP</text>
+<rect x="283.4" y="288.5" width="51.3" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
+<text x="309.0" y="298.5" fill="#333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">Accept</text>
+<rect x="243.8" y="413.5" width="60.0" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
+<text x="273.8" y="423.5" fill="#333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">读字节流</text>
 <rect x="596.9" y="721.8" width="51.3" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
 <text x="622.5" y="731.8" fill="#333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">Handle</text>
 <rect x="397.0" y="324.0" width="35.0" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
@@ -92,7 +92,29 @@
 <rect x="108.0" y="968.0" width="613.0" height="212.0" rx="10" ry="10" fill="none" stroke="#9AA7B5" stroke-width="1.2" stroke-dasharray='7,5'/>
 <rect x="114.0" y="972.0" width="185.6" height="19" rx="3" fill="#EFF2F6" stroke="none"/>
 <text x="120.0" y="983.0" fill="#3a4550" font-size="13" font-weight="700" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif">支撑设施 · Infrastructure</text>
-<rect x="400.3" y="915.0" width="219.4" height="32.0" rx="5" ry="5" fill="#fff2cc" stroke="#d6b656" stroke-width="1.0" />
-<text x="510.0" y="933.0" fill="#333" font-size="13" font-weight="700" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">响应 → conn.SendMsg 回写客户端</text>
+<rect x="282.3" y="915.0" width="219.4" height="32.0" rx="5" ry="5" fill="#fff2cc" stroke="#d6b656" stroke-width="1.0" />
+<text x="392.0" y="933.0" fill="#333" font-size="13" font-weight="700" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">响应 → conn.SendMsg 回写客户端</text>
 <text x="110.0" y="66.0" fill="#000" font-size="26" font-weight="700" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif">Zinx 轻量级 TCP 服务器框架</text>
-<text x="110.0" y="90.0" fill="#888" font-size="14" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif">Golang 并发服务器框架 · 请求处理链路架构（Connection → Decode → Dispatch → Router）</text></svg>
+<text x="110.0" y="90.0" fill="#888" font-size="14" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif">Golang 并发服务器框架 · 请求处理链路架构（Connection → Decode → Dispatch → Router）</text>
+<path d="M302.0,204.0 L302.0,222.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M302.0,204.0 L302.0,222.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M296.0,294.0 L296.0,312.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M296.0,294.0 L296.0,312.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M260.8,454.0 L260.8,472.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M260.8,454.0 L260.8,472.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M310.0,506.0 L319.0,506.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M310.0,506.0 L319.0,506.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M505.0,506.0 L514.0,506.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M505.0,506.0 L514.0,506.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M219.5,614.0 L219.5,632.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M219.5,614.0 L219.5,632.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M310.0,666.0 L319.0,666.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M310.0,666.0 L319.0,666.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M505.0,666.0 L514.0,666.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M505.0,666.0 L514.0,666.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M392.0,824.0 L392.0,842.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M392.0,824.0 L392.0,842.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M416.0,346.0 L434.0,346.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
+<path d="M416.0,346.0 L434.0,346.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4'  marker-end="url(#ah_5a5a5a)"/>
+<path d="M527.5,303.5 L532.0,290.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
+<path d="M527.5,303.5 L532.0,290.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4'  marker-end="url(#ah_5a5a5a)"/></svg>

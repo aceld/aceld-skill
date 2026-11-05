@@ -3,34 +3,34 @@
 <rect x="40.0" y="598.0" width="649.0" height="312.0" rx="10" ry="10" fill="#EAF1F9" stroke="none" stroke-width="0" />
 <rect x="40.0" y="1038.0" width="649.0" height="158.0" rx="10" ry="10" fill="#FDECEA" stroke="none" stroke-width="0" />
 <marker id="ah_5a5a5a" markerWidth="13" markerHeight="13" refX="10" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L11,4 L0,8 Z" fill="#5a5a5a"/></marker>
-<path d="M232.0,135.0 L246.5,135.0 L246.5,135.0 L261.0,135.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M232.0,135.0 L246.5,135.0 L246.5,135.0 L261.0,135.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
+<path d="M232.0,135.0 L261.0,135.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M232.0,135.0 L261.0,135.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
 <path d="M339.0,163.0 L339.0,257.5 L137.0,257.5 L137.0,352.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M339.0,163.0 L339.0,257.5 L137.0,257.5 L137.0,352.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
-<path d="M188.0,383.0 L194.5,383.0 L194.5,383.0 L201.0,383.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M188.0,383.0 L194.5,383.0 L194.5,383.0 L201.0,383.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
-<path d="M308.0,383.0 L314.5,383.0 L314.5,383.0 L321.0,383.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M308.0,383.0 L314.5,383.0 L314.5,383.0 L321.0,383.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
-<path d="M428.0,383.0 L434.5,383.0 L434.5,383.0 L441.0,383.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M428.0,383.0 L434.5,383.0 L434.5,383.0 L441.0,383.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
-<path d="M548.0,383.0 L554.5,383.0 L554.5,383.0 L561.0,383.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M548.0,383.0 L554.5,383.0 L554.5,383.0 L561.0,383.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
-<path d="M617.0,357.0 L617.0,262.5 L564.0,262.5 L564.0,168.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M617.0,357.0 L617.0,262.5 L564.0,262.5 L564.0,168.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
-<path d="M416.0,665.0 L376.5,665.0 L376.5,665.0 L337.0,665.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
-<path d="M416.0,665.0 L376.5,665.0 L376.5,665.0 L337.0,665.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' marker-end="url(#ah_5a5a5a)"/>
+<path d="M339.0,163.0 L339.0,257.5 L137.0,257.5 L137.0,352.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M188.0,383.0 L201.0,383.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M188.0,383.0 L201.0,383.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M308.0,383.0 L321.0,383.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M308.0,383.0 L321.0,383.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M428.0,383.0 L441.0,383.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M428.0,383.0 L441.0,383.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M548.0,383.0 L561.0,383.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M548.0,383.0 L561.0,383.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M590.5,357.0 L590.5,168.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M590.5,357.0 L590.5,168.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M416.0,665.0 L337.0,665.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
+<path d="M416.0,665.0 L337.0,665.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
 <path d="M244.0,637.0 L244.0,525.5 L149.0,525.5 L149.0,414.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
-<path d="M244.0,637.0 L244.0,525.5 L149.0,525.5 L149.0,414.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' marker-end="url(#ah_5a5a5a)"/>
+<path d="M244.0,637.0 L244.0,525.5 L149.0,525.5 L149.0,414.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
 <path d="M504.0,817.0 L504.0,757.5 L244.0,757.5 L244.0,698.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M504.0,817.0 L504.0,757.5 L244.0,757.5 L244.0,698.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
+<path d="M504.0,817.0 L504.0,757.5 L244.0,757.5 L244.0,698.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
 <path d="M244.0,873.0 L244.0,972.5 L287.0,972.5 L287.0,1072.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
-<path d="M244.0,873.0 L244.0,972.5 L287.0,972.5 L287.0,1072.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' marker-end="url(#ah_5a5a5a)"/>
-<path d="M125.0,409.0 L125.0,740.5 L134.0,740.5 L134.0,1072.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M125.0,409.0 L125.0,740.5 L134.0,740.5 L134.0,1072.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
+<path d="M244.0,873.0 L244.0,972.5 L287.0,972.5 L287.0,1072.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
+<path d="M129.5,409.0 L129.5,1072.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M129.5,409.0 L129.5,1072.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
 <path d="M377.0,409.0 L377.0,740.5 L311.0,740.5 L311.0,1072.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M377.0,409.0 L377.0,740.5 L311.0,740.5 L311.0,1072.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
+<path d="M377.0,409.0 L377.0,740.5 L311.0,740.5 L311.0,1072.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
 <path d="M617.0,409.0 L617.0,740.5 L464.0,740.5 L464.0,1072.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
-<path d="M617.0,409.0 L617.0,740.5 L464.0,740.5 L464.0,1072.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah_5a5a5a)"/>
+<path d="M617.0,409.0 L617.0,740.5 L464.0,740.5 L464.0,1072.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
 <rect x="89.0" y="110.0" width="140.0" height="50.0" rx="8" ry="8" fill="#647687" stroke="#314354" stroke-width="1.2" />
 <text x="159.0" y="135.0" fill="#ffffff" font-size="15" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">数据源 Source</text>
 <rect x="269.0" y="110.0" width="140.0" height="50.0" rx="8" ry="8" fill="#1ba1e2" stroke="#006EAF" stroke-width="1.2" />
@@ -67,8 +67,8 @@
 <text x="257.0" y="581.2" fill="#333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">调度</text>
 <rect x="239.5" y="912.8" width="35.0" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
 <text x="257.0" y="922.8" fill="#333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">连接</text>
-<rect x="114.2" y="564.8" width="47.5" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
-<text x="138.0" y="574.8" fill="#333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">写缓存</text>
+<rect x="118.8" y="730.5" width="47.5" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
+<text x="142.5" y="740.5" fill="#333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">写缓存</text>
 <rect x="372.5" y="564.8" width="35.0" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
 <text x="390.0" y="574.8" fill="#333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">落库</text>
 <rect x="612.5" y="564.8" width="35.0" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
@@ -83,4 +83,32 @@
 <rect x="46.0" y="1042.0" width="64.0" height="19" rx="3" fill="#FDECEA" stroke="none"/>
 <text x="52.0" y="1053.0" fill="#3a4550" font-size="13" font-weight="700" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif">外部依赖</text>
 <text x="40.0" y="66.0" fill="#000" font-size="26" font-weight="700" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif">KisFlow 流式计算引擎</text>
-<text x="40.0" y="90.0" fill="#888" font-size="14" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif">实时数据流处理框架 · 竖版 · Aceld 风格</text></svg>
+<text x="40.0" y="90.0" fill="#888" font-size="14" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif">实时数据流处理框架 · 竖版 · Aceld 风格</text>
+<path d="M243.0,135.0 L261.0,135.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M243.0,135.0 L261.0,135.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M137.0,334.0 L137.0,352.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M137.0,334.0 L137.0,352.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M188.0,383.0 L201.0,383.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M188.0,383.0 L201.0,383.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M308.0,383.0 L321.0,383.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M308.0,383.0 L321.0,383.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M428.0,383.0 L441.0,383.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M428.0,383.0 L441.0,383.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M548.0,383.0 L561.0,383.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M548.0,383.0 L561.0,383.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M590.5,186.0 L590.5,168.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M590.5,186.0 L590.5,168.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M355.0,665.0 L337.0,665.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
+<path d="M355.0,665.0 L337.0,665.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4'  marker-end="url(#ah_5a5a5a)"/>
+<path d="M149.0,432.0 L149.0,414.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
+<path d="M149.0,432.0 L149.0,414.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4'  marker-end="url(#ah_5a5a5a)"/>
+<path d="M244.0,716.0 L244.0,698.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M244.0,716.0 L244.0,698.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M287.0,1054.0 L287.0,1072.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
+<path d="M287.0,1054.0 L287.0,1072.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4'  marker-end="url(#ah_5a5a5a)"/>
+<path d="M129.5,1054.0 L129.5,1072.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M129.5,1054.0 L129.5,1072.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M311.0,1054.0 L311.0,1072.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M311.0,1054.0 L311.0,1072.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M464.0,1054.0 L464.0,1072.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M464.0,1054.0 L464.0,1072.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/></svg>

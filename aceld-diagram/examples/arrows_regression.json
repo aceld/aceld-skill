@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "title": "箭头与直连 · 回归样例",
+    "subtitle": "上下对得上就一条直线下来；箭头永远画在最上层，不被任何东西盖住"
+  },
+  "canvas": { "width": 820, "height": 620 },
+  "nodes": [
+    { "id": "gw",    "x": 220, "y": 110, "w": 180, "h": 56, "fill": "blue",   "label": "API Gateway" },
+    { "id": "svc",   "x": 220, "y": 270, "w": 180, "h": 56, "fill": "orange", "label": "业务服务" },
+    { "id": "cache", "x": 470, "y": 270, "w": 180, "h": 56, "fill": "yellow", "label": "Redis 缓存" },
+    { "id": "db",    "x": 220, "y": 430, "w": 180, "h": 62, "fill": "green",  "label": "MySQL", "shape": "cylinder" }
+  ],
+  "edges": [
+    { "from": "gw",  "to": "svc",   "label": "请求" },
+    { "from": "gw",  "to": "cache", "label": "旁路读", "dashed": true },
+    { "from": "svc", "to": "db",    "label": "持久化" }
+  ],
+  "groups": [
+    { "nodes": ["svc", "cache"], "title": "服务层", "stroke": "#6c8ebf", "fill": "#F5F8FB" },
+    { "nodes": ["db"],           "title": "存储层", "stroke": "#82b366", "fill": "#F7FBF6" }
+  ],
+  "callouts": [
+    { "at": [560, 130], "text": "能直连就不折" }
+  ]
+}

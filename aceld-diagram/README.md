@@ -26,6 +26,19 @@ python skill/scripts/gen_diagram.py ./my_diagram.json -o my_diagram.html
 
 无网络、无第三方库即可运行（YAML 才需要 `pyyaml`）。
 
+## 生成时的自检
+
+生成器收尾会打印三类告警，**看到就改，别忽略**：
+
+| 告警 | 含义 | 改法 |
+|---|---|---|
+| `!! 连线重合 N 处` | 两条线走在同一段路上，看起来像一条粗线或断线 | 调坐标 / 加 `via` / 改用 `buses` |
+| `!! 连线穿过节点 N 处` | 线穿过无关盒子，会被盒子整段遮住，只剩箭头悬着 | 改布局（首选）或用 `via` 绕开 |
+| `!! 多余折线 N 处` | 能一条直线直达却硬折了一下 | 改坐标 / 删掉 `via` 里的冗余路点 / `straight:true` |
+
+> ① ② ③ 三份历史案例 spec 会触发「穿节点」告警——这是 2026-11-05 新增诊断查出的**旧布局毛病**，不是生成失败。
+> 新画的图按提示改坐标即可；④ 回归样例是零告警的。
+
 ## 成品案例
 
 下面都是用本技能实际画出的架构图（预览为竖版；点开可看高清 PNG 与可编辑 spec）：
@@ -49,6 +62,12 @@ python skill/scripts/gen_diagram.py ./my_diagram.json -o my_diagram.html
 
 > 版式默认**竖版**（文档高度不限、宽度有限，竖版不被横向裁切）；PPT / 大屏再改坐标出横版。
 
+### ④ 箭头置顶 + 直连不折 · 回归样例
+
+![箭头与直连回归样例](cases/arrows_regression.png)
+
+上下对齐的两盒之间是**一条直线**，不会中途横折一下；三支箭头都画在最上层，节点、分组标题、便签、标签白底都盖不住。改完生成器先跑这份 spec 看效果：[`examples/arrows_regression.json`](examples/arrows_regression.json)。
+
 ## 风格速览
 
 | 要素 | 刘丹冰Aceld 的画法 |
@@ -61,7 +80,7 @@ python skill/scripts/gen_diagram.py ./my_diagram.json -o my_diagram.html
 | 层级 | 贯穿全图的横向虚线分隔 + 左端加粗层级名/说明（替代零散便签） |
 | 标注 | 便签（note）贴一旁 |
 | 跨维度列 | 左侧纵贯竖条承载全局/横切模块标签（可选，**非默认**；鹰眼仅鹰眼二期实例） |
-| 连线 | ~2.2px 正交小箭头：上下分离竖进竖出、同行并排横进横出；连线画在节点之下（跨盒被遮）、同边端口自动错开、跨线白晕留桥、标签自动避让；虚线表控制/依赖 |
+| 连线 | ~2.2px 正交小箭头：上下分离竖进竖出、同行并排横进横出；**能直连就一条直线，不折无意义的弯**；主体线画在节点之下（跨盒被遮），**箭头末段单独提到最上层，永不被盖**；同边端口自动错开、跨线白晕留桥、标签自动避让；虚线表控制/依赖 |
 
 完整规范、真实配色 token、适用场景与反模式见 [`skill/references/style-guide.md`](skill/references/style-guide.md)。
 
@@ -75,7 +94,8 @@ aceld-diagram/
 ├── cases/                       成品案例预览图（README 画廊用）
 │   ├── kisflow.png
 │   ├── zinx.png
-│   └── shorturl.png
+│   ├── shorturl.png
+│   └── arrows_regression.png       箭头置顶 + 直连不折的回归预览
 ├── skill/
 │   ├── SKILL.md                 技能入口
 │   ├── references/
@@ -84,10 +104,11 @@ aceld-diagram/
 │   │   └── gen_diagram.py       零依赖 SVG 生成器
 │   └── assets/
 │       └── diagram.example.json spec 模板（KisFlow 示例）
-└── examples/                    可编辑 spec + 生成结果（json / svg / html）
+└── examples/                    可编辑 spec + 生成结果（json / svg / html / png）
     ├── kisflow_arch.json / kisflow_arch_portrait.json
     ├── zinx_arch.json
-    └── shorturl_arch.json
+    ├── shorturl_arch.json
+    └── arrows_regression.json    箭头置顶 + 直连不折的回归样例
 ```
 
 ## 安装

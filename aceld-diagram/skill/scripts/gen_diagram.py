@@ -425,9 +425,13 @@ class Diagram:
         return (f'<text x="{cx:.1f}" y="{cy:.1f}" fill="{n["text"]}" font-size="{n["fontSize"]}"{fw} '
                 f'font-family="{F}" text-anchor="middle" dominant-baseline="central">{esc(n["label"])}</text>')
 
-    # 连线端点留白：源头留 3px、目标留 8px（保证箭头整支落在盒子外，不被节点遮住）
+    # 连线端点留白：源头留 3px、目标留 8px（保证箭头整支落在盒子外）
     STUB_SRC = 3.0
     STUB_DST = 8.0
+    # 箭头末段：这一段连同箭头会单独提到最上层重画，永不被节点 / 分组标题 / 便签盖住
+    TIP_LEN = 18.0
+    # 能直连就不折：两盒有公共对齐区间且端口差不超过此值时，拉成一条直线
+    STRAIGHT_TOL = 24.0
 
     @staticmethod
     def _jog(lo, hi, forbidden, tol=7.0):
@@ -489,7 +493,11 @@ class Diagram:
 
     @staticmethod
     def _ortho_join(pts):
-        """把任意折线正交化：相邻两点若两个坐标都不同，插入拐点（先水平后垂直），并去掉重复点。"""
+        """正交化 + 去冗余：插入缺失拐点、去掉重复点，再合并共线中间点。
+
+        共线中间点就是「假折」：A 明明能一条直线下来，路径里却多两个同坐标拐点，
+        看起来像在半路顿了一下。规则「能直连就不折」在代码层必须落到这一步。
+        """
         out = [tuple(pts[0])]
         for p in pts[1:]:
             p = tuple(p)
@@ -501,18 +509,97 @@ class Diagram:
         for p in out[1:]:
             if abs(p[0] - ded[-1][0]) > 0.5 or abs(p[1] - ded[-1][1]) > 0.5:
                 ded.append(p)
-        return ded
+        simp = [ded[0]]
+        for p in ded[1:]:
+            if len(simp) >= 2:
+                q, r = simp[-2], simp[-1]
+                same_x = abs(q[0] - r[0]) < 0.5 and abs(r[0] - p[0]) < 0.5
+                same_y = abs(q[1] - r[1]) < 0.5 and abs(r[1] - p[1]) < 0.5
+                if same_x or same_y:
+                    simp[-1] = p
+                    continue
+            simp.append(p)
+        return simp
+
+    @staticmethod
+    def _path_d(pts):
+        d = "M%.1f,%.1f" % pts[0]
+        for p in pts[1:]:
+            d += " L%.1f,%.1f" % p
+        return d
+
+    @classmethod
+    def _tail_point(cls, pts):
+        """沿折线从末端回溯 TIP_LEN 像素，得到箭头层的起点。"""
+        x, y = pts[-1]
+        remain = float(cls.TIP_LEN)
+        for i in range(len(pts) - 2, -1, -1):
+            px, py = pts[i]
+            dx, dy = x - px, y - py
+            seg = math.hypot(dx, dy)
+            if seg < 0.5:
+                continue
+            if seg >= remain:
+                t = remain / seg
+                return (x - dx * t, y - dy * t)
+            remain -= seg
+            x, y = px, py
+        return (x, y)
+
+    @staticmethod
+    def _elems(d, color, dashed, marker=False):
+        """一条连线的「白晕 → 彩线」；marker=True 时末端挂箭头。"""
+        dash = "stroke-dasharray='6,4' " if dashed else ""
+        halo = (f'<path d="{d}" fill="none" stroke="#ffffff" stroke-width="7.0" '
+                f'stroke-linejoin="round" stroke-linecap="round" {dash}/>')
+        mark = f' marker-end="url(#ah_{color.lstrip("#")})"' if marker else ""
+        line = (f'<path d="{d}" fill="none" stroke="{color}" stroke-width="2.2" '
+                f'stroke-linejoin="round" stroke-linecap="round" {dash}{mark}/>')
+        return halo, line
+
+    @classmethod
+    def _tip_elems(cls, pts, color, dashed):
+        """箭头层：只重画末段 + 箭头，稍后统一提到所有遮挡物之上。"""
+        d = cls._path_d([cls._tail_point(pts), pts[-1]])
+        return cls._elems(d, color, dashed, marker=True)
+
+    def _straight_coord(self, a, b, vertical, p1, p2, straight):
+        """能直连就直连：返回两端口共用的 x（竖直）/ y（水平）；该折时返回 None。
+
+        straight=False → 显式禁用；True → 只要两盒有公共区间就强制直连；
+        None（自动）→ 还要端口差 ≤ STRAIGHT_TOL，避免把该错开的多条线压到一起。
+        """
+        if straight is False:
+            return None
+        if vertical:
+            if not (a["y"] + a["h"] <= b["y"] or b["y"] + b["h"] <= a["y"]):
+                return None                     # 两盒 y 重叠，直连会穿盒
+            lo = max(a["x"] + 6, b["x"] + 6)
+            hi = min(a["x"] + a["w"] - 6, b["x"] + b["w"] - 6)
+            v1, v2 = p1[0], p2[0]
+        else:
+            if not (a["x"] + a["w"] <= b["x"] or b["x"] + b["w"] <= a["x"]):
+                return None
+            lo = max(a["y"] + 6, b["y"] + 6)
+            hi = min(a["y"] + a["h"] - 6, b["y"] + b["h"] - 6)
+            v1, v2 = p1[1], p2[1]
+        if lo > hi:
+            return None                         # 斜对角、x/y 无交集，只能折一次
+        if straight is not True and abs(v1 - v2) > self.STRAIGHT_TOL:
+            return None                         # 端口本来就该错开，别硬拉
+        v = (v1 + v2) / 2
+        return min(max(v, lo), hi)
 
     def _route_via(self, a, b, via):
         """显式路点路由：起止端口自动取「朝向首个/末个路点」的边缘，中间按路点正交折线。
         自动布线算不出「绕开节点、走外侧通道」的路径，这类关系必须由 spec 指定路点。"""
         pts = [(float(p[0]), float(p[1])) for p in via]
         start, _ = self._port_toward(a, pts[0][0], pts[0][1])
-        end, _ = self._port_toward(b, pts[-1][0], pts[-1][1])
+        # 目标端必须和自动路由一样留 8px。早期这里复用了源端的 3px，
+        # 箭头尖几乎贴着盒边，被 1.2px 描边 / 圆角 / 白晕一压就「消失」。
+        end, _ = self._port_toward(b, pts[-1][0], pts[-1][1], stub=self.STUB_DST)
         path = self._ortho_join([start] + pts + [end])
-        d = "M%.1f,%.1f" % path[0]
-        for p in path[1:]:
-            d += " L%.1f,%.1f" % p
+        d = self._path_d(path)
         cands = []
         for i in range(len(path) - 1):
             (x1, y1), (x2, y2) = path[i], path[i + 1]
@@ -522,8 +609,13 @@ class Diagram:
             cands = [(path[0][0] + 13, (path[0][1] + path[-1][1]) / 2)]
         return {"p1": start, "p2": end, "d": d, "pts": path, "lab_candidates": cands}
 
-    def _route(self, a, b, hint=None, o1=0.0, o2=0.0, via=None):
-        """正交路由：上下分离→竖进竖出；同行/并排→横进横出。o1/o2 为两端沿边偏移（端口分配）。"""
+    def _route(self, a, b, hint=None, o1=0.0, o2=0.0, via=None, straight=None):
+        """正交路由：上下分离→竖进竖出；同行/并排→横进横出。
+
+        铁律「能直连就不折」：两盒有公共对齐区间、且这条边不需要为别的线错开端口时，
+        直接输出两点直线。只有斜对角、端口必须错开、或显式 via 绕行时才允许折。
+        o1/o2 为两端沿边偏移；straight 见 _straight_coord。
+        """
         if via:
             return self._route_via(a, b, via)
         acx, acy = a["x"] + a["w"] / 2, a["y"] + a["h"] / 2
@@ -550,14 +642,18 @@ class Diagram:
         if vertical:
             p1 = (self._nudge(p1[0], a["x"] + 6, a["x"] + a["w"] - 6, self.fb_x), p1[1])
             p2 = (self._nudge(p2[0], b["x"] + 6, b["x"] + b["w"] - 6, self.fb_x), p2[1])
-            # 两端 x 只差一点点 → 拉成一条直线。否则会出现几像素的折角，看着就是「线歪了」
-            if abs(p1[0] - p2[0]) <= 14:
-                x = (p1[0] + p2[0]) / 2
-                p1, p2 = (x, p1[1]), (x, p2[1])
+            sx = self._straight_coord(a, b, True, p1, p2, straight)
+            if sx is not None:
+                # 从上面下来、两盒对得上，就一条竖线直达盒顶，禁止「竖→横→竖」的假折
+                p1, p2 = (sx, p1[1]), (sx, p2[1])
+                pts = [p1, p2]
+                cands = [(sx + 13, (p1[1] + p2[1]) / 2),
+                         (sx - 13, (p1[1] + p2[1]) / 2)]
+                return {"p1": p1, "p2": p2, "d": self._path_d(pts), "pts": pts,
+                        "lab_candidates": cands, "straight": True}
             my = self._jog(p1[1], p2[1], self.fb_y)
-            d = (f"M{p1[0]:.1f},{p1[1]:.1f} L{p1[0]:.1f},{my:.1f} "
-                 f"L{p2[0]:.1f},{my:.1f} L{p2[0]:.1f},{p2[1]:.1f}")
-            pts = [p1, (p1[0], my), (p2[0], my), p2]
+            pts = self._ortho_join([p1, (p1[0], my), (p2[0], my), p2])
+            d = self._path_d(pts)
             midx = (p1[0] + p2[0]) / 2
             cands = [
                 (p1[0] + 13, (p1[1] + my) / 2),   # 源头竖直段右侧（避开分组标题）
@@ -569,13 +665,17 @@ class Diagram:
         else:
             p1 = (p1[0], self._nudge(p1[1], a["y"] + 6, a["y"] + a["h"] - 6, self.fb_y))
             p2 = (p2[0], self._nudge(p2[1], b["y"] + 6, b["y"] + b["h"] - 6, self.fb_y))
-            if abs(p1[1] - p2[1]) <= 14:
-                y = (p1[1] + p2[1]) / 2
-                p1, p2 = (p1[0], y), (p2[0], y)
+            sy = self._straight_coord(a, b, False, p1, p2, straight)
+            if sy is not None:
+                p1, p2 = (p1[0], sy), (p2[0], sy)
+                pts = [p1, p2]
+                cands = [((p1[0] + p2[0]) / 2, sy - 12),
+                         ((p1[0] + p2[0]) / 2, sy + 15)]
+                return {"p1": p1, "p2": p2, "d": self._path_d(pts), "pts": pts,
+                        "lab_candidates": cands, "straight": True}
             mx = self._jog(p1[0], p2[0], self.fb_x)
-            d = (f"M{p1[0]:.1f},{p1[1]:.1f} L{mx:.1f},{p1[1]:.1f} "
-                 f"L{mx:.1f},{p2[1]:.1f} L{p2[0]:.1f},{p2[1]:.1f}")
-            pts = [p1, (mx, p1[1]), (mx, p2[1]), p2]
+            pts = self._ortho_join([p1, (mx, p1[1]), (mx, p2[1]), p2])
+            d = self._path_d(pts)
             midy = (p1[1] + p2[1]) / 2
             cands = [
                 (mx, midy - 12),
@@ -607,23 +707,40 @@ class Diagram:
             n = len(lst)
             for k, (i, end, _) in enumerate(lst):
                 off[(i, end)] = (k - (n - 1) / 2) * 24.0
-        return [(off.get((i, 0), 0.0), off.get((i, 1), 0.0)) for i in range(len(edges))]
+        res = []
+        for i, e in enumerate(edges):
+            o1 = off.get((i, 0), 0.0)
+            o2 = off.get((i, 1), 0.0)
+            # 两端都没有别的线共享这条边 → 不存在错开端口的必要，允许强制直连
+            only = True
+            if not e.get("via"):
+                a, b = self.nodes.get(e["from"]), self.nodes.get(e["to"])
+                if a and b:
+                    s1, s2, _ = self._edge_sides(a, b, e.get("route"))
+                    only = (len(ends.get((e["from"], s1), [])) == 1 and
+                            len(ends.get((e["to"], s2), [])) == 1)
+            res.append((o1, o2, only))
+        return res
 
-    def _edge_geom(self, e, o1=0.0, o2=0.0):
+    def _edge_geom(self, e, o1=0.0, o2=0.0, port_only=False):
         a = self.nodes.get(e["from"])
         b = self.nodes.get(e["to"])
         if not a or not b:
             return None
-        r = self._route(a, b, e.get("route"), o1, o2, e.get("via"))
-        d = r["d"]
+        st = e.get("straight")
+        if st is None:
+            st = True if (port_only and not e.get("via")) else None
+        r = self._route(a, b, e.get("route"), o1, o2, e.get("via"), st)
         color = e.get("color", "#5a5a5a")
         dashed = bool(e.get("dashed"))
-        dash = "stroke-dasharray='6,4' " if dashed else ""
-        halo = (f'<path d="{d}" fill="none" stroke="#ffffff" stroke-width="7.0" '
-                f'stroke-linejoin="round" stroke-linecap="round" {dash}/>')
-        line = (f'<path d="{d}" fill="none" stroke="{color}" stroke-width="2.2" '
-                f'stroke-linejoin="round" stroke-linecap="round" {dash}marker-end="url(#ah_{color.lstrip("#")})"/>')
-        return {"color": color, "halo": halo, "line": line, "pts": r["pts"],
+        # 主体线仍在节点之下（跨盒时被遮住，不盖模块）；箭头不挂在这里，
+        # 由 tip 单独提到最上层，否则会被节点 / 分组标题 / 便签压掉。
+        halo, line = self._elems(r["d"], color, dashed, marker=False)
+        tip_halo, tip_line = self._tip_elems(r["pts"], color, dashed)
+        return {"color": color, "halo": halo, "line": line,
+                "tip_halo": tip_halo, "tip_line": tip_line,
+                "pts": r["pts"], "endpoints": (e["from"], e["to"]),
+                "has_via": bool(e.get("via")),
                 "label": e.get("label"), "lab_candidates": r["lab_candidates"]}
 
     # ---------- 总线：多线并一 ----------
@@ -648,19 +765,17 @@ class Diagram:
                 continue
             if not paths:
                 continue
-            dash = "stroke-dasharray='6,4' " if bus.get("dashed") else ""
+            dashed = bool(bus.get("dashed"))
             parts, pts, cands = [], [], []
             for p in paths:
-                p_pts = p["pts"]
-                d = "M%.1f,%.1f" % p_pts[0]
-                for q in p_pts[1:]:
-                    d += " L%.1f,%.1f" % q
-                mark = f'marker-end="url(#ah_{color.lstrip("#")})"' if p["arrow"] else ""
-                halo = (f'<path d="{d}" fill="none" stroke="#ffffff" stroke-width="7.0" '
-                        f'stroke-linejoin="round" stroke-linecap="round" {dash}/>')
-                line = (f'<path d="{d}" fill="none" stroke="{color}" stroke-width="2.2" '
-                        f'stroke-linejoin="round" stroke-linecap="round" {dash}{mark}/>')
-                parts.append({"halo": halo, "line": line, "pts": p_pts})
+                p_pts = self._ortho_join(p["pts"])
+                d = self._path_d(p_pts)
+                halo, line = self._elems(d, color, dashed, marker=False)
+                # 总线的箭头同样交给人最上层，避免被目标节点或便签压住
+                tip_halo, tip_line = (self._tip_elems(p_pts, color, dashed)
+                                      if p["arrow"] else ("", ""))
+                parts.append({"halo": halo, "line": line, "pts": p_pts,
+                              "tip_halo": tip_halo, "tip_line": tip_line})
                 pts += p_pts
                 for i in range(len(p_pts) - 1):
                     (x1, y1), (x2, y2) = p_pts[i], p_pts[i + 1]
@@ -735,6 +850,46 @@ class Diagram:
                     hits.append({"a": a[0], "b": b[0], "dir": a[1],
                                  "at": a[2], "len": round(ov, 1)})
         self.warnings = hits
+        return hits
+
+    def _check_crossings(self, geoms):
+        """线穿过非端点节点 → 整段（连箭头）会被盒子遮住。生成时直接报出来。"""
+        hits = []
+        for gi, g in enumerate(geoms):
+            skip = set(g.get("endpoints", ()) or ())
+            pair = "→".join(g.get("endpoints", ("?", "?")))
+            pts = g["pts"]
+            for i in range(len(pts) - 1):
+                (x1, y1), (x2, y2) = pts[i], pts[i + 1]
+                for nid, n in self.nodes.items():
+                    if nid in skip:
+                        continue
+                    nx0, ny0 = n["x"] + 2, n["y"] + 2
+                    nx1, ny1 = n["x"] + n["w"] - 2, n["y"] + n["h"] - 2
+                    if abs(y1 - y2) < 0.5:
+                        cross = (ny0 < y1 < ny1 and max(x1, x2) > nx0 and min(x1, x2) < nx1)
+                        direction = "水平"
+                    elif abs(x1 - x2) < 0.5:
+                        cross = (nx0 < x1 < nx1 and max(y1, y2) > ny0 and min(y1, y2) < ny1)
+                        direction = "竖直"
+                    else:
+                        continue
+                    if cross:
+                        hits.append({"pair": pair, "node": nid, "dir": direction})
+        self.warnings_cross = hits
+        return hits
+
+    def _check_needless_jogs(self, geoms):
+        """能直连却折了：起止同轴、中间还挂 ≥4 个点，且不是显式 via 绕行。"""
+        hits = []
+        for gi, g in enumerate(geoms):
+            if g.get("has_via") or len(g["pts"]) < 4:
+                continue
+            p1, p2 = g["pts"][0], g["pts"][-1]
+            if abs(p1[0] - p2[0]) < 1.5 or abs(p1[1] - p2[1]) < 1.5:
+                hits.append({"pair": "→".join(g.get("endpoints", ("?", "?"))),
+                             "pts": len(g["pts"])})
+        self.warnings_jog = hits
         return hits
 
     def _place_labels(self, edge_geoms):
@@ -824,10 +979,10 @@ class Diagram:
                           f'dominant-baseline="central">{esc(ch)}</text>')
         # 层级虚线分隔
         self._render_tiers()
-        # 连线：逐条「白晕→彩线」，白晕切断先前线条形成跨线桥；画在节点之下 → 遇盒自动被遮
+        # 连线主体：逐条「白晕→彩线」，白晕切断先前线条形成跨线桥；画在节点之下 → 遇盒自动被遮
         edges = self.spec.get("edges", [])
         ports = self._assign_ports(edges)
-        edge_geoms = [g for g in (self._edge_geom(e, ports[i][0], ports[i][1])
+        edge_geoms = [g for g in (self._edge_geom(e, ports[i][0], ports[i][1], ports[i][2])
                                   for i, e in enumerate(edges)) if g]
         bus_geoms = self._bus_geoms()
         all_geoms = edge_geoms + bus_geoms
@@ -887,7 +1042,17 @@ class Diagram:
         if meta.get("subtitle"):
             self._add(f'<text x="{title_x:.1f}" y="{ty+44:.1f}" fill="#888" font-size="14" '
                       f'font-family="{F}">{esc(meta["subtitle"])}</text>')
+        # ★ 箭头层放在最后：节点 / 连线标签白底 / 分组虚线框与标题 / 便签 / 图题
+        #   全都在它之下，箭头不可能再被覆盖。主体线仍留在节点之下，不破坏「线不盖盒」。
+        for g in all_geoms:
+            tips = [g] if "tip_halo" in g else g.get("parts", [])
+            for t in tips:
+                if t.get("tip_halo"):
+                    self._add(t["tip_halo"])
+                    self._add(t["tip_line"])
         self._check_overlaps(all_geoms)
+        self._check_crossings(edge_geoms)
+        self._check_needless_jogs(edge_geoms)
 
     # ---------- 输出 ----------
     def svg(self):
@@ -959,6 +1124,17 @@ def main():
             axis = "y" if w["dir"] == "h" else "x"
             print(f"   geom#{w['a']} 与 geom#{w['b']} 在 {axis}={w['at']:.0f} 上重叠 {w['len']:.0f}px"
                   f" —— 调坐标，或改用 buses 合并")
+    crosses = getattr(d, "warnings_cross", None)
+    if crosses:
+        uniq = list(dict.fromkeys((x["pair"], x["node"], x["dir"]) for x in crosses))
+        print(f"!! 连线穿过节点 {len(uniq)} 处 —— 线会被盒子整段遮住，箭头会孤零零悬着：")
+        for pair, node, direction in uniq:
+            print(f"   {pair} 的{direction}段穿过 `{node}` —— 改布局，或用 via 绕开")
+    jogs = getattr(d, "warnings_jog", None)
+    if jogs:
+        print(f"!! 多余折线 {len(jogs)} 处 —— 能一条直线直达却硬折了一下：")
+        for w in jogs:
+            print(f"   {w['pair']} 有 {w['pts']} 个路径点 —— 检查 straight / 端口偏移 / 坐标对齐")
 
 
 if __name__ == "__main__":
