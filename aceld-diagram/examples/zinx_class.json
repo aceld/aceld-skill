@@ -1,0 +1,71 @@
+{
+  "kind": "class",
+  "meta": {
+    "title": "Zinx 核心类型关系（类图）",
+    "subtitle": "接口在上、实现在中、数据与路由在下 · 空心三角 = 实现 interface · 实线箭头 = 关联/依赖"
+  },
+  "canvas": { "width": 1300, "height": 980 },
+  "groups": [
+    { "id": "g1", "x": 50, "y": 126, "w": 1200, "h": 214, "title": "① 接口层 · interface", "stroke": "#6c8ebf", "fill": "#F5F8FB" },
+    { "id": "g2", "x": 50, "y": 396, "w": 1200, "h": 238, "title": "② 实现层 · struct", "stroke": "#82b366", "fill": "#F4FAF3" },
+    { "id": "g3", "x": 50, "y": 706, "w": 1200, "h": 214, "title": "③ 数据与业务 · data / router", "stroke": "#9673a6", "fill": "#FAF7FB" }
+  ],
+  "classes": [
+    {
+      "id": "IServer", "x": 90, "y": 160, "w": 280, "h": 140, "label": "IServer",
+      "stereotype": "interface", "fill": "lblue",
+      "methods": ["Start()", "Stop()", "Serve()", "AddRouter(id, router)"]
+    },
+    {
+      "id": "IConnection", "x": 500, "y": 160, "w": 280, "h": 140, "label": "IConnection",
+      "stereotype": "interface", "fill": "lblue",
+      "methods": ["Start()", "SendMsg(id, data)", "GetConnID() uint32", "Stop()"]
+    },
+    {
+      "id": "IMsgHandler", "x": 910, "y": 160, "w": 280, "h": 140, "label": "IMsgHandler",
+      "stereotype": "interface", "fill": "lblue",
+      "methods": ["AddRouter(id, router)", "SendMsgToTaskQueue(req)", "StartWorkerPool()"]
+    },
+    {
+      "id": "Server", "x": 90, "y": 430, "w": 280, "h": 170, "label": "Server", "fill": "blue",
+      "fields": ["Name string", "IPVersion string", "ConnMgr IConnManager"],
+      "methods": ["NewServer() *Server", "AddRouter(id, router)"]
+    },
+    {
+      "id": "Connection", "x": 500, "y": 430, "w": 280, "h": 170, "label": "Connection", "fill": "blue",
+      "fields": ["conn net.Conn", "connID uint32", "msgHandler IMsgHandler"],
+      "methods": ["StartReader()", "SendMsg(id, data)"]
+    },
+    {
+      "id": "MsgHandler", "x": 910, "y": 430, "w": 280, "h": 170, "label": "MsgHandler", "fill": "dark",
+      "fields": ["Apis map[uint32]IRouter", "TaskQueue []chan IRequest", "WorkerPoolSize uint32"],
+      "methods": ["DoMsgHandler(req)", "StartOneWorker(id)"]
+    },
+    {
+      "id": "Message", "x": 90, "y": 740, "w": 280, "h": 140, "label": "Message", "fill": "green",
+      "fields": ["ID uint32", "DataLen uint32", "Data []byte"],
+      "methods": ["GetMsgID() uint32"]
+    },
+    {
+      "id": "Request", "x": 500, "y": 740, "w": 280, "h": 140, "label": "Request", "fill": "green",
+      "fields": ["conn IConnection", "msg IMessage"],
+      "methods": ["GetConnection()", "GetData() []byte"]
+    },
+    {
+      "id": "BaseRouter", "x": 910, "y": 740, "w": 280, "h": 140, "label": "BaseRouter", "fill": "purple",
+      "fields": [],
+      "methods": ["PreHandle(req)", "Handle(req)", "PostHandle(req)"]
+    }
+  ],
+  "relations": [
+    { "from": "Server",     "to": "IServer",     "kind": "realize" },
+    { "from": "Connection", "to": "IConnection", "kind": "realize" },
+    { "from": "MsgHandler", "to": "IMsgHandler", "kind": "realize" },
+    { "from": "Server",     "to": "Connection",  "label": "1 : * 管理" },
+    { "from": "Connection", "to": "MsgHandler",  "label": "投递 Request" },
+    { "from": "Connection", "to": "Request",     "label": "封装" },
+    { "from": "Message",    "to": "Request",     "label": "GetData()" },
+    { "from": "MsgHandler", "to": "BaseRouter",  "label": "按 MsgID 索引" },
+    { "from": "BaseRouter", "to": "Request",     "label": "Handle(req)" }
+  ]
+}

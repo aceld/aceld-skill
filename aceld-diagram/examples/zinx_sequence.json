@@ -1,0 +1,39 @@
+{
+  "kind": "sequence",
+  "meta": {
+    "title": "Zinx 一次请求的完整时序",
+    "subtitle": "从 TCP 建连到 SendMsg 回写 · 六个组件 · loop 为单个请求包的生命周期"
+  },
+  "canvas": { "width": 1280, "height": 980 },
+  "rowHeight": 62,
+  "actors": [
+    { "id": "client",  "label": "Client 客户端",      "fill": "slate" },
+    { "id": "server",  "label": "Server 服务端",      "fill": "blue" },
+    { "id": "conn",    "label": "Connection 连接",    "fill": "blue" },
+    { "id": "codec",   "label": "DataPack 拆包",      "fill": "sgreen" },
+    { "id": "handler", "label": "MsgHandler 分发",    "fill": "dark" },
+    { "id": "router",  "label": "Router 业务路由",    "fill": "crimson" }
+  ],
+  "frames": [
+    { "label": "loop 每个请求包", "from": 3, "to": 9, "lanes": ["conn", "codec", "handler", "router"] }
+  ],
+  "activations": [
+    { "actor": "conn",    "from": 3, "to": 9,  "fill": "lblue" },
+    { "actor": "handler", "from": 5, "to": 8,  "fill": "gray" },
+    { "actor": "router",  "from": 7, "to": 8,  "fill": "red" }
+  ],
+  "messages": [
+    { "from": "client",  "to": "server",  "label": "TCP 三次握手" },
+    { "from": "server",  "to": "conn",    "label": "Accept → NewConn" },
+    { "from": "server",  "to": "conn",    "label": "Start() 读写协程" },
+    { "from": "conn",    "to": "codec",   "label": "读取字节流" },
+    { "from": "codec",   "to": "conn",    "label": "Unpack → Message", "dashed": true },
+    { "from": "conn",    "to": "handler", "label": "Request → 任务队列", "note": "WorkerPool 多协程并发" },
+    { "from": "handler", "to": "handler", "label": "按 MsgID 查路由" },
+    { "from": "handler", "to": "router",  "label": "Handle(request)" },
+    { "from": "router",  "to": "handler", "label": "业务处理完成", "dashed": true },
+    { "from": "handler", "to": "conn",    "label": "SendMsg() 回写", "dashed": true },
+    { "from": "conn",    "to": "client",  "label": "TCP 写回响应", "dashed": true }
+  ],
+  "footer": "实线 = 调用 / 数据流　·　虚线 = 返回 / 回写　·　激活条 = 该组件正在处理"
+}

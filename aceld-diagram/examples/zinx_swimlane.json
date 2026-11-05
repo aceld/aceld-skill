@@ -1,0 +1,27 @@
+{
+  "kind": "swimlane",
+  "meta": {
+    "title": "Zinx 请求处理泳道图",
+    "subtitle": "一次请求穿过四个责任层 · 竖线 = 同层内流转 · 折线 = 跨层交接"
+  },
+  "canvas": { "width": 1320, "height": 1120 },
+  "rowHeight": 100,
+  "stepHeight": 52,
+  "lanes": [
+    { "id": "client",  "label": "① Client 客户端",        "fill": "slate" },
+    { "id": "net",     "label": "② Server / Connection",  "fill": "blue" },
+    { "id": "codec",   "label": "③ DataPack / Message",   "fill": "sgreen" },
+    { "id": "biz",     "label": "④ MsgHandler / Router",  "fill": "crimson" }
+  ],
+  "steps": [
+    { "lane": "client", "text": "发起 TCP 连接",              "fill": "white" },
+    { "lane": "net",    "text": "Accept → 创建 Connection",  "fill": "lblue", "label": "Accept" },
+    { "lane": "net",    "text": "Start() 启动读写协程",       "fill": "lblue" },
+    { "lane": "codec",  "text": "Unpack 拆出 Message",       "fill": "green", "label": "字节流" },
+    { "lane": "biz",    "text": "封装 Request 投递队列",      "fill": "yellow", "label": "Request" },
+    { "lane": "biz",    "text": "Worker 按 MsgID 查路由",     "fill": "yellow" },
+    { "lane": "biz",    "text": "Router.Handle 业务处理",     "fill": "yellow" },
+    { "lane": "net",    "text": "conn.SendMsg 回写",          "fill": "lblue", "label": "回写" },
+    { "lane": "client", "text": "收到 TCP 响应",              "fill": "white", "label": "响应" }
+  ]
+}

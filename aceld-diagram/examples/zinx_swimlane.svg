@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="1120" viewBox="0 0 1320 1120"><rect width="1320" height="1120" fill="#ffffff"/><marker id="ah_5a5a5a" markerWidth="13" markerHeight="13" refX="10" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L11,4 L0,8 Z" fill="#5a5a5a"/></marker><rect x="40.0" y="132.0" width="310.0" height="940.0" rx="0" ry="0" fill="#F7F9FC" stroke="#e1e5ea" stroke-width="1.0" />
+<rect x="350.0" y="132.0" width="310.0" height="940.0" rx="0" ry="0" fill="#FFFFFF" stroke="#e1e5ea" stroke-width="1.0" />
+<rect x="660.0" y="132.0" width="310.0" height="940.0" rx="0" ry="0" fill="#F7F9FC" stroke="#e1e5ea" stroke-width="1.0" />
+<rect x="970.0" y="132.0" width="310.0" height="940.0" rx="0" ry="0" fill="#FFFFFF" stroke="#e1e5ea" stroke-width="1.0" />
+<path d="M195.0,244.0 L195.0,260.0 L505.0,260.0 L505.0,276.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M195.0,244.0 L195.0,260.0 L505.0,260.0 L505.0,276.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<rect x="324.4" y="237.0" width="51.3" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
+<text x="350.0" y="247.0" fill="#333333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">Accept</text>
+<path d="M505.0,344.0 L505.0,376.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M505.0,344.0 L505.0,376.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M505.0,444.0 L505.0,460.0 L815.0,460.0 L815.0,476.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M505.0,444.0 L505.0,460.0 L815.0,460.0 L815.0,476.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<rect x="636.2" y="437.0" width="47.5" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
+<text x="660.0" y="447.0" fill="#333333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">字节流</text>
+<path d="M815.0,544.0 L815.0,560.0 L1125.0,560.0 L1125.0,576.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M815.0,544.0 L815.0,560.0 L1125.0,560.0 L1125.0,576.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<rect x="940.9" y="537.0" width="58.1" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
+<text x="970.0" y="547.0" fill="#333333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">Request</text>
+<path d="M1125.0,644.0 L1125.0,676.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M1125.0,644.0 L1125.0,676.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M1125.0,744.0 L1125.0,776.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M1125.0,744.0 L1125.0,776.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M1125.0,844.0 L1125.0,860.0 L505.0,860.0 L505.0,876.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M1125.0,844.0 L1125.0,860.0 L505.0,860.0 L505.0,876.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<rect x="797.5" y="837.0" width="35.0" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
+<text x="815.0" y="847.0" fill="#333333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">回写</text>
+<path d="M505.0,944.0 L505.0,960.0 L195.0,960.0 L195.0,976.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M505.0,944.0 L505.0,960.0 L195.0,960.0 L195.0,976.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<rect x="332.5" y="937.0" width="35.0" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
+<text x="350.0" y="947.0" fill="#333333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">响应</text>
+<rect x="44.0" y="136.0" width="302.0" height="36.0" rx="6" ry="6" fill="#647687" stroke="#314354" stroke-width="1.2" />
+<text x="195.0" y="154.0" fill="#ffffff" font-size="14" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">① Client 客户端</text>
+<rect x="354.0" y="136.0" width="302.0" height="36.0" rx="6" ry="6" fill="#1ba1e2" stroke="#006EAF" stroke-width="1.2" />
+<text x="505.0" y="154.0" fill="#ffffff" font-size="14" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">② Server / Connection</text>
+<rect x="664.0" y="136.0" width="302.0" height="36.0" rx="6" ry="6" fill="#60a917" stroke="#2D7600" stroke-width="1.2" />
+<text x="815.0" y="154.0" fill="#ffffff" font-size="14" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">③ DataPack / Message</text>
+<rect x="974.0" y="136.0" width="302.0" height="36.0" rx="6" ry="6" fill="#FF3333" stroke="#C73500" stroke-width="1.2" />
+<text x="1125.0" y="154.0" fill="#ffffff" font-size="14" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">④ MsgHandler / Router</text>
+<rect x="56.0" y="184.0" width="278.0" height="52.0" rx="8" ry="8" fill="#FFFFFF" stroke="#36393d" stroke-width="1.2" />
+<circle cx="76.0" cy="210.0" r="13.0" fill="#ffffff" stroke="#36393d" stroke-width="1.2"/>
+<text x="76.0" y="210.0" fill="#000000" font-size="12" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">1</text>
+<text x="210.0" y="210.0" fill="#000000" font-size="13" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">发起 TCP 连接</text>
+<rect x="366.0" y="284.0" width="278.0" height="52.0" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.2" />
+<circle cx="386.0" cy="310.0" r="13.0" fill="#ffffff" stroke="#6c8ebf" stroke-width="1.2"/>
+<text x="386.0" y="310.0" fill="#000000" font-size="12" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">2</text>
+<text x="520.0" y="310.0" fill="#000000" font-size="13" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">Accept → 创建 Connection</text>
+<rect x="366.0" y="384.0" width="278.0" height="52.0" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.2" />
+<circle cx="386.0" cy="410.0" r="13.0" fill="#ffffff" stroke="#6c8ebf" stroke-width="1.2"/>
+<text x="386.0" y="410.0" fill="#000000" font-size="12" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">3</text>
+<text x="520.0" y="410.0" fill="#000000" font-size="13" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">Start() 启动读写协程</text>
+<rect x="676.0" y="484.0" width="278.0" height="52.0" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.2" />
+<circle cx="696.0" cy="510.0" r="13.0" fill="#ffffff" stroke="#82b366" stroke-width="1.2"/>
+<text x="696.0" y="510.0" fill="#000000" font-size="12" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">4</text>
+<text x="830.0" y="510.0" fill="#000000" font-size="13" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">Unpack 拆出 Message</text>
+<rect x="986.0" y="584.0" width="278.0" height="52.0" rx="8" ry="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.2" />
+<circle cx="1006.0" cy="610.0" r="13.0" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="1006.0" y="610.0" fill="#000000" font-size="12" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">5</text>
+<text x="1140.0" y="610.0" fill="#000000" font-size="13" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">封装 Request 投递队列</text>
+<rect x="986.0" y="684.0" width="278.0" height="52.0" rx="8" ry="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.2" />
+<circle cx="1006.0" cy="710.0" r="13.0" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="1006.0" y="710.0" fill="#000000" font-size="12" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">6</text>
+<text x="1140.0" y="710.0" fill="#000000" font-size="13" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">Worker 按 MsgID 查路由</text>
+<rect x="986.0" y="784.0" width="278.0" height="52.0" rx="8" ry="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.2" />
+<circle cx="1006.0" cy="810.0" r="13.0" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="1006.0" y="810.0" fill="#000000" font-size="12" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">7</text>
+<text x="1140.0" y="810.0" fill="#000000" font-size="13" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">Router.Handle 业务处理</text>
+<rect x="366.0" y="884.0" width="278.0" height="52.0" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.2" />
+<circle cx="386.0" cy="910.0" r="13.0" fill="#ffffff" stroke="#6c8ebf" stroke-width="1.2"/>
+<text x="386.0" y="910.0" fill="#000000" font-size="12" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">8</text>
+<text x="520.0" y="910.0" fill="#000000" font-size="13" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">conn.SendMsg 回写</text>
+<rect x="56.0" y="984.0" width="278.0" height="52.0" rx="8" ry="8" fill="#FFFFFF" stroke="#36393d" stroke-width="1.2" />
+<circle cx="76.0" cy="1010.0" r="13.0" fill="#ffffff" stroke="#36393d" stroke-width="1.2"/>
+<text x="76.0" y="1010.0" fill="#000000" font-size="12" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">9</text>
+<text x="210.0" y="1010.0" fill="#000000" font-size="13" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">收到 TCP 响应</text>
+<text x="40.0" y="66.0" fill="#000000" font-size="26" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">Zinx 请求处理泳道图</text>
+<text x="40.0" y="90.0" fill="#888888" font-size="14" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">一次请求穿过四个责任层 · 竖线 = 同层内流转 · 折线 = 跨层交接</text>
+<path d="M503.0,260.0 L505.0,276.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M503.0,260.0 L505.0,276.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M505.0,358.0 L505.0,376.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M505.0,358.0 L505.0,376.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M813.0,460.0 L815.0,476.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M813.0,460.0 L815.0,476.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M1123.0,560.0 L1125.0,576.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M1123.0,560.0 L1125.0,576.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M1125.0,658.0 L1125.0,676.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M1125.0,658.0 L1125.0,676.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M1125.0,758.0 L1125.0,776.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M1125.0,758.0 L1125.0,776.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M507.0,860.0 L505.0,876.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M507.0,860.0 L505.0,876.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M197.0,960.0 L195.0,976.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M197.0,960.0 L195.0,976.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/></svg>

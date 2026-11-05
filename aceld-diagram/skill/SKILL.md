@@ -1,6 +1,6 @@
 ---
 name: aceld-diagram
-description: 刘丹冰(Aceld) 风格的架构图绘制技能。沉淀其「draw.io 默认主题」白底扁平风——圆角矩形模块、圆柱存储、虚线分组、便签标注、细线小箭头、可选跨维度列（放全局/横切模块，非默认）。当用户要画系统架构图、数据流/处理链路图、架构演进路线图，或要求「用 Aceld 的风格画图」「画一张扁平专业的架构图」时使用。调用 gen_diagram.py 按 node/edge/group 坐标自动生成 SVG。
+description: 刘丹冰(Aceld) 风格的绘图技能，支持架构图 / 时序交互图 / 类图 / 泳道图四种图种。沉淀其「draw.io 默认主题」白底扁平风——圆角矩形模块、圆柱存储、虚线分组、便签标注、细线小箭头、可选跨维度列（放全局/横切模块，非默认）。当用户要画系统架构图、数据流/处理链路图、架构演进路线图、时序图、UML 类图、泳道流程图，或要求「用 Aceld 的风格画图」「画一张扁平专业的架构图」时使用。gen_diagram.py 按 node/edge/group 坐标出架构图，gen_diagram_ext.py 按 kind 出其余三种，零依赖生成 SVG。
 ---
 
 <!-- aceld-rollout:begin 资料检索 v1 -->
@@ -9,9 +9,9 @@ description: 刘丹冰(Aceld) 风格的架构图绘制技能。沉淀其「draw.
 > 读 `research/<slug>/pack/pack.md` 取链接；`verify.py` 显示 PASS 才可用，**不要自己临时搜几篇当依据，也不要改写 `pack.*`**。
 <!-- aceld-rollout:end -->
 
-# Aceld 架构图绘制 · draw.io 默认主题白底扁平风
+# Aceld 风格绘图 · draw.io 默认主题白底扁平风（架构 / 时序 / 类 / 泳道）
 
-把刘丹冰(Aceld) 多年沉淀的「架构图怎么画」变成可复用的技能。核心是**用最小可视化成本讲清系统怎么跑、数据怎么流、关键节点在哪**——纯白底、扁平、不追求花哨，追求一眼读懂。风格提取自其 `鹰眼二期` / `KisFlow` 等 `.drawio` 源文件真实配色与图形，而非主观想象。
+把刘丹冰(Aceld) 多年沉淀的「图怎么画」变成可复用的技能，覆盖四种图种。核心是**用最小可视化成本讲清系统怎么跑、数据怎么流、关键节点在哪**——纯白底、扁平、不追求花哨，追求一眼读懂。风格提取自其 `鹰眼二期` / `KisFlow` 等 `.drawio` 源文件真实配色与图形，而非主观想象。
 
 <!-- aceld-rollout:begin 开工前置检查 v1 -->
 > ### ⚑ 开工前置检查（每次先跑，30 秒）
@@ -29,8 +29,10 @@ description: 刘丹冰(Aceld) 风格的架构图绘制技能。沉淀其「draw.
 > 不检查就开工，等于用去年的地图走今年的路。
 <!-- aceld-rollout:end -->
 
-**本技能覆盖不了**：时序图 / 状态机 / 桑基图 / 甘特图 —— 遇到直接走 ②，别用矩形硬拼。
-**同样覆盖不了数据图**（折线 / U 型曲线 / 柱状 / 散点）：生成器只有节点、连线、分组、便签四种基元。
+**四种图已覆盖**：架构图走 `gen_diagram.py`；**时序交互图 / 类图 / 泳道图**走 `gen_diagram_ext.py`
+（见 §2 用法 C），它复用同一套色板、字号、标题位置、箭头层与「能直连就不折」，不是另起一套视觉。
+**仍然覆盖不了**：状态机 / 桑基图 / 甘特图 / C4 模型 —— 遇到直接走 ② 找技能，别用矩形硬拼。
+**同样覆盖不了数据图**（折线 / U 型曲线 / 柱状 / 散点）：两个生成器都没有对应基元。
 数据图请手写 SVG，但**必须沿用本技能的色板、字号、标题位置**（见 `references/style-guide.md` §九），
 否则同一篇文章里会像两个人画的。
 
@@ -89,6 +91,30 @@ spec 字段（坐标自由摆放，详见 `assets/diagram.example.json`）：
 
 `fill` 取 style-guide 的配色 token（如 `blue/green/lblue/red/yellow/slate/orange/purple/gray`）；实心深色（`blue/orange/slate/sgreen`）自动配白字，浅色配黑字。改坐标与字段即可，**无需手写 SVG**。
 
+### 用法 C：扩展图种（时序 / 类 / 泳道）
+
+spec 里加 `kind`，跑 `gen_diagram_ext.py`。它 `import gen_diagram`，直接复用 `THEME`、`esc`、文字宽度估算、
+`_ortho_join()`（去假折）、`_elems()` / `_tip_elems()`（白晕 + 箭头层置顶），**不复制一份视觉代码**。
+
+```bash
+python scripts/gen_diagram_ext.py <spec.json> -o out.html --svg out.svg
+# kind 必须是 sequence | class | swimlane，否则报错退出
+```
+
+| kind | 回答的问题 | spec 字段 |
+|---|---|---|
+| `sequence` | 一次调用按什么顺序穿过组件、谁调用谁、何时返回 | `actors[]`、`messages[]`（`from`/`to`/`label`/`dashed`/`note`；`from==to` 即自调用）、`activations[]`、`frames[]`（loop/opt 组合框）、`rowHeight`、`footer` |
+| `class` | 有哪些接口与实现、关系怎么走 | `classes[]`（`x/y/w/h/label/fill/fields[]/methods[]/stereotype`）、`relations[]`（`kind: realize \| assoc \| depend`，`realize` = 虚线 + 空心三角）、`groups[]` |
+| `swimlane` | 一个流程跨了哪几个责任方、在哪交接 | `lanes[]`、`steps[]`（`lane/text/fill/label`）、`rowHeight`、`stepHeight` |
+
+三种都通用：`meta.title` / `meta.subtitle`、`canvas{width,height}`、`fill` 取同一套配色 token。
+仓库 `examples/zinx_sequence.json`、`zinx_class.json`、`zinx_swimlane.json` 是可直接改的三份范例。
+
+**扩展图种的专属坑**（都已落进生成器，别回退）：
+- 时序：组合框标题必须**最后落笔**，否则生命线 / 激活条 / 消息线白晕会吃掉最后一个字；自调用标签要放在 U 形竖线外侧，白底不能盖住折返段。
+- 类图：关系主体线画在类框之下，空心三角提到箭头层；同列/同行两框之间只出一条直线，不折。
+- 泳道：同一层内连续步骤是一条竖直线；只有跨列交接才折一次，标签落在折线外侧空白。
+
 ### 用法 B：按规范手绘 / 指导
 
 当需要口述或手画时，照 `references/style-guide.md` 的清单与反模式执行：白底、圆角矩形、圆柱存储、虚线分组、便签标注、鹰眼监控列、细线小箭头。
@@ -97,7 +123,8 @@ spec 字段（坐标自由摆放，详见 `assets/diagram.example.json`）：
 
 ```
 用户要画图？
-├─ 能给出组件/依赖清单 → 用法 A：写 JSON spec（nodes/edges/groups）跑生成器
+├─ 架构总览 / 数据流 / 分层，能给出组件依赖清单 → 用法 A：写 JSON spec（nodes/edges/groups）跑 gen_diagram.py
+├─ 时序交互 / 类关系 / 跨责任方流程 → 用法 C：spec 写 kind，跑 gen_diagram_ext.py
 ├─ 只是想看「Aceld 风格长啥样」→ 跑 assets/diagram.example.json，看产出的 html
 └─ 要手画 / 评审一张图 → 用法 B：按 style-guide 清单核对
 ```
@@ -113,8 +140,11 @@ spec 字段（坐标自由摆放，详见 `assets/diagram.example.json`）：
 - `references/style-guide.md` —— 风格提炼 + 真实配色 token + **出图前三问 / 出图后自检** + 数据图做法 + 反模式（**画前必读**）
 - `references/SOURCES.md` —— 方法来源登记：借鉴了谁的判断顺序、落到哪一节、commit 与许可
 - `scripts/gen_diagram.py` —— 零依赖 SVG 生成器（Python 标准库，含 YAML 兜底解析）
+- `scripts/gen_diagram_ext.py` —— 扩展图种生成器（sequence / class / swimlane），复用主生成器的色板与箭头层
 - `assets/diagram.example.json` —— spec 模板（KisFlow 架构示例）
 - 仓库版另有 `examples/`（可编辑 spec + 生成结果）与 `cases/`（成品预览图），随仓库分发；
+  `examples/zinx_{arch,sequence,class,swimlane}.json` 是「同一个项目四种图」的完整范例，
+  `references/style-guide.md` §十一写了扩展图种的基元与反模式；
   `examples/arrows_regression.json` + `.svg`（预览图 `cases/arrows_regression.png`）是「箭头置顶 + 直连不折」的回归样例，改完生成器先跑它看效果；
   本地安装版只装 `skill/` 子目录，**不含这两者**，需要时去仓库取
 
@@ -122,11 +152,11 @@ spec 字段（坐标自由摆放，详见 `assets/diagram.example.json`）：
 
 ## 6. 能力缺口 → 动态找技能
 
-本技能覆盖的是「静态架构图」。遇到下面这些信号，**不要硬画**，先去网上找：
+本技能覆盖的是「静态架构图 + 时序 / 类 / 泳道」四种。遇到下面这些信号，**不要硬画**，先去网上找：
 
 | 信号 | 例子 |
 |---|---|
-| 要画的图形类型本技能没有 | 时序图、状态机、桑基图、甘特图、C4 模型 |
+| 要画的图形类型本技能没有 | 状态机、桑基图、甘特图、C4 模型、网络拓扑、ER 图 |
 | 想要另一种风格 | 手绘风、暗色风、等距 3D、极简黑白 |
 | 反复调不好 | 布局挤在一起调了半小时还挤 |
 

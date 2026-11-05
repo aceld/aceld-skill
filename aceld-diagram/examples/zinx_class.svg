@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1300" height="980" viewBox="0 0 1300 980"><rect width="1300" height="980" fill="#ffffff"/><marker id="ah_5a5a5a" markerWidth="13" markerHeight="13" refX="10" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L11,4 L0,8 Z" fill="#5a5a5a"/></marker><rect x="50.0" y="126.0" width="1200.0" height="214.0" rx="10" ry="10" fill="#F5F8FB" stroke="#6c8ebf" stroke-width="1.2" stroke-dasharray='7,5'/>
+<rect x="56.0" y="130.0" width="151.1" height="19.0" rx="3" ry="3" fill="#F5F8FB" stroke="none" stroke-width="1.2" />
+<text x="62.0" y="141.0" fill="#3a4550" font-size="13" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">① 接口层 · interface</text>
+<rect x="50.0" y="396.0" width="1200.0" height="238.0" rx="10" ry="10" fill="#F4FAF3" stroke="#82b366" stroke-width="1.2" stroke-dasharray='7,5'/>
+<rect x="56.0" y="400.0" width="129.7" height="19.0" rx="3" ry="3" fill="#F4FAF3" stroke="none" stroke-width="1.2" />
+<text x="62.0" y="411.0" fill="#3a4550" font-size="13" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">② 实现层 · struct</text>
+<rect x="50.0" y="706.0" width="1200.0" height="214.0" rx="10" ry="10" fill="#FAF7FB" stroke="#9673a6" stroke-width="1.2" stroke-dasharray='7,5'/>
+<rect x="56.0" y="710.0" width="205.7" height="19.0" rx="3" ry="3" fill="#FAF7FB" stroke="none" stroke-width="1.2" />
+<text x="62.0" y="721.0" fill="#3a4550" font-size="13" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">③ 数据与业务 · data / router</text>
+<path d="M230.0,422.0 L230.0,308.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
+<path d="M230.0,422.0 L230.0,308.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
+<path d="M640.0,422.0 L640.0,308.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
+<path d="M640.0,422.0 L640.0,308.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
+<path d="M1050.0,422.0 L1050.0,308.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
+<path d="M1050.0,422.0 L1050.0,308.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray='6,4' />
+<path d="M378.0,515.0 L492.0,515.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M378.0,515.0 L492.0,515.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<rect x="396.9" y="491.0" width="76.2" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
+<text x="435.0" y="501.0" fill="#333333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">1 : * 管理</text>
+<path d="M788.0,515.0 L902.0,515.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M788.0,515.0 L902.0,515.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<rect x="800.0" y="491.0" width="90.0" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
+<text x="845.0" y="501.0" fill="#333333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">投递 Request</text>
+<path d="M640.0,608.0 L640.0,732.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M640.0,608.0 L640.0,732.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<rect x="622.5" y="646.0" width="35.0" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
+<text x="640.0" y="656.0" fill="#333333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">封装</text>
+<path d="M378.0,810.0 L492.0,810.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M378.0,810.0 L492.0,810.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<rect x="399.1" y="786.0" width="71.9" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
+<text x="435.0" y="796.0" fill="#333333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">GetData()</text>
+<path d="M1050.0,608.0 L1050.0,732.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M1050.0,608.0 L1050.0,732.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<rect x="1002.2" y="646.0" width="95.6" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
+<text x="1050.0" y="656.0" fill="#333333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">按 MsgID 索引</text>
+<path d="M902.0,810.0 L788.0,810.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M902.0,810.0 L788.0,810.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+<rect x="802.2" y="786.0" width="85.6" height="19" rx="3" fill="#ffffff" stroke="none" opacity="0.96"/>
+<text x="845.0" y="796.0" fill="#333333" font-size="12.5" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">Handle(req)</text>
+<rect x="90.0" y="160.0" width="280.0" height="140.0" rx="8" ry="8" fill="#ffffff" stroke="#6c8ebf" stroke-width="1.2" />
+<rect x="90.0" y="160.0" width="280.0" height="39.0" rx="8" ry="8" fill="#dae8fc" stroke="none" stroke-width="1.2" />
+<rect x="90.0" y="188.0" width="280.0" height="11.0" rx="0" ry="0" fill="#dae8fc" stroke="none" stroke-width="1.2" />
+<line x1="90.0" y1="190.0" x2="370.0" y2="190.0" stroke="#6c8ebf" stroke-width="1.0"/>
+<text x="230.0" y="175.0" fill="#000000" font-size="13.5" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">«interface» IServer</text>
+<text x="102.0" y="206.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">Start()</text>
+<text x="102.0" y="224.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">Stop()</text>
+<text x="102.0" y="242.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">Serve()</text>
+<text x="102.0" y="260.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">AddRouter(id, router)</text>
+<rect x="500.0" y="160.0" width="280.0" height="140.0" rx="8" ry="8" fill="#ffffff" stroke="#6c8ebf" stroke-width="1.2" />
+<rect x="500.0" y="160.0" width="280.0" height="39.0" rx="8" ry="8" fill="#dae8fc" stroke="none" stroke-width="1.2" />
+<rect x="500.0" y="188.0" width="280.0" height="11.0" rx="0" ry="0" fill="#dae8fc" stroke="none" stroke-width="1.2" />
+<line x1="500.0" y1="190.0" x2="780.0" y2="190.0" stroke="#6c8ebf" stroke-width="1.0"/>
+<text x="640.0" y="175.0" fill="#000000" font-size="13.5" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">«interface» IConnection</text>
+<text x="512.0" y="206.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">Start()</text>
+<text x="512.0" y="224.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">SendMsg(id, data)</text>
+<text x="512.0" y="242.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">GetConnID() uint32</text>
+<text x="512.0" y="260.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">Stop()</text>
+<rect x="910.0" y="160.0" width="280.0" height="140.0" rx="8" ry="8" fill="#ffffff" stroke="#6c8ebf" stroke-width="1.2" />
+<rect x="910.0" y="160.0" width="280.0" height="39.0" rx="8" ry="8" fill="#dae8fc" stroke="none" stroke-width="1.2" />
+<rect x="910.0" y="188.0" width="280.0" height="11.0" rx="0" ry="0" fill="#dae8fc" stroke="none" stroke-width="1.2" />
+<line x1="910.0" y1="190.0" x2="1190.0" y2="190.0" stroke="#6c8ebf" stroke-width="1.0"/>
+<text x="1050.0" y="175.0" fill="#000000" font-size="13.5" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">«interface» IMsgHandler</text>
+<text x="922.0" y="206.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">AddRouter(id, router)</text>
+<text x="922.0" y="224.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">SendMsgToTaskQueue(req)</text>
+<text x="922.0" y="242.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">StartWorkerPool()</text>
+<rect x="90.0" y="430.0" width="280.0" height="170.0" rx="8" ry="8" fill="#ffffff" stroke="#006EAF" stroke-width="1.2" />
+<rect x="90.0" y="430.0" width="280.0" height="39.0" rx="8" ry="8" fill="#1ba1e2" stroke="none" stroke-width="1.2" />
+<rect x="90.0" y="458.0" width="280.0" height="11.0" rx="0" ry="0" fill="#1ba1e2" stroke="none" stroke-width="1.2" />
+<line x1="90.0" y1="460.0" x2="370.0" y2="460.0" stroke="#006EAF" stroke-width="1.0"/>
+<text x="230.0" y="445.0" fill="#ffffff" font-size="14.5" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">Server</text>
+<text x="102.0" y="476.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">Name string</text>
+<text x="102.0" y="494.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">IPVersion string</text>
+<text x="102.0" y="512.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">ConnMgr IConnManager</text>
+<line x1="98.0" y1="522.0" x2="362.0" y2="522.0" stroke="#dfe3e8" stroke-width="1.0" stroke-dasharray="4,3"/>
+<text x="102.0" y="530.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">NewServer() *Server</text>
+<text x="102.0" y="548.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">AddRouter(id, router)</text>
+<rect x="500.0" y="430.0" width="280.0" height="170.0" rx="8" ry="8" fill="#ffffff" stroke="#006EAF" stroke-width="1.2" />
+<rect x="500.0" y="430.0" width="280.0" height="39.0" rx="8" ry="8" fill="#1ba1e2" stroke="none" stroke-width="1.2" />
+<rect x="500.0" y="458.0" width="280.0" height="11.0" rx="0" ry="0" fill="#1ba1e2" stroke="none" stroke-width="1.2" />
+<line x1="500.0" y1="460.0" x2="780.0" y2="460.0" stroke="#006EAF" stroke-width="1.0"/>
+<text x="640.0" y="445.0" fill="#ffffff" font-size="14.5" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">Connection</text>
+<text x="512.0" y="476.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">conn net.Conn</text>
+<text x="512.0" y="494.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">connID uint32</text>
+<text x="512.0" y="512.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">msgHandler IMsgHandler</text>
+<line x1="508.0" y1="522.0" x2="772.0" y2="522.0" stroke="#dfe3e8" stroke-width="1.0" stroke-dasharray="4,3"/>
+<text x="512.0" y="530.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">StartReader()</text>
+<text x="512.0" y="548.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">SendMsg(id, data)</text>
+<rect x="910.0" y="430.0" width="280.0" height="170.0" rx="8" ry="8" fill="#ffffff" stroke="#000000" stroke-width="1.2" />
+<rect x="910.0" y="430.0" width="280.0" height="39.0" rx="8" ry="8" fill="#36393d" stroke="none" stroke-width="1.2" />
+<rect x="910.0" y="458.0" width="280.0" height="11.0" rx="0" ry="0" fill="#36393d" stroke="none" stroke-width="1.2" />
+<line x1="910.0" y1="460.0" x2="1190.0" y2="460.0" stroke="#000000" stroke-width="1.0"/>
+<text x="1050.0" y="445.0" fill="#ffffff" font-size="14.5" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">MsgHandler</text>
+<text x="922.0" y="476.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">Apis map[uint32]IRouter</text>
+<text x="922.0" y="494.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">TaskQueue []chan IRequest</text>
+<text x="922.0" y="512.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">WorkerPoolSize uint32</text>
+<line x1="918.0" y1="522.0" x2="1182.0" y2="522.0" stroke="#dfe3e8" stroke-width="1.0" stroke-dasharray="4,3"/>
+<text x="922.0" y="530.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">DoMsgHandler(req)</text>
+<text x="922.0" y="548.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">StartOneWorker(id)</text>
+<rect x="90.0" y="740.0" width="280.0" height="140.0" rx="8" ry="8" fill="#ffffff" stroke="#82b366" stroke-width="1.2" />
+<rect x="90.0" y="740.0" width="280.0" height="39.0" rx="8" ry="8" fill="#d5e8d4" stroke="none" stroke-width="1.2" />
+<rect x="90.0" y="768.0" width="280.0" height="11.0" rx="0" ry="0" fill="#d5e8d4" stroke="none" stroke-width="1.2" />
+<line x1="90.0" y1="770.0" x2="370.0" y2="770.0" stroke="#82b366" stroke-width="1.0"/>
+<text x="230.0" y="755.0" fill="#000000" font-size="14.5" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">Message</text>
+<text x="102.0" y="786.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">ID uint32</text>
+<text x="102.0" y="804.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">DataLen uint32</text>
+<text x="102.0" y="822.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">Data []byte</text>
+<line x1="98.0" y1="832.0" x2="362.0" y2="832.0" stroke="#dfe3e8" stroke-width="1.0" stroke-dasharray="4,3"/>
+<text x="102.0" y="840.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">GetMsgID() uint32</text>
+<rect x="500.0" y="740.0" width="280.0" height="140.0" rx="8" ry="8" fill="#ffffff" stroke="#82b366" stroke-width="1.2" />
+<rect x="500.0" y="740.0" width="280.0" height="39.0" rx="8" ry="8" fill="#d5e8d4" stroke="none" stroke-width="1.2" />
+<rect x="500.0" y="768.0" width="280.0" height="11.0" rx="0" ry="0" fill="#d5e8d4" stroke="none" stroke-width="1.2" />
+<line x1="500.0" y1="770.0" x2="780.0" y2="770.0" stroke="#82b366" stroke-width="1.0"/>
+<text x="640.0" y="755.0" fill="#000000" font-size="14.5" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">Request</text>
+<text x="512.0" y="786.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">conn IConnection</text>
+<text x="512.0" y="804.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">msg IMessage</text>
+<line x1="508.0" y1="814.0" x2="772.0" y2="814.0" stroke="#dfe3e8" stroke-width="1.0" stroke-dasharray="4,3"/>
+<text x="512.0" y="822.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">GetConnection()</text>
+<text x="512.0" y="840.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">GetData() []byte</text>
+<rect x="910.0" y="740.0" width="280.0" height="140.0" rx="8" ry="8" fill="#ffffff" stroke="#9673a6" stroke-width="1.2" />
+<rect x="910.0" y="740.0" width="280.0" height="39.0" rx="8" ry="8" fill="#e1d5e7" stroke="none" stroke-width="1.2" />
+<rect x="910.0" y="768.0" width="280.0" height="11.0" rx="0" ry="0" fill="#e1d5e7" stroke="none" stroke-width="1.2" />
+<line x1="910.0" y1="770.0" x2="1190.0" y2="770.0" stroke="#9673a6" stroke-width="1.0"/>
+<text x="1050.0" y="755.0" fill="#000000" font-size="14.5" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" dominant-baseline="central">BaseRouter</text>
+<text x="922.0" y="786.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">PreHandle(req)</text>
+<text x="922.0" y="804.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">Handle(req)</text>
+<text x="922.0" y="822.0" fill="#444" font-size="12" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">PostHandle(req)</text>
+<text x="40.0" y="66.0" fill="#000000" font-size="26" font-weight='700' font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">Zinx 核心类型关系（类图）</text>
+<text x="40.0" y="90.0" fill="#888888" font-size="14" font-family="Helvetica, Arial, PingFang SC, Microsoft YaHei, sans-serif" text-anchor="start" dominant-baseline="central">接口在上、实现在中、数据与路由在下 · 空心三角 = 实现 interface · 实线箭头 = 关联/依赖</text>
+<polygon points="230.0,308.0 223.0,321.0 237.0,321.0" fill="#ffffff" stroke="#5a5a5a" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon points="640.0,308.0 633.0,321.0 647.0,321.0" fill="#ffffff" stroke="#5a5a5a" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon points="1050.0,308.0 1043.0,321.0 1057.0,321.0" fill="#ffffff" stroke="#5a5a5a" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M474.0,515.0 L492.0,515.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M474.0,515.0 L492.0,515.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M884.0,515.0 L902.0,515.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M884.0,515.0 L902.0,515.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M640.0,714.0 L640.0,732.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M640.0,714.0 L640.0,732.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M474.0,810.0 L492.0,810.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M474.0,810.0 L492.0,810.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M1050.0,714.0 L1050.0,732.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M1050.0,714.0 L1050.0,732.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/>
+<path d="M806.0,810.0 L788.0,810.0" fill="none" stroke="#ffffff" stroke-width="7.0" stroke-linejoin="round" stroke-linecap="round" />
+<path d="M806.0,810.0 L788.0,810.0" fill="none" stroke="#5a5a5a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"  marker-end="url(#ah_5a5a5a)"/></svg>

@@ -27,7 +27,7 @@
 | 技能 | 目录 | 说明 |
 |---|---|---|
 | Course Studio（AI 课程制作流水线） | [`aceld-course/`](aceld-course/) | 给一份讲稿，产出一节完整的课：动画幻灯片 → 配音 → 成片 → 图文 → 图卡 → 封面 |
-| 刘丹冰Aceld 架构图绘制（draw.io 默认主题白底扁平风） | [`aceld-diagram/`](aceld-diagram/) | 圆角矩形模块、圆柱存储、虚线分组、层级虚线分隔、便签标注、细线小箭头、可选跨维度列的架构图：风格规范 + 零依赖 SVG 生成器 |
+| 刘丹冰Aceld 绘图（draw.io 默认主题白底扁平风） | [`aceld-diagram/`](aceld-diagram/) | 架构图 / 时序交互图 / 类图 / 泳道图四种图种同一套视觉：圆角矩形模块、圆柱存储、虚线分组、层级虚线分隔、便签标注、细线小箭头、可选跨维度列；风格规范 + 两个零依赖 SVG 生成器，README 有 Zinx 四图画廊 |
 | Find Skill（开工前置检查 + 检索 + 体检 + 吸收） | [`aceld-findskill/`](aceld-findskill/) | 每个技能开工前先跑它：本地有没有更合适的、线上有没有更新的。再做多源检索（skills.sh 安装量 / GitHub）+ 五条硬性淘汰线 + 安全扫描 + 吸收方法论（不搬代码） |
 | Skill Rollout（能力批量铺开：审计 → 注入 → 验证） | [`aceld-skill-rollout/`](aceld-skill-rollout/) | 一个能力要铺到全部技能上时用它：审计「存在≠生效」、幂等注入（sentinel 哨兵块）、仓库→本地同步、发布前端到端验证 |
 | 公众号写作与发布（零凭据） | [`aceld-wechat/`](aceld-wechat/) | markdown → 微信内联样式 HTML，粘贴进编辑器、图片自动转 mmbiz、**只存草稿绝不发表**。不用 AppID/AppSecret，排版 100% 保真；附写作规范（标题公式 / 现象→病机→解法 / 去 AI 味） |
