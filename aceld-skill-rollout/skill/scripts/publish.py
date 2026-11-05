@@ -17,6 +17,10 @@
 代理：
     本机直连 github.com:443 被 SNI 拦、沙箱代理返回 502，
     只有 Clash Party 的 127.0.0.1:7890 能通。默认自动设上，可用 --proxy 改。
+    ★2026-11-05：代理开着也可能报
+      `schannel: failed to receive handshake, SSL/TLS connection failed` ——
+      Git for Windows 默认 TLS 后端 Schannel 走代理 CONNECT 隧道的兼容问题
+      （同一代理下 curl 拿 200，git 却挂）。push 时临时切 OpenSSL + HTTP/1.1。
 """
 import argparse
 import os
@@ -121,7 +125,10 @@ def main():
     env["https_proxy"] = a.proxy
     env["http_proxy"] = a.proxy
     env["GIT_TERMINAL_PROMPT"] = "0"      # 没凭据时立刻失败，不要挂住等输入
-    push = run(["git", "push", "origin", "HEAD"], cwd=repo, env=env, check=False)
+    # ★只在本次 push 临时切 TLS 后端与 HTTP 版本：绕开 Schannel 走代理的握手失败，
+    #   不改全局 git config，也不影响其它仓库。
+    push = run(["git", "-c", "http.sslBackend=openssl", "-c", "http.version=HTTP/1.1",
+                "push", "origin", "HEAD"], cwd=repo, env=env, check=False)
     if push.returncode != 0:
         print("\n!! 推送失败。提交已保留在本地，修好网络/凭据后重跑：")
         print("   python %s --sync-only" % os.path.join(HERE, "publish.py"))
