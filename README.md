@@ -31,6 +31,7 @@
 | Find Skill（开工前置检查 + 检索 + 体检 + 吸收） | [`aceld-findskill/`](aceld-findskill/) | 每个技能开工前先跑它：本地有没有更合适的、线上有没有更新的。再做多源检索（skills.sh 安装量 / GitHub）+ 五条硬性淘汰线 + 安全扫描 + 吸收方法论（不搬代码） |
 | Skill Rollout（能力批量铺开：审计 → 注入 → 验证） | [`aceld-skill-rollout/`](aceld-skill-rollout/) | 一个能力要铺到全部技能上时用它：审计「存在≠生效」、幂等注入（sentinel 哨兵块）、仓库→本地同步、发布前端到端验证 |
 | 公众号写作与发布（零凭据） | [`aceld-wechat/`](aceld-wechat/) | markdown → 微信内联样式 HTML，粘贴进编辑器、图片自动转 mmbiz、**只存草稿绝不发表**。不用 AppID/AppSecret，排版 100% 保真；附写作规范（标题公式 / 现象→病机→解法 / 去 AI 味） |
+| 近半年权威高热度文章检索（供料层） | [`aceld-websearch/`](aceld-websearch/) | 给其他技能供料：**滚动 180 天**时间窗 + T1/T2 权威源 + 可核验高指标（阅读/播放/点赞/评论/收藏/star）+ 逐条验证可读原文链接，产出 `pack.md` + `pack.json` 资料包作为下游输入。零依赖脚本，硬门槛不过就淘汰，禁止估算指标 |
 
 > 每个技能都是自包含的：进入对应子目录，运行里面的 `install.sh` / `install.ps1` 即可安装。
 

@@ -3,6 +3,12 @@ name: aceld-wechat
 description: 微信公众号文章编写与发布全流程。涵盖「怎么写」（标题公式、现象→病机→解法骨架、去 AI 味、配图节奏）与「怎么发」（markdown 转微信内联样式 HTML、零凭据粘贴进编辑器、图片自动转 mmbiz、只存草稿绝不发表）。当用户要写公众号文章、把 markdown 排成公众号版式、发布到微信公众号草稿箱、或遇到「粘贴后正文变空/图片裂了/标题填不进去」时使用。
 ---
 
+<!-- aceld-rollout:begin 资料检索 v1 -->
+> ### ⚑ 缺外部文章 / 案例 / 数据？先取资料包
+> 调用 `aceld-websearch` 生成资料包（近 180 天 · T1/T2 权威 · 可核验高指标 · 可读原文链接），
+> 读 `research/<slug>/pack/pack.md` 取链接；`verify.py` 显示 PASS 才可用，**不要自己临时搜几篇当依据，也不要改写 `pack.*`**。
+<!-- aceld-rollout:end -->
+
 # 公众号文章：编写与发布
 
 两条线：**写得像人话**（`references/article-style.md`）、**发得不丢样式**（`references/wechat-constraints.md`）。

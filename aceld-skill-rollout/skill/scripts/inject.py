@@ -123,7 +123,10 @@ def main():
 
     repo = find_repo(a.repo)
     items = scan_repo(repo) + scan_local(a.local)
-    repo_names = {i["name"] for i in scan_repo(repo)}
+    # ★用技能名（frontmatter 的 name）而不是仓库目录名：
+    #   仓库 aceld-course/ 装出来叫 course-studio，按目录名建集合会把它误判成「三方」跳过。
+    #   audit.py 里的同名集合用的就是 i["skill"]，这里必须保持一致。
+    repo_names = {i["skill"] for i in scan_repo(repo)}
     only = {x.strip() for x in a.only.split(",") if x.strip()}
 
     print("模式：%s%s" % ("移除" if a.remove else "注入",

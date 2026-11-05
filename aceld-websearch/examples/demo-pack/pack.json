@@ -1,0 +1,305 @@
+{
+  "schema_version": "1.0",
+  "skill": "aceld-websearch",
+  "topic": "AI Agent 工程化落地（示例）",
+  "profile": "tech",
+  "generated_at": "2026-11-05 10:50:48",
+  "window": {
+    "schema_version": "1.0",
+    "topic": "AI Agent 工程化落地（示例）",
+    "as_of": "2026-11-05",
+    "since": "2026-05-09",
+    "until": "2026-11-05",
+    "days": 180,
+    "freshness": "m6",
+    "rule": "两道窗口取严：搜索侧 freshness=m6，脚本侧按 [2026-05-09, 2026-11-05] 硬过滤；日期一律取文章页面标注的发布日期，不是搜索结果的「N 天前」、不是抓取时间。",
+    "year_tokens": [
+      "2026",
+      "2025"
+    ]
+  },
+  "thresholds": {
+    "min_metrics": {
+      "article": {
+        "views": 5000,
+        "comments": 10
+      },
+      "video": {
+        "views": 20000,
+        "comments": 30
+      },
+      "post": {
+        "upvotes": 100,
+        "comments": 20
+      },
+      "thread": {
+        "upvotes": 100,
+        "comments": 20
+      },
+      "repo": {
+        "stars": 300,
+        "comments": 0
+      },
+      "paper": {
+        "citations": 10,
+        "comments": 0
+      }
+    },
+    "min_score": 55,
+    "top_n": 8,
+    "max_domain_share": 0.4,
+    "allow_t3": false
+  },
+  "queries": [
+    {
+      "query": "AI Agent 工程化落地 2026 实践",
+      "engine": "WebSearch",
+      "freshness": "m6",
+      "allowed_domains": [
+        "infoq.cn",
+        "juejin.cn"
+      ],
+      "hits": 12,
+      "note": "中文技术媒体路"
+    },
+    {
+      "query": "agent skills production engineering 2026",
+      "engine": "WebSearch",
+      "freshness": "m6",
+      "allowed_domains": [],
+      "hits": 15,
+      "note": "英文开放路"
+    },
+    {
+      "query": "site:zhuanlan.zhihu.com Agent 落地 复盘 2026",
+      "engine": "WebSearch",
+      "freshness": "m6",
+      "allowed_domains": [],
+      "hits": 8,
+      "note": "高赞长文路"
+    }
+  ],
+  "items": [
+    {
+      "title": "（示例）Agent Skills: 官方文档更新与工程实践",
+      "url": "https://docs.anthropic.com/example/agent-skills/",
+      "author": "Anthropic",
+      "source": "Anthropic 官方文档",
+      "published": "2026-07-02",
+      "kind": "article",
+      "tier": "T1",
+      "metrics": {
+        "views": 96000,
+        "likes": 1800,
+        "comments": 320
+      },
+      "metric_source": "官方文档页公开计数（若平台不公开计数，本条应改走 heat_waiver 或淘汰）",
+      "metrics_verified": true,
+      "readable": true,
+      "readable_evidence": "WebFetch 抓到完整文档正文 20 段",
+      "summary": "官方给出技能目录结构、渐进式披露与脚本边界的定义。",
+      "value_for": "定义引用 / 一手依据",
+      "cross_refs": 3,
+      "is_original": true,
+      "heat_waiver": false,
+      "canonical_url": "https://docs.anthropic.com/example/agent-skills",
+      "domain": "docs.anthropic.com",
+      "score": {
+        "total": 78.3,
+        "authority": 35,
+        "heat": 16.7,
+        "freshness": 8.6,
+        "readability": 10,
+        "bonus": 8,
+        "age_days": 126,
+        "primary_field": "views"
+      }
+    },
+    {
+      "title": "（示例）我们把 Agent 搬进生产环境后踩过的 7 个坑",
+      "url": "https://www.infoq.cn/article/example-agent-production?utm_source=wechat",
+      "author": "示例作者 / 某平台架构组",
+      "source": "InfoQ",
+      "published": "2026-09-18",
+      "kind": "article",
+      "tier": "T2",
+      "tier_reason": "InfoQ 编辑审核的技术媒体原创稿",
+      "metrics": {
+        "views": 128000,
+        "likes": 2100,
+        "comments": 486,
+        "favorites": 3400
+      },
+      "metric_source": "文章页公开显示的阅读数、点赞、评论、收藏（WebFetch 于 2026-11-05 抓取）",
+      "metrics_verified": true,
+      "readable": true,
+      "readable_evidence": "WebFetch 抓到正文 12 段，无需登录，无付费墙",
+      "summary": "作者复盘了工具调用超时、上下文膨胀与重试风暴，给出可落地的降级策略。",
+      "value_for": "课程案例 / 反面教材",
+      "cross_refs": 2,
+      "is_original": true,
+      "heat_waiver": false,
+      "canonical_url": "https://www.infoq.cn/article/example-agent-production",
+      "domain": "infoq.cn",
+      "score": {
+        "total": 77.4,
+        "authority": 24,
+        "heat": 20.3,
+        "freshness": 16.1,
+        "readability": 10,
+        "bonus": 7,
+        "age_days": 48,
+        "primary_field": "views"
+      }
+    }
+  ],
+  "alternates": [],
+  "waived": [],
+  "rejected": [
+    {
+      "title": "（示例·应淘汰）去年的 Agent 综述",
+      "url": "https://juejin.cn/post/example-old",
+      "author": "示例作者",
+      "source": "掘金",
+      "published": "2025-12-01",
+      "kind": "article",
+      "tier": "T2",
+      "metrics": {
+        "views": 300000,
+        "comments": 900
+      },
+      "metric_source": "页面公开计数",
+      "metrics_verified": true,
+      "readable": true,
+      "readable_evidence": "WebFetch 抓到正文",
+      "summary": "一篇很火但已经过时的综述。",
+      "value_for": "无",
+      "cross_refs": 0,
+      "is_original": true,
+      "heat_waiver": false,
+      "canonical_url": "https://juejin.cn/post/example-old",
+      "domain": "juejin.cn",
+      "reject_reasons": [
+        "超窗：2025-12-01 早于 2026-05-09（距今 339 天 > 180 天）"
+      ]
+    },
+    {
+      "title": "（示例·应淘汰）低热度转载",
+      "url": "https://juejin.cn/post/example-low",
+      "author": "示例作者",
+      "source": "掘金",
+      "published": "2026-10-11",
+      "kind": "article",
+      "tier": "T2",
+      "metrics": {
+        "views": 800,
+        "comments": 2
+      },
+      "metric_source": "页面公开计数",
+      "metrics_verified": true,
+      "readable": true,
+      "readable_evidence": "WebFetch 抓到正文",
+      "summary": "阅读量很低，不达高指标门槛。",
+      "value_for": "无",
+      "cross_refs": 0,
+      "is_original": false,
+      "heat_waiver": false,
+      "canonical_url": "https://juejin.cn/post/example-low",
+      "domain": "juejin.cn",
+      "reject_reasons": [
+        "主指标不足：阅读/播放 800 < 门槛 5000",
+        "评论数不足：2 < 门槛 10"
+      ]
+    },
+    {
+      "title": "（示例·应淘汰）付费墙文章",
+      "url": "https://www.wsj.com/example-agent",
+      "author": "WSJ",
+      "source": "WSJ",
+      "published": "2026-08-20",
+      "kind": "article",
+      "tier": "T1",
+      "metrics": {
+        "views": 500000,
+        "comments": 1200
+      },
+      "metric_source": "搜索摘要里看到的数字",
+      "metrics_verified": false,
+      "readable": false,
+      "readable_evidence": "",
+      "summary": "打不开全文。",
+      "value_for": "无",
+      "cross_refs": 0,
+      "is_original": true,
+      "heat_waiver": false,
+      "canonical_url": "https://www.wsj.com/example-agent",
+      "domain": "wsj.com",
+      "reject_reasons": [
+        "URL 不可读：黑名单域名 wsj.com（付费墙/聚合/短链）",
+        "tier 覆盖了域名判定（UNKNOWN→T1）但没写 tier_reason",
+        "指标未核验（禁止用搜索摘要里的数字凑数）",
+        "未验证可读（WebFetch 没抓到正文，或需登录/付费/App）"
+      ]
+    },
+    {
+      "title": "（示例·应淘汰）采集站洗稿",
+      "url": "https://blog.csdn.net/example-repost",
+      "author": "采集号",
+      "source": "CSDN",
+      "published": "2026-10-02",
+      "kind": "article",
+      "tier": "T3",
+      "metrics": {
+        "views": 60000,
+        "comments": 100
+      },
+      "metric_source": "页面公开计数",
+      "metrics_verified": true,
+      "readable": true,
+      "readable_evidence": "WebFetch 抓到正文",
+      "summary": "转载且非原文。",
+      "value_for": "无",
+      "cross_refs": 0,
+      "is_original": false,
+      "heat_waiver": false,
+      "canonical_url": "https://blog.csdn.net/example-repost",
+      "domain": "blog.csdn.net",
+      "reject_reasons": [
+        "T3 一般 UGC/聚合站，默认不收（csdn.net）"
+      ]
+    },
+    {
+      "title": "（示例·默认不收）刚发布的官方论文",
+      "url": "https://arxiv.org/abs/2509.00001",
+      "author": "某研究组",
+      "source": "arXiv",
+      "published": "2026-10-21",
+      "kind": "paper",
+      "tier": "T1",
+      "metrics": {},
+      "metric_source": "",
+      "metrics_verified": false,
+      "readable": true,
+      "readable_evidence": "WebFetch 抓到摘要与全文 PDF 链接",
+      "summary": "一手研究，但平台不公开阅读量、无引用积累。",
+      "value_for": "一手依据（需单列）",
+      "cross_refs": 1,
+      "is_original": true,
+      "heat_waiver": true,
+      "canonical_url": "https://arxiv.org/abs/2509.00001",
+      "domain": "arxiv.org",
+      "reject_reasons": [
+        "指标未核验（禁止用搜索摘要里的数字凑数）",
+        "无公开热度（heat_waiver）：默认不收；确需一手权威时加 --allow-waiver 单列"
+      ]
+    }
+  ],
+  "stats": {
+    "candidates": 7,
+    "valid": 2,
+    "selected": 2,
+    "alternates": 0,
+    "rejected": 5,
+    "waived": 0
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "schema_version": "1.0",
+  "default_profile": "tech",
+  "note": "域名表只是自动判定的起点。Agent 可用 candidates.json 里的 tier 字段覆盖，但必须同时给 tier_reason。",
+  "metric_fields": {
+    "views": "阅读量 / 播放量",
+    "likes": "点赞 / 喜欢",
+    "comments": "评论数",
+    "shares": "转发 / 分享",
+    "favorites": "收藏 / 在看",
+    "stars": "GitHub star",
+    "upvotes": "赞同 / HN points / Reddit upvotes",
+    "citations": "引用数",
+    "coins": "投币",
+    "danmaku": "弹幕"
+  },
+  "primary_metric": {
+    "article": "views",
+    "video": "views",
+    "post": "upvotes",
+    "thread": "upvotes",
+    "repo": "stars",
+    "paper": "citations"
+  },
+  "profiles": {
+    "tech": {
+      "label": "AI / 编程技术（默认）：中英双语，偏官方文档、工程博客、论文与优质中文技术媒体",
+      "domains": {
+        "T1": [
+          "arxiv.org", "openai.com", "anthropic.com", "deepmind.google", "research.google",
+          "ai.meta.com", "engineering.fb.com", "microsoft.com", "github.blog", "docs.github.com",
+          "go.dev", "golang.org", "kubernetes.io", "pytorch.org", "huggingface.co",
+          "docs.python.org", "rust-lang.org", "cloud.google.com", "aws.amazon.com",
+          "developer.nvidia.com", "acm.org", "ieee.org", "usenix.org", "nature.com",
+          "science.org", "dl.acm.org", "blog.cloudflare.com", "netflixtechblog.com",
+          "engineering.linkedin.com", "uber.com", "dropbox.tech", "stripe.com",
+          "langchain.com", "docs.langchain.com", "modelcontextprotocol.io"
+        ],
+        "T2": [
+          "infoq.cn", "juejin.cn", "zhuanlan.zhihu.com", "mp.weixin.qq.com",
+          "sspai.com", "jiqizhixin.com", "qbitai.com", "36kr.com", "geekpark.net",
+          "theverge.com", "arstechnica.com", "techcrunch.com", "wired.com",
+          "technologyreview.com", "news.ycombinator.com", "reddit.com",
+          "dev.to", "stackoverflow.blog", "bilibili.com", "youtube.com",
+          "xiaohongshu.com", "segmentfault.com", "oschina.net", "linux.cn",
+          "cloud.tencent.com", "developer.aliyun.com", "cet.com.cn", "thepaper.cn"
+        ],
+        "T3": [
+          "csdn.net", "cnblogs.com", "baijiahao.baidu.com", "sohu.com",
+          "163.com", "jianshu.com", "51cto.com", "medium.com", "tumblr.com",
+          "blog.csdn.net", "zhidao.baidu.com", "baike.baidu.com", "douyin.com"
+        ]
+      },
+      "blocked_domains": [
+        "t.cn", "bit.ly", "dwz.cn", "s.id", "url.cn", "tinyurl.com", "goo.gl",
+        "wsj.com", "ft.com", "bloomberg.com", "theinformation.com", "caixin.com",
+        "baike.baidu.com", "wenku.baidu.com", "docin.com", "doc88.com", "book118.com"
+      ],
+      "min_metrics": {
+        "article": {"views": 5000, "comments": 10},
+        "video": {"views": 20000, "comments": 30},
+        "post": {"upvotes": 100, "comments": 20},
+        "thread": {"upvotes": 100, "comments": 20},
+        "repo": {"stars": 300, "comments": 0},
+        "paper": {"citations": 10, "comments": 0}
+      },
+      "min_score": 55,
+      "top_n": 8,
+      "max_domain_share": 0.4,
+      "allow_t3": false,
+      "allow_waiver": false
+    },
+    "wechat": {
+      "label": "中文内容 / 公众号选题：偏爆款文章、知乎高赞、B站高播放，找行文角度与读者情绪",
+      "domains": {
+        "T1": [
+          "mp.weixin.qq.com", "zhuanlan.zhihu.com", "juejin.cn", "infoq.cn",
+          "jiqizhixin.com", "qbitai.com", "sspai.com", "geekpark.net", "36kr.com",
+          "openai.com", "anthropic.com", "arxiv.org"
+        ],
+        "T2": [
+          "bilibili.com", "xiaohongshu.com", "weibo.com", "zhihu.com",
+          "douban.com", "thepaper.cn", "huxiu.com", "yicai.com", "stcn.com",
+          "linux.cn", "oschina.net", "segmentfault.com", "youtube.com"
+        ],
+        "T3": [
+          "baijiahao.baidu.com", "sohu.com", "163.com", "jianshu.com",
+          "csdn.net", "51cto.com", "toutiao.com"
+        ]
+      },
+      "blocked_domains": [
+        "t.cn", "bit.ly", "dwz.cn", "url.cn", "wenku.baidu.com", "baike.baidu.com",
+        "caixin.com", "wsj.com", "ft.com"
+      ],
+      "min_metrics": {
+        "article": {"views": 10000, "comments": 20},
+        "video": {"views": 30000, "comments": 50},
+        "post": {"upvotes": 300, "comments": 30},
+        "thread": {"upvotes": 300, "comments": 30},
+        "repo": {"stars": 500, "comments": 0},
+        "paper": {"citations": 20, "comments": 0}
+      },
+      "min_score": 58,
+      "top_n": 10,
+      "max_domain_share": 0.35,
+      "allow_t3": false,
+      "allow_waiver": false
+    },
+    "general": {
+      "label": "泛领域：只按「可核验 + 权威 + 高热度」筛，不预设技术类白名单",
+      "domains": {"T1": [], "T2": [], "T3": []},
+      "blocked_domains": [
+        "t.cn", "bit.ly", "dwz.cn", "url.cn", "tinyurl.com", "goo.gl",
+        "wsj.com", "ft.com", "bloomberg.com", "theinformation.com", "caixin.com",
+        "wenku.baidu.com", "docin.com", "doc88.com", "book118.com"
+      ],
+      "min_metrics": {
+        "article": {"views": 5000, "comments": 10},
+        "video": {"views": 20000, "comments": 30},
+        "post": {"upvotes": 100, "comments": 20},
+        "thread": {"upvotes": 100, "comments": 20},
+        "repo": {"stars": 300, "comments": 0},
+        "paper": {"citations": 10, "comments": 0}
+      },
+      "min_score": 50,
+      "top_n": 8,
+      "max_domain_share": 0.4,
+      "allow_t3": false,
+      "allow_waiver": false
+    }
+  }
+}
