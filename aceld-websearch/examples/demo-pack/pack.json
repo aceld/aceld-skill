@@ -3,7 +3,7 @@
   "skill": "aceld-websearch",
   "topic": "AI Agent 工程化落地（示例）",
   "profile": "tech",
-  "generated_at": "2026-11-05 10:50:48",
+  "generated_at": "2026-11-05 13:47:52",
   "window": {
     "schema_version": "1.0",
     "topic": "AI Agent 工程化落地（示例）",
@@ -48,7 +48,8 @@
     "min_score": 55,
     "top_n": 8,
     "max_domain_share": 0.4,
-    "allow_t3": false
+    "allow_t3": false,
+    "allow_waiver": false
   },
   "queries": [
     {

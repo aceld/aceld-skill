@@ -282,6 +282,16 @@ def render_md(pack):
              % (prof, len(pack["queries"]), st["candidates"], len(pack["items"]),
                 len(pack["alternates"]), len(pack["rejected"])))
     L.append("- 硬门槛：页面发布日期在窗内 · T1/T2 权威源 · 指标可核验且达阈值 · 链接真能读到正文")
+    th = pack.get("thresholds", {})
+    relax = []
+    if th.get("allow_t3"):
+        relax.append("`--allow-t3`（允许 T3 源入选）")
+    if th.get("allow_waiver"):
+        relax.append("`--allow-waiver`（一手权威但平台无公开热度，单列且不占入选名额）")
+    if int(w.get("days") or 180) != 180:
+        relax.append("`--days %s`（时间窗已改为近 %s 天）" % (w["days"], w["days"]))
+    if relax:
+        L.append("- **已显式放宽**：%s；其余硬门槛一律未放宽。" % "、".join(relax))
     L.append("")
     L.append("---")
     L.append("")
@@ -406,6 +416,7 @@ def main():
             "top_n": top_n,
             "max_domain_share": prof["max_domain_share"],
             "allow_t3": a.allow_t3 or prof["allow_t3"],
+            "allow_waiver": a.allow_waiver or prof["allow_waiver"],
         },
         "queries": data.get("queries", []),
         "items": [{k: v for k, v in it.items() if not k.startswith("_drop")}

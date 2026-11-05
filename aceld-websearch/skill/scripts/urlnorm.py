@@ -44,6 +44,12 @@ NOT_ORIGINAL_HINTS = [
     (r"(^|/)cache/|webcache|snapshot", "快照页"),
     (r"\?.*\b(from|share_?from)=(timeline|group|search|copy)", "分享来源页"),
 ]
+# 微信公众号文章的**永久原文链接**格式就是 /s/<id>：它既不是短链，也不是分享中间页，
+# 更没有别的官方 URL 可以回溯。之前的 (^|/)s/ 规则会把它误杀，导致官方一手原文被判 blocked。
+# 这里只对 mp.weixin.qq.com 的 /s/<id> 形态豁免「短链/分享中间页」这一条 hint，
+# 其余 hint（AMP / 跳转 / 快照 / 分享来源）照常生效，不放宽任何硬门槛。
+WX_PERMALINK_HOST = "mp.weixin.qq.com"
+WX_PERMALINK_PATH = re.compile(r"^/s/[A-Za-z0-9_-]{8,}$", re.I)
 
 
 def load_cfg(path=SOURCES):
@@ -112,6 +118,9 @@ def inspect(url, cfg, profile="tech"):
         tier = "UNKNOWN"
     hints = [label for pat, label in NOT_ORIGINAL_HINTS
              if re.search(pat, norm, re.I)]
+    # 微信 /s/<id> 是官方永久原文链接，只豁免「短链/分享中间页」这一个误判标签。
+    if (host == WX_PERMALINK_HOST and WX_PERMALINK_PATH.match(urlparse(norm).path)):
+        hints = [h for h in hints if h != "短链/分享中间页"]
     reasons = []
     if blocked:
         reasons.append("黑名单域名 %s（付费墙/聚合/短链）" % blocked)
