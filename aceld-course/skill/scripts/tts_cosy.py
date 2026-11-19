@@ -6,10 +6,13 @@
   python scripts/tts_cosy.py --only 3,7      # 只重配指定段
   python scripts/tts_cosy.py --qc            # 边配边做 ASR 质检（慢，但能早发现丢字）
 
-★ 三条不要动的东西：
+★ 四条不要动的东西：
   1. speed = 1.0（改 speed 是频谱线性拉伸，会发闷且调不回来）
   2. 淡出 6ms（不是 28ms，否则句末轻声被削掉）
   3. 静音裁剪「头部严 0.08 / 尾部宽 0.015」
+  4. 只克隆音色，不克隆断句节奏：送 TTS 前做朗读标点规范化（smart_punct）；
+     ★不要加停顿归一化（normalize_pauses）——实测会把停顿全压成 0.18s 机械节奏、
+     语速虚高到 337~402 字/分；关闭后停顿 0.18~0.52s 自然、语速 306~324 字/分。
 """
 import os
 import re
@@ -41,6 +44,46 @@ def apply_repl(t: str, repl) -> str:
         t = t.replace(a, b)
     # 替换后清掉中文之间的多余空格
     return re.sub(r"(?<=[\u4e00-\u9fff])\s+(?=[\u4e00-\u9fff])", "", t)
+
+
+# ---------------- 朗读标点规范化（只克隆音色，不克隆断句节奏）----------------
+# 2026-11-19 实验定稿：zero_shot 会连参考音频的碎断节奏一起克隆，出现
+# 「一场表，演」词内断裂、列表项「1，xxx，2，xxx」粘成一串、忽快忽慢。
+# 解法不在音频层（不要调 speed、不要做停顿归一化），在文本层把朗读标点写对。
+DEFAULT_WORD_GUARD = [
+    "表演", "包括", "所谓", "其实", "模型", "智能体", "上下文", "架构",
+    "实验", "路由", "工人",
+]
+
+
+def smart_punct(t: str, word_guard=None) -> str:
+    """朗读标点规范化：只改标点不改字，让模型按我们写的标点断句。
+
+    - 去掉中文之间被误加的空格
+    - 列表项「1，xxx，2，xxx」→「第一。xxx。第二。xxx。」
+    - 序号后逗号「第一，」→「第一。」（强制停顿）
+    - 保护词内的误断逗号「一场表，演」→「一场表演」
+
+    ★字幕与对齐仍用原文 segments[].text，这里只影响送进 TTS 的文本。
+    """
+    guard = DEFAULT_WORD_GUARD if word_guard is None else word_guard
+    t = re.sub(r"(?<=[\u4e00-\u9fff])\s+(?=[\u4e00-\u9fff])", "", t)
+    t = re.sub(
+        r"(?:^|[。！？；，、：])\s*([1-9])[，、]\s*",
+        lambda m: (m.group(0)[0] if m.group(0)[0] in "。！？；，、：" else "")
+                  + "第" + "零一二三四五六七八九"[int(m.group(1))] + "。",
+        t,
+    )
+    t = re.sub(r"(第[一二三四五六七八九十]+)[，、]", r"\1。", t)
+    for w in guard:
+        if len(w) == 2:
+            t = t.replace(w[0] + "，" + w[1], w)
+    return t
+
+
+def tts_text(t: str, repl, word_guard=None) -> str:
+    """最终送 TTS 的文本：先发音替换，再朗读标点规范化。"""
+    return smart_punct(apply_repl(t, repl), word_guard)
 
 
 # ---------------- 后处理 ----------------
@@ -122,6 +165,7 @@ def main():
     SPEED = float(c.get("voice.speed", 1.0))
     GAP = float(c.get("voice.gap_sent", 0.60))
     REPL = c.repl()
+    WORD_GUARD = c.get("voice.word_guard", None)   # 朗读标点规范化的保护词，None 用内置表
 
     if not os.path.exists(REF_AUDIO):
         raise SystemExit("找不到音色参考音频：%s\n请在 course.yaml 里配置 voice.ref_file" % REF_AUDIO)
@@ -176,7 +220,7 @@ def main():
 
     def gen(text):
         parts = []
-        for j in cosy.inference_zero_shot(apply_repl(text, REPL), REF_TEXT, prompt,
+        for j in cosy.inference_zero_shot(tts_text(text, REPL, WORD_GUARD), REF_TEXT, prompt,
                                           stream=False, speed=SPEED):
             parts.append(prep(j["tts_speech"].cpu().numpy().squeeze(), sr_out))
         if not parts:
@@ -242,7 +286,7 @@ def main():
         for i in range(0, len(text), step):
             part = text[i:i + step]
             d = dur * len(part) / len(text)
-            lines.append({"text": part, "tts": apply_repl(part, REPL),
+            lines.append({"text": part, "tts": tts_text(part, REPL, WORD_GUARD),
                           "start": round(t, 2), "end": round(t + d, 2)})
             t += d
 
