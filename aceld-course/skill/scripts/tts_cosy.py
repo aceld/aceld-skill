@@ -86,6 +86,30 @@ def tts_text(t: str, repl, word_guard=None) -> str:
     return smart_punct(apply_repl(t, repl), word_guard)
 
 
+def split_sentences(t: str, min_len: int = 8):
+    """★2026-11-20 用户意见：严格按标点断句。
+    整段丢给 zero_shot，模型会自行决定停顿，把「注入的。群里」粘成
+    「注入的群里」，造成「防提示词，注入的群里随便」这类费解断句。
+    按句末标点 。！？ 切成句、逐句推理、句间插固定停顿，强制在标点处断开；
+    句内逗号不切，交给模型自然连读。过短片段（<min_len）并入前句，避免机械。
+    """
+    raw = re.split(r"(?<=[。！？])", t)
+    sents, buf = [], ""
+    for p in raw:
+        p = p.strip()
+        if not p:
+            continue
+        if buf and len(p) < min_len:
+            buf += p
+        else:
+            if buf:
+                sents.append(buf)
+            buf = p
+    if buf:
+        sents.append(buf)
+    return sents or [t]
+
+
 # ---------------- 后处理 ----------------
 
 def trim(a, sr, thr_ratio=0.08, pad_ms=6, run=3, tail_ratio=0.015, tail_pad_ms=40):
@@ -218,18 +242,23 @@ def main():
         wm = WhisperModel(c.text("paths.whisper_model", "large-v3"), device="cuda", compute_type="float16")
         print("ASR 质检已开启", flush=True)
 
+    # ★2026-11-20：逐句推理强制按标点断句（默认开）。sent_split=false 可退回整段做对照。
+    SENT_SPLIT = bool(c.get("voice.sent_split", True))
+
     def gen(text):
-        parts = []
-        for j in cosy.inference_zero_shot(tts_text(text, REPL, WORD_GUARD), REF_TEXT, prompt,
-                                          stream=False, speed=SPEED):
-            parts.append(prep(j["tts_speech"].cpu().numpy().squeeze(), sr_out))
-        if not parts:
-            raise RuntimeError("没有产生音频")
+        t = tts_text(text, REPL, WORD_GUARD)
+        sents = split_sentences(t) if SENT_SPLIT else [t]
         gap = np.zeros(int(sr_out * GAP), dtype=np.float32)
         out = []
-        for k, p in enumerate(parts):
-            out.append(p)
-            if k < len(parts) - 1:
+        for si, s in enumerate(sents):
+            chunks = []
+            for j in cosy.inference_zero_shot(s, REF_TEXT, prompt, stream=False, speed=SPEED):
+                chunks.append(j["tts_speech"].cpu().numpy().squeeze())
+            if not chunks:
+                raise RuntimeError("没有产生音频")
+            # 句内 chunks 拼成整句后统一 prep，避免 chunk 边界被 trim 出碎停顿
+            out.append(prep(np.concatenate(chunks), sr_out))
+            if si < len(sents) - 1:
                 out.append(gap)
         return np.concatenate(out)
 
