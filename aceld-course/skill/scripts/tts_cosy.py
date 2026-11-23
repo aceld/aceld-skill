@@ -112,7 +112,7 @@ def split_sentences(t: str, min_len: int = 8):
 
 # ---------------- 后处理 ----------------
 
-def trim(a, sr, thr_ratio=0.08, pad_ms=6, run=3, tail_ratio=0.015, tail_pad_ms=40):
+def trim(a, sr, thr_ratio=0.08, pad_ms=6, run=3, tail_ratio=0.005, tail_pad_ms=120):
     """裁首尾静音/噪声。
 
     头部阈值要高（0.08 ≈ -22dB），否则 vocoder 的 -34dB 残留噪声会被当成语音起音，
@@ -160,11 +160,14 @@ def fade(a, sr, ms=6):
 
 
 def prep(a, sr):
-    """去 DC 偏移 → 裁静音 → 首尾淡化。三者缺一都会在拼接处爆音。"""
+    """去 DC 偏移 → 裁静音 → 首尾淡化。三者缺一都会在拼接处爆音。
+    ★2026-11-23 句尾吞字修复：尾部 fade 从 6ms 缩到 2ms。
+    ASR 实证：尾部阈值 0.015 + fade 6ms 会把「卡在人这儿」读成「卡在人字」。
+    配合 trim 的 tail_ratio 0.005 / tail_pad 120ms 才能保住轻声尾字。"""
     a = np.asarray(a, dtype=np.float32).squeeze()
     a = a - float(a.mean())
     a = trim(a, sr)
-    return fade(a, sr, 6)
+    return fade(a, sr, 2)
 
 
 # ---------------- 主流程 ----------------

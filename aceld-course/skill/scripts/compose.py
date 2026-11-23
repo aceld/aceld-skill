@@ -223,7 +223,10 @@ def main():
     # ---- 6. 合成 ----
     W = int(c.get("video.width", 1920))
     H = int(c.get("video.height", 1080))
-    avatar = c.get("video.avatar")
+    # ★2026-11-23 约定：所有课程默认不要右下角真人视频小窗。
+    # 只有显式 video.allow_avatar=true 才保留小窗能力（向后兼容老工程）。
+    allow_avatar = bool(c.get("video.allow_avatar", False))
+    avatar = c.get("video.avatar") if allow_avatar else None
     if avatar:
         avatar = avatar if os.path.isabs(avatar) else os.path.join(root, avatar)
 
