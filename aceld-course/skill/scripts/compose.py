@@ -243,8 +243,10 @@ def main():
 
     if not a.no_subs and c.get("subtitle.band", True):
         y = H - 84
+        # ★无真人小窗时字幕带铺满整宽；有小窗(老工程)才给右下角留 420px
+        band_w = (W - 420) if (avatar and os.path.exists(avatar)) else W
         vfilters.append("%sdrawbox=x=0:y=%d:w=%d:h=84:color=black@0.52:t=fill[b2]"
-                        % (last, y, W - 420))
+                        % (last, y, band_w))
         last = "[b2]"
 
     if not a.no_subs and n_lines:
